@@ -8,8 +8,9 @@ import sys
 if __name__ == '__main__':
     # read the shapefile
     absolute_path = os.path.dirname(__file__)
-    full_path = os.path.join(os.path.dirname(absolute_path), "data/ny_final.shp")
-
+    
+    full_path = os.path.join(os.path.dirname(absolute_path), "data/ny/2020/ny_cong_2012_to_2021.shp")
+    print(full_path)
     reader = shapefile.Reader(full_path)
     fields = reader.fields[1:]
     field_names = [field[0] for field in fields]
