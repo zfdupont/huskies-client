@@ -1,12 +1,18 @@
 import React from 'react';
-import shape from './data/shape.json';
+import NYD from './data/NYD.json';
 import {MapContainer, GeoJSON} from 'react-leaflet';
 export default class NewYork extends React.Component{
+    disStyle = {
+        fillColor: "green",
+        fillOpacity: 0.5,
+        color: "black",
+        weight: 2
+    };
     render() {
         return(
             <div>
                 <MapContainer center={[42.8, -76]} zoom={6}>
-                    <GeoJSON style = {this.mapStyle} data={shape.features}/>
+                    <GeoJSON style = {this.disStyle} data={NYD.features}/>
                 </MapContainer>
             </div>
         )

@@ -9,6 +9,8 @@ export default class Map extends React.Component{
 		super(props);
         this.stateSelect = this.stateSelect.bind(this);
         this.selectNY = this.selectNY.bind(this);
+        this.selectGA = this.selectGA.bind(this);
+        this.selectIL = this.selectIL.bind(this);
     }
     mapStyle = {
         fillColor: "yellow",
@@ -24,6 +26,12 @@ export default class Map extends React.Component{
     selectNY() {
         this.props.handlePage("NY");
     }
+    selectGA() {
+        this.props.handlePage("GA");
+    }
+    selectIL() {
+        this.props.handlePage("IL");
+    }
     stateSelect() {
         document.getElementById("dropdown").classList.toggle("show");
     };
@@ -31,16 +39,16 @@ export default class Map extends React.Component{
         return(
             <div>
                 <MapContainer center={[37.4316, -78.6569]} zoom={4}>
-                    <GeoJSON style = {this.stateStyle} data={NY.geometry}/>
-                    <GeoJSON style = {this.stateStyle} data={GA.geometry}/>
-                    <GeoJSON style = {this.stateStyle} data={IL.geometry}/>
-                    <GeoJSON style = {this.mapStyle} data={states.features}/>
+                    <GeoJSON style={this.stateStyle} data={NY.geometry}/>
+                    <GeoJSON style={this.stateStyle} data={GA.geometry}/>
+                    <GeoJSON style={this.stateStyle} data={IL.geometry}/>
+                    <GeoJSON style={this.mapStyle} data={states.features}/>
                 </MapContainer>
                 <button onClick = {this.stateSelect}>Select State</button>
                 <div id = "dropdown" class = "dropdown_states">
                     <a href="#" onClick = {this.selectNY}>New York</a>
-                    <a href="#">Georgia</a>
-                    <a href="#">Illinois</a>
+                    <a href="#" onClick = {this.selectGA}>Georgia</a>
+                    <a href="#" onClick = {this.selectIL}>Illinois</a>
                 </div>
             </div>
         )
