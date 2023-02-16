@@ -1,10 +1,20 @@
-.App {
+#main {
   display: flex;
   text-align: center;
 }
 
-.App-link {
-  color: #61dafb;
+#header {
+  margin-bottom: 10px;
+}
+
+#stats {
+  width: 100vw;
+  background-color: beige;
+  font-size: x-large;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .leaflet-container {
