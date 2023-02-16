@@ -1,34 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import React, { Context, Consumer, useState } from 'react';
+import DistMap from './Map.jsx';
+import bar from './bar.jsx';
+import {Menu, MenuItem, FormControl, InputLabel, Select} from '@mui/material'
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+export default function App(){
+    const [state, setState] = useState("");
+    let handleChange = (e) => {
+        setState(e.target.value);
+    }
+    return (
+        <>
+            <div id='header'>
+                <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">State</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={state}
+                        label="State"
+                        onChange={handleChange}
+                    >
+                        <MenuItem value={'Georgia'}>Georgia</MenuItem>
+                        <MenuItem value={'Illinois'}>Illinois</MenuItem>
+                        <MenuItem value={'New York'}>New York</MenuItem>
+                    </Select>
+                </FormControl>
+            </div>
+            <div id='main'>
+                <DistMap state={state}></DistMap>
+                <div id='stats'>STATS HERE</div>
+            </div>
+            
+        </>
+    );
 }
-
-export default App
