@@ -1,5 +1,6 @@
 import React, { Context, Consumer, useState } from 'react';
-import Map from './Map.jsx';
+import DistMap from './Map.jsx';
+import bar from './bar.jsx';
 import {Menu, MenuItem, FormControl, InputLabel, Select} from '@mui/material'
 
 export default function App(){
@@ -26,7 +27,7 @@ export default function App(){
                 </FormControl>
             </div>
             <div id='main'>
-                <Map state={state}></Map>
+                <DistMap state={state}></DistMap>
                 <div id='stats'>STATS HERE</div>
             </div>
             
