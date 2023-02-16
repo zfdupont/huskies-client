@@ -74,9 +74,15 @@ export default function DistMap(props){
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <GeoJSON data={GA}></GeoJSON>
-                <GeoJSON data={IL}></GeoJSON>
-                <GeoJSON data={NY}></GeoJSON>
+                <GeoJSON data={GA} onEachFeature={(feature, layer) => {
+                    layer.on('click', () => setState('Georgia'));
+                }}></GeoJSON>
+                <GeoJSON data={IL} onEachFeature={(feature, layer) => {
+                    layer.on('click', () => setState('Illinois'));
+                }}></GeoJSON>
+                <GeoJSON data={NY} onEachFeature={(feature, layer) => {
+                    layer.on('click', () => setState('New York'));
+                }}></GeoJSON>
                 <FlyMapTo position={position} zoom={zoom} />
                 <ShowDistrictMap state={state}/> 
 
