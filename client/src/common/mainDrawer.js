@@ -15,7 +15,7 @@ import Toolbar from '@mui/material/Toolbar';
 // Custom
 import DrawerLists from "./DrawerLists";
 
-const drawerWidth = 240;
+const drawerWidth = 200;
 
 function ResponsiveDrawer(props) {
     const { window } = props;
