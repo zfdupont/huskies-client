@@ -3,10 +3,8 @@ import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import MapPanel from "../TabPanels/mapPanel/MapPanel";
 import AnalyzePanel from "../TabPanels/analyzePanel/AnalyzePanel";
-import {Dialog, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 
 function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
