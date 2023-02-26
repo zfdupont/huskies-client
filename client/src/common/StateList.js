@@ -19,7 +19,7 @@ export default function NestedList() {
     const handleClick = () => {
         setOpen(!open);
     };
-
+    //Test
     function onStateClick(stateType)
     {
         (store.isStateMatch(stateType))? store.unselectState() : store.selectState(stateType);
