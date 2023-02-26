@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -9,14 +9,21 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import StarBorder from '@mui/icons-material/StarBorder';
 
-import StoreContext from './Store'
+import StoreContext from './Store';
+import {StateType} from './Store';
 
 export default function NestedList() {
     const { store } = useContext(StoreContext);
     const [open, setOpen] = React.useState(true);
+
     const handleClick = () => {
         setOpen(!open);
     };
+
+    function onStateClick(stateType)
+    {
+        store.selectState(stateType);
+    }
     return (
         <List
             sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
@@ -29,23 +36,23 @@ export default function NestedList() {
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                    <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemButton onClick={() => {onStateClick(StateType.NEWYORK)}} sx={{ pl: 4 }}>
                         <ListItemIcon>
                             <StarBorder />
                         </ListItemIcon>
-                        <ListItemText primary="2022" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}  />
+                        <ListItemText primary="New York" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}  />
                     </ListItemButton>
-                    <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemButton onClick={() => {onStateClick(StateType.GEORGIA)}} sx={{ pl: 4 }}>
                         <ListItemIcon>
                             <StarBorder />
                         </ListItemIcon>
-                        <ListItemText primary="2020" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}} />
+                        <ListItemText primary="Georgia" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}} />
                     </ListItemButton>
-                    <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemButton onClick={() => {onStateClick(StateType.ILLINOIS)}} sx={{ pl: 4 }}>
                         <ListItemIcon>
                             <StarBorder />
                         </ListItemIcon>
-                        <ListItemText id="test" primary="#5143" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}} />
+                        <ListItemText primary="Illinois" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}} />
                     </ListItemButton>
                 </List>
             </Collapse>

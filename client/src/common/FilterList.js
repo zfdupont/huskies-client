@@ -39,13 +39,25 @@ export default function NestedList() {
                         <ListItemIcon>
                             <StarBorder />
                         </ListItemIcon>
-                        <ListItemText primary="Starred" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
+                        <ListItemText primary="Democrat" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
                     </ListItemButton>
                     <ListItemButton sx={{ pl: 4 }}>
                         <ListItemIcon>
                             <StarBorder />
                         </ListItemIcon>
-                        <ListItemText primary="Starred" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
+                        <ListItemText primary="Republican" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
+                    </ListItemButton>
+                    <ListItemButton sx={{ pl: 4 }}>
+                        <ListItemIcon>
+                            <StarBorder />
+                        </ListItemIcon>
+                        <ListItemText primary="New Constitute" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
+                    </ListItemButton>
+                    <ListItemButton sx={{ pl: 4 }}>
+                        <ListItemIcon>
+                            <StarBorder />
+                        </ListItemIcon>
+                        <ListItemText primary="Incumbent" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
                     </ListItemButton>
                 </List>
             </Collapse>

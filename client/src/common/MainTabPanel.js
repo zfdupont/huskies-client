@@ -41,7 +41,6 @@ function a11yProps(index) {
 
 export default function BasicPanel() {
     const [value, setValue] = React.useState(0);
-
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
@@ -67,7 +66,7 @@ export default function BasicPanel() {
             </TabPanel>
             <TabPanel index={2} value={value}>
                 <div style={{position:'absolute', width: '100%', height: "92vh", overflowY: 'scroll'}}>
-                    <MapPanel/>
+                    {/*<MapPanel/>*/}
                 </div>
             </TabPanel>
         </Box>

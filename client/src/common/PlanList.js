@@ -14,9 +14,12 @@ export default function NestedList() {
     const { store } = useContext(StoreContext);
     const [open, setOpen] = React.useState(true);
 
+
     const handleClick = () => {
         setOpen(!open);
     };
+
+    let ListTitle = (open)? "Plan" : store.getMapPlan();
 
     return (
         <List
@@ -25,12 +28,12 @@ export default function NestedList() {
             aria-labelledby="nested-list-subheader"
         >
             <ListItemButton onClick={handleClick} sx={{ pl: 2 }}>
-                <ListItemText primary="Plan" primaryTypographyProps={{fontSize: store.sx.drawerList.mainFontSize}} />
+                <ListItemText primary={ListTitle} primaryTypographyProps={{fontSize: store.sx.drawerList.mainFontSize}} />
                 {open ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                    <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemButton selected={true} sx={{ pl: 4 }}>
                         <ListItemIcon>
                             <StarBorder />
                         </ListItemIcon>
@@ -40,7 +43,13 @@ export default function NestedList() {
                         <ListItemIcon>
                             <StarBorder />
                         </ListItemIcon>
-                        <ListItemText primary="Starred" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}  />
+                        <ListItemText primary="2020" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}  />
+                    </ListItemButton>
+                    <ListItemButton sx={{ pl: 4 }}>
+                        <ListItemIcon>
+                            <StarBorder />
+                        </ListItemIcon>
+                        <ListItemText primary="#1423" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}  />
                     </ListItemButton>
                 </List>
             </Collapse>

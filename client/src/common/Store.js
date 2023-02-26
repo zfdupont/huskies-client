@@ -8,38 +8,82 @@ export const StateType = {
 }
 
 export const StoreActionType = {
-    DEFAULT: "default"
+    STATE_SELECT: "state_select",
+    STATE_UNSELECT: "state_unselect"
 }
 
-function StoreContextProvider(props) {
-    const [store, setStore] = useState({
-        state: StateType.NEWYORK,
-        plan: 2022,
-    })
-
+function setStyle(store)
+{
     store.sx = {
         drawerList: {
             mainFontSize: '14px',
             subFontSize: '12px'
         }
     }
+}
+
+function StoreContextProvider(props) {
+    const [store, setStore] = useState({
+        map: {
+            state: null,
+            plan: 2022,
+            subPlan: null,
+        }
+    })
+    setStyle(store);
+    function createMapState(state, plan, subPlan)
+    {
+        return {
+            state: (state !== undefined)? state : store.map.state,
+            plan: (plan !== undefined)? plan : store.map.plan,
+            subPlan: (subPlan !== undefined)? subPlan : store.map.subPlan,
+        }
+    }
+
+    // Create State Guide: 1) value -> set value, 2) null -> set null, 3) undefined -> remain previous value.
     const storeReducer = (action) => {
+        let prev; // It must be undefined.
         const {type, payload} = action;
         switch (type) {
-            case StoreActionType.DEFAULT:
+            case StoreActionType.STATE_SELECT:
                 return setStore({
-                    state: store.state,
-                    plan: store.plan
+                    map: createMapState(payload.stateType,prev, prev)
+                })
+            case StoreActionType.STATE_UNSELECT:
+                return setStore({
+                    map: createMapState(null, prev, prev)
                 })
             default:
                 return store;
         }
     }
 
-    store.test = function()
+// Reducer Functions Area
+    store.selectState = function(stateType)
     {
-        console.log("this is store test.");
+        storeReducer({
+            type: StoreActionType.STATE_SELECT,
+            payload: {
+                stateType: stateType
+            }
+        })
     }
+
+    store.unselectState = function()
+    {
+        storeReducer({
+            type: StoreActionType.STATE_UNSELECT,
+            payload: null,
+        })
+    }
+
+// Normal Functions Area
+    store.isStateNull = function()
+    {
+        return store.map.state == null;
+    }
+
+    store.getMapPlan = () => {return store.map.plan;}
 
     return (
         <StoreContext.Provider value={{store}}>

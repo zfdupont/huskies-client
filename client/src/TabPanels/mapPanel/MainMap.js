@@ -1,35 +1,84 @@
 import {GeoJSON, MapContainer, TileLayer, useMap} from "react-leaflet";
 import L from 'leaflet';
 import * as React from "react";
+import { useState, useContext, useEffect } from 'react';
 import NY from '../../0.data/NY.json'
 import GA from '../../0.data/GA.json'
 import IL from '../../0.data/IL.json'
-import US from '../../0.data/US.json'
+import {StateType, StoreContext} from '../../common/Store'
 
-function MapSetup()
+
+let currLayerGroups = {};
+let layerGroup = null;
+
+function GetGeoJsonByStateType(type)
 {
-    const map = useMap();
-
-    const bounds = [
-        [55, -66], // [west, south]
-        [17, -130]  // [east, north]
-    ];
-
+    if (type === StateType.NEWYORK) return NY;
+    if (type === StateType.GEORGIA) return GA;
+    if (type === StateType.ILLINOIS) return IL;
+}
+function Test(map)
+{
     map.on('moveend', function(e) {
-        console.log(map.getBounds());
+        // console.log(map.getBounds());
     });
-    map.setMaxBounds(bounds);
+}
+function DefaultSetup(map)
+{
+    map.setMaxBounds([[55, -66], [17, -130]]);
     map.setMaxZoom(10);
     map.setMinZoom(4.3);
-    L.geoJSON(NY).addTo(map);
-    L.geoJSON(GA).addTo(map);
-    L.geoJSON(IL).addTo(map);
 }
 
+function StateFeature(feature, layer)
+{
+    layer.on({
+        click: () => console.log(feature)
+    })
+}
 
+function RemoveAllLayer()
+{
+    const LayerGroupProperties = Object.keys(currLayerGroups);
+    LayerGroupProperties.forEach((prop) => {
+        currLayerGroups[prop].clearLayers();
+    })
+}
+
+function SetCountryView(map)
+{
+    RemoveAllLayer();
+    let stateData = [NY, GA, IL];
+    let layerGroup = L.layerGroup().addTo(map);
+    stateData.forEach((data) => {
+        let newLayer = L.geoJSON(data, {
+            onEachFeature: StateFeature
+        }).addTo(layerGroup);
+    });
+    currLayerGroups.countryView = layerGroup;
+}
+
+function SetStateView(map, stateType)
+{
+    RemoveAllLayer();
+    let layerGroup = L.layerGroup().addTo(map);
+    let data = GetGeoJsonByStateType(stateType);
+    L.geoJSON(data).addTo(layerGroup);
+    currLayerGroups.stateView =layerGroup;
+}
 
 export default function MainMap()
 {
+    const { store } = useContext(StoreContext);
+    function MapSetup()
+    {
+        const map = useMap();
+        DefaultSetup(map);
+        if (store.map.state === null)
+            SetCountryView(map);
+        else
+            SetStateView(map, store.map.state);
+    }
 
     return (
         <div className="map" style={{flex:3.5, marginRight: '10px'}}>
