@@ -8,6 +8,11 @@ import IL from "../../0.data/IL.json";
 
 
 let currLayerGroups = {};
+let stateDataList = [
+    {type: StateType.NEWYORK, data: NY},
+    {type: StateType.GEORGIA, data: GA},
+    {type: StateType.ILLINOIS, data: IL}
+];
 
 export default function MapController()
 {
@@ -34,14 +39,10 @@ export default function MapController()
             SetStateView(store.map.state);
     }
     // --- Event Handler ------------------------
-    function StateFeature(feature, layer)
+    function OnStateClick(stateType)
     {
-        layer.on({
-            click: () => console.log(feature)
-        })
+        store.selectState(stateType);
     }
-
-
     // --- HELPER FUNCTIONS -----------------
     function GetGeoJsonByStateType(type)
     {
@@ -61,12 +62,13 @@ export default function MapController()
     function SetCountryView()
     {
         RemoveAllLayer();
-        let stateData = [NY, GA, IL];
         let layerGroup = L.layerGroup().addTo(map);
-        stateData.forEach((data) => {
-            L.geoJSON(data, {
-                onEachFeature: StateFeature
-            }).addTo(layerGroup);
+        stateDataList.forEach((pair) => {
+            L.geoJSON(pair.data, {
+                onEachFeature: (feature, layer) => {
+                    layer.on('click', () => OnStateClick(pair.type))
+                }
+        }).addTo(layerGroup);
         });
         currLayerGroups.countryView = layerGroup;
         SetFocus(StateType.NONE);
