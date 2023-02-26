@@ -1,0 +1,25 @@
+{
+  "country": {
+    "default": {
+      "maxBounds": [[55, -66], [17, -130]],
+      "maxZoom": 10,
+      "minZoom": 4.3
+    },
+    "style": {
+      "weight": 3,
+      "opacity": 0.5
+    }
+  },
+  "state": {
+    "style": {
+      "fill": false,
+      "color": "black",
+      "weight": 2,
+      "opacity": 1
+    }
+  },
+  "urls": {
+    "placeLabel": "https://api.mapbox.com/styles/v1/yongshn220/clel5qcg3002q01qjm6p6zpcj/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoieW9uZ3NobjIyMCIsImEiOiJjbGVqZnp1Z2kwMTRvNDFycmg1Z2RveGdtIn0.QUuLGb1Uu6Pl6OF0YJO--A",
+    "defaultWhite": "https://api.mapbox.com/styles/v1/yongshn220/clel4og46001a01l8zzp1or8i/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoieW9uZ3NobjIyMCIsImEiOiJjbGVqZnp1Z2kwMTRvNDFycmg1Z2RveGdtIn0.QUuLGb1Uu6Pl6OF0YJO--A"
+  }
+}

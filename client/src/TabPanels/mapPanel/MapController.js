@@ -2,9 +2,8 @@ import {useContext, useEffect, useRef, useState} from "react";
 import L from "leaflet";
 import StoreContext, {StateType} from '../../common/Store';
 import {useMap} from "react-leaflet";
-import NY from "../../0.data/NY.json";
-import GA from "../../0.data/GA.json";
-import IL from "../../0.data/IL.json";
+import MapProperty from './MapProperty.json';
+import {TileLayerType, LayerGroupType, GeoData, StateTypeList} from './MapType';
 
 
 let currLayerGroups = {};
@@ -22,9 +21,10 @@ export default function MapController()
     // --- INIT SETUP ------------------------
     function DefaultSetup()
     {
-        map.setMaxBounds([[55, -66], [17, -130]]);
-        map.setMaxZoom(10);
-        map.setMinZoom(4.3);
+        AddTileLayer(TileLayerType.DEFAULT_WHITE, false);
+        map.setMaxBounds(MapProperty.country.default.maxBounds);
+        map.setMaxZoom(MapProperty.country.default.maxZoom);
+        map.setMinZoom(MapProperty.country.default.minZoom);
     }
     function ViewSetup()
     {
@@ -34,25 +34,22 @@ export default function MapController()
             SetStateView(store.map.state);
     }
     // --- Event Handler ------------------------
-    function StateFeature(feature, layer)
+    function OnStateClick(stateType)
     {
-        layer.on({
-            click: () => console.log(feature)
-        })
+        store.selectState(stateType);
     }
-
-
     // --- HELPER FUNCTIONS -----------------
-    function GetGeoJsonByStateType(type)
+    function StateTypeToGeoData(type)
     {
-        if (type === StateType.NEWYORK) return NY;
-        if (type === StateType.GEORGIA) return GA;
-        if (type === StateType.ILLINOIS) return IL;
+        if (type === StateType.NEWYORK) return GeoData.NEWYORK_STATE;
+        if (type === StateType.GEORGIA) return GeoData.GEORGIA_STATE;
+        if (type === StateType.ILLINOIS) return GeoData.ILLINOIS_STATE;
     }
     function RemoveAllLayer()
     {
-        const LayerGroupProperties = Object.keys(currLayerGroups);
-        LayerGroupProperties.forEach((prop) => {
+        const layerGroupProperties = Object.keys(currLayerGroups);
+        console.log(layerGroupProperties);
+        layerGroupProperties.forEach((prop) => {
             currLayerGroups[prop].clearLayers();
         })
     }
@@ -61,30 +58,55 @@ export default function MapController()
     function SetCountryView()
     {
         RemoveAllLayer();
-        let stateData = [NY, GA, IL];
-        let layerGroup = L.layerGroup().addTo(map);
-        stateData.forEach((data) => {
-            L.geoJSON(data, {
-                onEachFeature: StateFeature
-            }).addTo(layerGroup);
-        });
-        currLayerGroups.countryView = layerGroup;
+        AddCountryDefaultLayer();
         SetFocus(StateType.NONE);
     }
     function SetStateView(stateType)
     {
         RemoveAllLayer();
-        let layerGroup = L.layerGroup().addTo(map);
-        let data = GetGeoJsonByStateType(stateType);
-        L.geoJSON(data).addTo(layerGroup);
-        currLayerGroups.stateView =layerGroup;
+        AddStateDefaultLayer(stateType);
         SetFocus(stateType);
     }
 
     // --- MAP COLOR CONTROLLER --------------------------
-    function AddLayer()
+    function AddCountryDefaultLayer()
     {
+        StateTypeList.forEach((stateType) => {
+            let option = {
+                style: MapProperty.country.style,
+                onEachFeature: (feature, layer) => { layer.on('click', () => OnStateClick(stateType)) }
+            }
+            let geoData = StateTypeToGeoData(stateType);
+            AddGeoJsonLayer(geoData, stateType, option);
+        })
+        AddTileLayer(TileLayerType.PLACE_LABEL, true);
+    }
 
+    function AddStateDefaultLayer(stateType)
+    {
+        let geoData = StateTypeToGeoData(stateType);
+        let option = {style: MapProperty.state.style};
+        AddGeoJsonLayer(geoData, LayerGroupType.STATE_DEFAULT, option);
+        AddTileLayer(TileLayerType.PLACE_LABEL, true);
+    }
+
+    function AddTileLayer(layerType, isLayerGroup){
+        // only layerGroup is added into LayerGroupList.
+        let target = (isLayerGroup)? L.layerGroup().addTo(map) : map;
+        if (isLayerGroup) currLayerGroups[layerType] = target;
+
+        L.tileLayer(MapProperty.urls[layerType], {
+            pane: 'mapPane'
+        }).addTo(target);
+    }
+
+    function AddGeoJsonLayer(geoData, layerGroupType, option = {})
+    {
+        let layerGroup = (currLayerGroups[layerGroupType])? currLayerGroups[layerGroupType] : L.layerGroup().addTo(map);
+        if (!currLayerGroups[layerGroupType]) {
+            currLayerGroups[layerGroupType] = layerGroup;
+        }
+        L.geoJSON(geoData, option).addTo(layerGroup);
     }
 
     // --- MAP ZOOM/PIVOT CONTROLLER. --------------------
