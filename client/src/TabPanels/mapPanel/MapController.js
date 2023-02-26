@@ -90,7 +90,6 @@ export default function MapController()
     // --- MAP ZOOM/PIVOT CONTROLLER. --------------------
     function SetFocus(stateType)
     {
-        console.log(stateType);
         switch(stateType)
         {
             case StateType.NONE:

@@ -83,12 +83,12 @@ function StoreContextProvider(props) {
     }
 
 // --- HELPER FUNCTIONS -----------------------------
-    store.isStateNull = () => { return store.map.state === StateType.NONE; }
 
     store.getMapPlan = () => { return store.map.plan; }
 
     store.isStateChanged = () => { return store.map.state !== store.map.prevState; }
-
+    store.isStateNone = () => { return store.map.state === StateType.NONE; }
+    store.isStateMatch = (stateType) => { return stateType === store.map.state; }
     return (
         <StoreContext.Provider value={{store}}>
             {props.children}

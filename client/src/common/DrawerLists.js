@@ -17,7 +17,7 @@ export default function DrawerLists()
         <div>
             <PlanList/>
             <StateList/>
-            { !store.isStateNull() && <FilterList/>}
+            { !store.isStateNone() && <FilterList/>}
         </div>
     );
 }

@@ -22,7 +22,7 @@ export default function NestedList() {
 
     function onStateClick(stateType)
     {
-        store.selectState(stateType);
+        (store.isStateMatch(stateType))? store.unselectState() : store.selectState(stateType);
     }
     return (
         <List
@@ -36,19 +36,19 @@ export default function NestedList() {
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                    <ListItemButton onClick={() => {onStateClick(StateType.NEWYORK)}} sx={{ pl: 4 }}>
+                    <ListItemButton selected={store.isStateMatch(StateType.NEWYORK)} onClick={(e) => {onStateClick(StateType.NEWYORK)}} sx={{ pl: 4 }}>
                         <ListItemIcon>
                             <StarBorder />
                         </ListItemIcon>
                         <ListItemText primary="New York" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}  />
                     </ListItemButton>
-                    <ListItemButton onClick={() => {onStateClick(StateType.GEORGIA)}} sx={{ pl: 4 }}>
+                    <ListItemButton selected={store.isStateMatch(StateType.GEORGIA)} onClick={() => {onStateClick(StateType.GEORGIA)}} sx={{ pl: 4 }}>
                         <ListItemIcon>
                             <StarBorder />
                         </ListItemIcon>
                         <ListItemText primary="Georgia" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}} />
                     </ListItemButton>
-                    <ListItemButton onClick={() => {onStateClick(StateType.ILLINOIS)}} sx={{ pl: 4 }}>
+                    <ListItemButton selected={store.isStateMatch(StateType.ILLINOIS)} onClick={() => {onStateClick(StateType.ILLINOIS)}} sx={{ pl: 4 }}>
                         <ListItemIcon>
                             <StarBorder />
                         </ListItemIcon>
