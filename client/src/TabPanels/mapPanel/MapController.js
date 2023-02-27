@@ -12,10 +12,16 @@ export default function MapController()
 {
     const { store } = useContext(StoreContext);
     const map = useMap();
+
+    // Should be called once.
+    useEffect(() => {
+        DefaultSetup();
+    }, [])
+
     Main();
+
     function Main()
     {
-        DefaultSetup();
         ViewSetup();
     }
     // --- INIT SETUP ------------------------
@@ -112,16 +118,7 @@ export default function MapController()
     // --- MAP ZOOM/PIVOT CONTROLLER. --------------------
     function SetFocus(stateType)
     {
-        switch(stateType)
-        {
-            case StateType.NONE:
-                map.flyTo([40.35, -97.5], 4.3); return;
-            case StateType.NEWYORK:
-                map.flyTo([42.579, -76.10], 6.5); return;
-            case StateType.GEORGIA:
-                map.flyTo([32.428, -83.297], 6.5); return;
-            case StateType.ILLINOIS:
-                map.flyTo([40.08, -89.184], 6.5); return;
-        }
+        let flyTo = (stateType === StateType.NONE)? MapProperty.country.flyTo : MapProperty.state[stateType]["flyTo"];
+        map.flyTo(flyTo.pos, flyTo.zoom);
     }
 }
