@@ -17,15 +17,26 @@ export const LayerGroupType = {
     STATE_DEFAULT: "stateDefault",
     COUNTRY_DEFAULT: "countryDefault",
 }
-export const GeoData = {
-    COUNTRY: StateGeoJson,
-    NEWYORK_STATE: NY,
-    GEORGIA_STATE: GA,
-    ILLINOIS_STATE: IL,
-    NEWYORK_DISTRICT: NYD,
-    GEORGIA_DISTRICT: GAD,
-    ILLINOIS_DISTRICT: ILD,
+
+export const GeoDataType = {
+    STATE: "state",
+    DISTRICT: "district",
+    PRECINCT: "precinct",
 }
+
+// In this way, geoData will be easily get by stateType and GeoDataType.
+export const GeoData = {}
+GeoData[StateType.NEWYORK] = {}
+GeoData[StateType.NEWYORK][GeoDataType.STATE] = NY;
+GeoData[StateType.NEWYORK][GeoDataType.DISTRICT] = NYD;
+
+GeoData[StateType.GEORGIA] = {}
+GeoData[StateType.GEORGIA][GeoDataType.STATE] = GA;
+GeoData[StateType.GEORGIA][GeoDataType.DISTRICT] = GAD;
+
+GeoData[StateType.ILLINOIS] = {}
+GeoData[StateType.ILLINOIS][GeoDataType.STATE] = IL;
+GeoData[StateType.ILLINOIS][GeoDataType.DISTRICT] = ILD;
 
 export const StateTypeList = [
     StateType.NEWYORK,

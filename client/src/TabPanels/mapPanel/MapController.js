@@ -3,7 +3,7 @@ import L from "leaflet";
 import StoreContext, {StateType} from '../../common/Store';
 import {useMap} from "react-leaflet";
 import MapProperty from './MapProperty.json';
-import {TileLayerType, LayerGroupType, GeoData, StateTypeList} from './MapType';
+import {TileLayerType, LayerGroupType, GeoData, GeoDataType, StateTypeList} from './MapType';
 
 
 let currLayerGroups = {};
@@ -11,9 +11,8 @@ let currLayerGroups = {};
 export default function MapController()
 {
     const { store } = useContext(StoreContext);
-    const map = useMap();
+    const map = useMap(); // This is Hooks, not re-rendered.
 
-    // Should be called once.
     useEffect(() => {
         DefaultSetup();
     }, [])
@@ -45,16 +44,10 @@ export default function MapController()
         store.selectState(stateType);
     }
     // --- HELPER FUNCTIONS -----------------
-    function StateTypeToGeoData(type)
-    {
-        if (type === StateType.NEWYORK) return GeoData.NEWYORK_STATE;
-        if (type === StateType.GEORGIA) return GeoData.GEORGIA_STATE;
-        if (type === StateType.ILLINOIS) return GeoData.ILLINOIS_STATE;
-    }
+
     function RemoveAllLayer()
     {
         const layerGroupProperties = Object.keys(currLayerGroups);
-        console.log(layerGroupProperties);
         layerGroupProperties.forEach((prop) => {
             currLayerGroups[prop].clearLayers();
         })
@@ -74,7 +67,7 @@ export default function MapController()
         SetFocus(stateType);
     }
 
-    // --- MAP COLOR CONTROLLER --------------------------
+    // --- MAP COLOR CONTROLLER ---------------------------
     function AddCountryDefaultLayer()
     {
         StateTypeList.forEach((stateType) => {
@@ -82,7 +75,7 @@ export default function MapController()
                 style: MapProperty.country.style,
                 onEachFeature: (feature, layer) => { layer.on('click', () => OnStateClick(stateType)) }
             }
-            let geoData = StateTypeToGeoData(stateType);
+            let geoData = GeoData[stateType][GeoDataType.STATE];
             AddGeoJsonLayer(geoData, stateType, option);
         })
         AddTileLayer(TileLayerType.PLACE_LABEL, true);
@@ -90,9 +83,15 @@ export default function MapController()
 
     function AddStateDefaultLayer(stateType)
     {
-        let geoData = StateTypeToGeoData(stateType);
-        let option = {style: MapProperty.state.style};
-        AddGeoJsonLayer(geoData, LayerGroupType.STATE_DEFAULT, option);
+        let option = {
+            style: MapProperty.state.style,
+            onEachFeature: (feature, layer) => { layer.on('click', () => {
+                console.log(feature);
+                console.log(layer);
+            })}
+        };
+        // AddGeoJsonLayer(GeoData[stateType][GeoDataType.STATE], LayerGroupType.STATE_DEFAULT, option);
+        AddGeoJsonLayer(GeoData[stateType][GeoDataType.DISTRICT], LayerGroupType.STATE_DEFAULT, option);
         AddTileLayer(TileLayerType.PLACE_LABEL, true);
     }
 
@@ -108,6 +107,7 @@ export default function MapController()
 
     function AddGeoJsonLayer(geoData, layerGroupType, option = {})
     {
+        // If target layerGroup is already in map, add new layer in the group. otherwise, create new.
         let layerGroup = (currLayerGroups[layerGroupType])? currLayerGroups[layerGroupType] : L.layerGroup().addTo(map);
         if (!currLayerGroups[layerGroupType]) {
             currLayerGroups[layerGroupType] = layerGroup;
@@ -120,5 +120,11 @@ export default function MapController()
     {
         let flyTo = (stateType === StateType.NONE)? MapProperty.country.flyTo : MapProperty.state[stateType]["flyTo"];
         map.flyTo(flyTo.pos, flyTo.zoom);
+    }
+
+    // --- MAP DRAWING FUNCTION --------------------------
+    function DrawLayersOnMap()
+    {
+
     }
 }
