@@ -4,4 +4,14 @@ export default class StateModel
         this.name = name;
         this.districts = districts;
     }
+
+    getDemocratDistricts()
+    {
+        return this.districts.filter((district) => district.party === "democrat");
+    }
+
+    getRepublicanDistricts()
+    {
+        return this.districts.filter((district) => district.party === "republican");
+    }
 }

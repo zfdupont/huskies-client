@@ -7,7 +7,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import StarBorder from '@mui/icons-material/StarBorder';
+import Star from '@mui/icons-material/Star';
 import StoreContext from './Store';
 
 export default function NestedList() {
@@ -28,27 +28,21 @@ export default function NestedList() {
             aria-labelledby="nested-list-subheader"
         >
             <ListItemButton onClick={handleClick} sx={{ pl: 2 }}>
-                <ListItemText primary={ListTitle} primaryTypographyProps={{fontSize: store.sx.drawerList.mainFontSize}} />
-                {open ? <ExpandLess /> : <ExpandMore />}
+                <ListItemIcon>
+                    <Star />
+                </ListItemIcon>
+                <ListItemText style={{position:"absolute", left:'48px'}}  primary={ListTitle} primaryTypographyProps={{fontSize: store.sx.drawerList.mainFontSize}} />
+                {open ? <ExpandLess style={{position:"absolute", left:'160px'}} /> : <ExpandMore style={{position:"absolute", left:'160px'}} />}
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                    <ListItemButton selected={true} sx={{ pl: 4 }}>
-                        <ListItemIcon>
-                            <StarBorder />
-                        </ListItemIcon>
+                    <ListItemButton selected={true} sx={{ pl: 6 }}>
                         <ListItemText primary="2022" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}  />
                     </ListItemButton>
-                    <ListItemButton sx={{ pl: 4 }}>
-                        <ListItemIcon>
-                            <StarBorder />
-                        </ListItemIcon>
+                    <ListItemButton sx={{ pl: 6 }}>
                         <ListItemText primary="2020" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}  />
                     </ListItemButton>
-                    <ListItemButton sx={{ pl: 4 }}>
-                        <ListItemIcon>
-                            <StarBorder />
-                        </ListItemIcon>
+                    <ListItemButton sx={{ pl: 6 }}>
                         <ListItemText primary="#1423" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}  />
                     </ListItemButton>
                 </List>

@@ -18,7 +18,6 @@ export default function MapController()
     }, [])
 
     Main();
-
     function Main()
     {
         ViewSetup();

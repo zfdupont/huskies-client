@@ -6,14 +6,15 @@ import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import StarBorder from '@mui/icons-material/StarBorder';
+import Star from '@mui/icons-material/Star';
 import {useContext} from "react";
 import StoreContext from "./Store";
+import {ListItem, Switch} from "@mui/material";
 
 export default function NestedList() {
     const { store } = useContext(StoreContext);
     const [open, setOpen] = React.useState(true);
-
+    const label = { inputProps: { 'aria-label': 'Switch demo' } };
     const handleClick = () => {
         setOpen(!open);
     };
@@ -29,36 +30,31 @@ export default function NestedList() {
             //     </ListSubheader>
             // }
         >
-            <ListItemButton onClick={handleClick} sx={{ pl: 2 }}>
-                <ListItemText primary="Filter" primaryTypographyProps={{fontSize: store.sx.drawerList.mainFontSize}} />
-                {open ? <ExpandLess /> : <ExpandMore />}
+            <ListItemButton onClick={handleClick} sx={{ pl: 2}}>
+                <ListItemIcon>
+                    <Star />
+                </ListItemIcon>
+                <ListItemText style={{position:"absolute", left:'48px'}} primary="Filter" primaryTypographyProps={{fontSize: store.sx.drawerList.mainFontSize}} />
+                {open ? <ExpandLess style={{position:"absolute", left:'160px'}} /> : <ExpandMore style={{position:"absolute", left:'160px'}} />}
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                    <ListItemButton sx={{ pl: 4 }}>
-                        <ListItemIcon>
-                            <StarBorder />
-                        </ListItemIcon>
+                    <ListItem sx={{ pl: 6 }}>
                         <ListItemText primary="Democrat" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
-                    </ListItemButton>
-                    <ListItemButton sx={{ pl: 4 }}>
-                        <ListItemIcon>
-                            <StarBorder />
-                        </ListItemIcon>
+                        <Switch {...label} />
+                    </ListItem>
+                    <ListItem sx={{ pl: 6 }}>
                         <ListItemText primary="Republican" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
-                    </ListItemButton>
-                    <ListItemButton sx={{ pl: 4 }}>
-                        <ListItemIcon>
-                            <StarBorder />
-                        </ListItemIcon>
-                        <ListItemText primary="New Constitute" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
-                    </ListItemButton>
-                    <ListItemButton sx={{ pl: 4 }}>
-                        <ListItemIcon>
-                            <StarBorder />
-                        </ListItemIcon>
+                        <Switch {...label} />
+                    </ListItem>
+                    <ListItem sx={{ pl:6 }}>
                         <ListItemText primary="Incumbent" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
-                    </ListItemButton>
+                        <Switch {...label} />
+                    </ListItem>
+                    <ListItem sx={{ pl: 6 }}>
+                        <ListItemText primary="Differences" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
+                        <Switch {...label} />
+                    </ListItem>
                 </List>
             </Collapse>
         </List>
