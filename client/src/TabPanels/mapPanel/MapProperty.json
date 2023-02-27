@@ -8,6 +8,10 @@
     "style": {
       "weight": 3,
       "opacity": 0.5
+    },
+    "flyTo": {
+      "pos": [40.35, -97.5],
+      "zoom": 4.3
     }
   },
   "state": {
@@ -16,6 +20,24 @@
       "color": "black",
       "weight": 2,
       "opacity": 1
+    },
+    "newyork": {
+      "flyTo": {
+        "pos": [42.579, -76.10],
+        "zoom": 6.5
+      }
+    },
+    "georgia": {
+      "flyTo": {
+        "pos": [32.428, -83.297],
+        "zoom": 6.5
+      }
+    },
+    "illinois": {
+      "flyTo": {
+        "pos": [40.08, -89.184],
+        "zoom": 6.5
+      }
     }
   },
   "urls": {
