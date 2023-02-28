@@ -30,7 +30,7 @@ export default class StateModel
     {
         let ids = [];
         for (let districtKey in this.districts) {
-            if (this.districts[districtKey] === "republican") ids.push(this.districts[districtKey].id);
+            if (this.districts[districtKey].party === "republican") ids.push(this.districts[districtKey].id);
         }
         return ids;
     }
