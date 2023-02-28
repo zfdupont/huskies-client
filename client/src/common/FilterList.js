@@ -56,7 +56,7 @@ export default function NestedList() {
                     </ListItem>
                     <ListItem sx={{ pl: 6 }}>
                         <ListItemText primary="Difference" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
-                        <Switch {...label} size="small" onClick={(e) => {onToggle(e, FilterType.DIFFERENCE)}} />
+                        <Switch {...label} disabled={true} size="small" onClick={(e) => {onToggle(e, FilterType.DIFFERENCE)}} />
                     </ListItem>
                 </List>
             </Collapse>

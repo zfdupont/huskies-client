@@ -6,18 +6,18 @@ import FilterList from './FilterList'
 import StateList from './StateList'
 import PlanList from './PlanList'
 import StoreContext from './Store'
+import {TabType} from "./Enums";
 
 export default function DrawerLists()
 {
     const {store} = useContext(StoreContext);
 
-
-
+    console.log(store);
     return (
         <div>
             <PlanList/>
             <StateList/>
-            { !store.isStateNone() && <FilterList/>}
+            { !store.isStateNone() && store.isTabMatch(TabType.MAP) && <FilterList/>}
         </div>
     );
 }

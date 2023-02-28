@@ -7,6 +7,11 @@ import IL from "../0.data/IL.json";
 import ILD from "../0.data/ILD.json";
 
 
+export const TabType = {
+    MAP: "map",
+    ANALYZE: "analyze",
+}
+
 export const StateType = {
     NONE: "none",
     NEWYORK: "newyork",

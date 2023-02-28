@@ -5,7 +5,7 @@ import CountryModel from "../models/CountryModel";
 import StateModel from "../models/StateModel";
 import DistrictModel from "../models/DistrictModel";
 import PopulationModel from "../models/PopulationModel";
-import {StateType, FilterType}  from './Enums';
+import {StateType, FilterType, TabType} from './Enums';
 export const StoreContext = createContext({});
 
 export const StoreActionType = {
@@ -13,6 +13,7 @@ export const StoreActionType = {
     STATE_UNSELECT: "state_unselect",
     ADD_STATE_DATA: "add_state_data",
     UPDATE_FILTER: "update_filter",
+    UPDATE_TAB: "change_tab",
 }
 
 function setStyle(store)
@@ -37,7 +38,8 @@ function StoreContextProvider(props) {
         data: {
             "2022": createCountryModel(dummyData1),
             "2020": createCountryModel(dummyData2),
-        }
+        },
+        tab: TabType.MAP
     })
     setStyle(store);
 // --- STATE HELPER ---------------------------------
@@ -93,20 +95,29 @@ function StoreContextProvider(props) {
         let prev; // It must be undefined. -> undefined parameter will keep prev state.
         const {type, payload} = action;
         switch (type) {
+            case StoreActionType.UPDATE_TAB:
+                return setStore({
+                    map: store.map,
+                    data: store.data,
+                    tab: payload.tabType,
+                })
             case StoreActionType.STATE_SELECT:
                 return setStore({
                     map: createMapState(prev, payload.stateType, prev, prev),
                     data: store.data,
+                    tab: store.tab,
                 })
             case StoreActionType.STATE_UNSELECT:
                 return setStore({
-                    map: createMapState(prev, StateType.NONE, prev, prev),
+                    map: createMapState(prev, StateType.NONE, prev, []),
                     data: store.data,
+                    tab: store.tab,
                 })
             case StoreActionType.UPDATE_FILTER:
                 return setStore({
                     map: createMapState(prev, prev, prev, payload.filters),
                     data: store.data,
+                    tab: store.tab,
                 })
             default:
                 return store;
@@ -114,6 +125,14 @@ function StoreContextProvider(props) {
     }
 
 // --- REDUCER CALL FUNCTIONS ----------------------
+    store.selectTab = function(tabType)
+    {
+        storeReducer({
+            type: StoreActionType.UPDATE_TAB,
+            payload: { tabType: tabType }
+        })
+    }
+
     store.selectState = function(stateType)
     {
         storeReducer({
@@ -122,6 +141,8 @@ function StoreContextProvider(props) {
         })
     }
 
+    // Move to country view
+    // Reset added filter layers.
     store.unselectState = function()
     {
         storeReducer({
@@ -150,6 +171,7 @@ function StoreContextProvider(props) {
     }
 
 // --- HELPER FUNCTIONS -----------------------------
+    store.isTabMatch = (tabType) => { return tabType === store.tab; }
     store.getMapPlan = () => { return store.map.plan; }
     store.isStateChanged = () => { return store.map.state !== store.map.prevState; }
     store.isStateNone = () => { return store.map.state === StateType.NONE; }

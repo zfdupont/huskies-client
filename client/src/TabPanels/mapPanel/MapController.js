@@ -16,17 +16,15 @@ export default function MapController()
 
     useEffect(() => {
         DefaultSetup();
+        return setViewState(StateType.NONE);
     }, [])
 
     Main();
     function Main()
     {
-        ViewSetup();
-        console.log("final : ");
-        console.log(currLayerGroups);
+        RemoveAllLayer();
         FilterSetup();
-        console.log("filter final : ");
-        console.log(currLayerGroups);
+        ViewSetup();
     }
     // --- SETUP ---------------------------
     function DefaultSetup()
@@ -46,6 +44,8 @@ export default function MapController()
     }
     function FilterSetup()
     {
+        if (store.map.state === StateType.NONE) return;
+
         store.map.filters.forEach((filterType) => {
             let data = GetFilteredDistrictJson(filterType);
             let layerGroupType = convertType.filterToLayerGroup(filterType);
@@ -70,27 +70,21 @@ export default function MapController()
     function RemoveAllLayer()
     {
         const layerGroupProperties = Object.keys(currLayerGroups);
-        console.log("before : ");
-        console.log(currLayerGroups);
         layerGroupProperties.forEach((prop) => {
             let layerGroup = currLayerGroups[prop];
             delete currLayerGroups[prop];
             layerGroup.clearLayers();
         })
-        console.log("after : ");
-        console.log(currLayerGroups);
     }
 
     // --- MAP VIEW CONTROLLER. --------------------
     function SetCountryView()
     {
-        RemoveAllLayer();
         AddCountryDefaultLayer();
         SetFocus(StateType.NONE);
     }
     function SetStateView(stateType)
     {
-        RemoveAllLayer();
         AddStateDefaultLayer(stateType);
         SetFocus(stateType);
     }
