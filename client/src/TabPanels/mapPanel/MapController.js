@@ -29,11 +29,17 @@ export default function MapController()
     // --- SETUP ---------------------------
     function DefaultSetup()
     {
+        AddPanes();
         AddTileLayer(TileLayerType.DEFAULT_WHITE, false);
-        AddTileLayer(TileLayerType.PLACE_LABEL, false);
+        AddTileLayer(TileLayerType.PLACE_LABEL, false, {pane: TileLayerType.PLACE_LABEL});
         map.setMaxBounds(MapProperty.country.default.maxBounds);
         map.setMaxZoom(MapProperty.country.default.maxZoom);
         map.setMinZoom(MapProperty.country.default.minZoom);
+    }
+    function AddPanes()
+    {
+        map.createPane(TileLayerType.PLACE_LABEL);
+        map.getPane(TileLayerType.PLACE_LABEL).style.zIndex = 650; // topmost layer under popup.
     }
     function ViewSetup()
     {
@@ -117,14 +123,11 @@ export default function MapController()
         // AddTileLayer(TileLayerType.PLACE_LABEL, true);
     }
 
-    function AddTileLayer(layerType, isLayerGroup){
+    function AddTileLayer(layerType, isLayerGroup, option = {}){
         // only layerGroup is added into LayerGroupList.
         let target = (isLayerGroup)? L.layerGroup().addTo(map) : map;
         if (isLayerGroup) currLayerGroups[layerType] = target;
-
-        L.tileLayer(MapProperty.urls[layerType], {
-            pane: 'mapPane'
-        }).addTo(target);
+        L.tileLayer(MapProperty.urls[layerType], option).addTo(target);
     }
 
     function AddGeoJsonLayer(geoData, layerGroupType, option = {})
