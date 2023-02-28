@@ -7,10 +7,10 @@ import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import StarBorder from '@mui/icons-material/StarBorder';
+import Star from '@mui/icons-material/Star';
 
 import StoreContext from './Store';
-import {StateType} from './Store';
+import {StateType} from './Enums';
 
 export default function NestedList() {
     const { store } = useContext(StoreContext);
@@ -31,27 +31,21 @@ export default function NestedList() {
             aria-labelledby="nested-list-subheader"
         >
             <ListItemButton onClick={handleClick} sx={{ pl: 2 }}>
-                <ListItemText primary="States" primaryTypographyProps={{fontSize: store.sx.drawerList.mainFontSize}} />
-                {open ? <ExpandLess /> : <ExpandMore />}
+                <ListItemIcon>
+                    <Star />
+                </ListItemIcon>
+                <ListItemText style={{position:"absolute", left:'48px'}} primary="States" primaryTypographyProps={{fontSize: store.sx.drawerList.mainFontSize}} />
+                {open ? <ExpandLess style={{position:"absolute", left:'160px'}} /> : <ExpandMore style={{position:"absolute", left:'160px'}} />}
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                    <ListItemButton selected={store.isStateMatch(StateType.NEWYORK)} onClick={(e) => {onStateClick(StateType.NEWYORK)}} sx={{ pl: 4 }}>
-                        <ListItemIcon>
-                            <StarBorder />
-                        </ListItemIcon>
+                    <ListItemButton  selected={store.isStateMatch(StateType.NEWYORK)} onClick={(e) => {onStateClick(StateType.NEWYORK)}} sx={{ pl: 6 }}>
                         <ListItemText primary="New York" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}  />
                     </ListItemButton>
-                    <ListItemButton selected={store.isStateMatch(StateType.GEORGIA)} onClick={() => {onStateClick(StateType.GEORGIA)}} sx={{ pl: 4 }}>
-                        <ListItemIcon>
-                            <StarBorder />
-                        </ListItemIcon>
+                    <ListItemButton  selected={store.isStateMatch(StateType.GEORGIA)} onClick={() => {onStateClick(StateType.GEORGIA)}} sx={{ pl: 6 }}>
                         <ListItemText primary="Georgia" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}} />
                     </ListItemButton>
-                    <ListItemButton selected={store.isStateMatch(StateType.ILLINOIS)} onClick={() => {onStateClick(StateType.ILLINOIS)}} sx={{ pl: 4 }}>
-                        <ListItemIcon>
-                            <StarBorder />
-                        </ListItemIcon>
+                    <ListItemButton  selected={store.isStateMatch(StateType.ILLINOIS)} onClick={() => {onStateClick(StateType.ILLINOIS)}} sx={{ pl: 6 }}>
                         <ListItemText primary="Illinois" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}} />
                     </ListItemButton>
                 </List>
