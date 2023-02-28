@@ -1,11 +1,25 @@
-import StateGeoJson from "../../0.data/states.json";
-import NY from "../../0.data/NY.json";
-import NYD from "../../0.data/NYD.json";
-import {StateType} from "../../common/Store";
-import GA from "../../0.data/GA.json";
-import GAD from "../../0.data/GAD.json"
-import IL from "../../0.data/IL.json";
-import ILD from "../../0.data/ILD.json";
+import StateGeoJson from "../0.data/states.json";
+import NY from "../0.data/NY.json";
+import NYD from "../0.data/NYD.json";
+import GA from "../0.data/GA.json";
+import GAD from "../0.data/GAD.json"
+import IL from "../0.data/IL.json";
+import ILD from "../0.data/ILD.json";
+
+
+export const StateType = {
+    NONE: "none",
+    NEWYORK: "newyork",
+    GEORGIA: "georgia",
+    ILLINOIS: "illinois",
+}
+
+export const FilterType = {
+    DEMOCRAT: "democrat",
+    REPUBLICAN: "republican",
+    INCUMBENT: "incumbent",
+    DIFFERENCE: "difference",
+}
 
 // LayerType string must match the layer name in MapProperty.json.
 export const TileLayerType = {

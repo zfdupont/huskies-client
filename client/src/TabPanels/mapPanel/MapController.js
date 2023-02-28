@@ -1,9 +1,9 @@
 import {useContext, useEffect, useRef, useState} from "react";
 import L from "leaflet";
-import StoreContext, {StateType} from '../../common/Store';
 import {useMap} from "react-leaflet";
+import StoreContext from '../../common/Store';
 import MapProperty from './MapProperty.json';
-import {TileLayerType, LayerGroupType, GeoData, GeoDataType, StateTypeList} from './MapType';
+import {TileLayerType, LayerGroupType, GeoData, GeoDataType, StateTypeList, StateType} from '../../common/Enums';
 
 
 let currLayerGroups = {};
@@ -11,6 +11,7 @@ let currLayerGroups = {};
 export default function MapController()
 {
     const { store } = useContext(StoreContext);
+    const [ viewState, setViewState ] = useState(StateType.NONE);
     const map = useMap(); // This is Hooks, not re-rendered.
 
     useEffect(() => {
@@ -22,10 +23,11 @@ export default function MapController()
     {
         ViewSetup();
     }
-    // --- INIT SETUP ------------------------
+    // --- INIT SETUP ---------------------------
     function DefaultSetup()
     {
         AddTileLayer(TileLayerType.DEFAULT_WHITE, false);
+        AddTileLayer(TileLayerType.PLACE_LABEL, false);
         map.setMaxBounds(MapProperty.country.default.maxBounds);
         map.setMaxZoom(MapProperty.country.default.maxZoom);
         map.setMinZoom(MapProperty.country.default.minZoom);
@@ -37,18 +39,19 @@ export default function MapController()
         else
             SetStateView(store.map.state);
     }
-    // --- Event Handler ------------------------
+    // --- Event Handler -------------------------
     function OnStateClick(stateType)
     {
         store.selectState(stateType);
     }
-    // --- HELPER FUNCTIONS -----------------
+    // --- HELPER FUNCTIONS ----------------------
 
     function RemoveAllLayer()
     {
         const layerGroupProperties = Object.keys(currLayerGroups);
         layerGroupProperties.forEach((prop) => {
             currLayerGroups[prop].clearLayers();
+            delete currLayerGroups[prop];
         })
     }
 
@@ -77,7 +80,7 @@ export default function MapController()
             let geoData = GeoData[stateType][GeoDataType.STATE];
             AddGeoJsonLayer(geoData, stateType, option);
         })
-        AddTileLayer(TileLayerType.PLACE_LABEL, true);
+        // AddTileLayer(TileLayerType.PLACE_LABEL, true);
     }
 
     function AddStateDefaultLayer(stateType)
@@ -91,7 +94,7 @@ export default function MapController()
         };
         // AddGeoJsonLayer(GeoData[stateType][GeoDataType.STATE], LayerGroupType.STATE_DEFAULT, option);
         AddGeoJsonLayer(GeoData[stateType][GeoDataType.DISTRICT], LayerGroupType.STATE_DEFAULT, option);
-        AddTileLayer(TileLayerType.PLACE_LABEL, true);
+        // AddTileLayer(TileLayerType.PLACE_LABEL, true);
     }
 
     function AddTileLayer(layerType, isLayerGroup){
@@ -117,8 +120,10 @@ export default function MapController()
     // --- MAP ZOOM/PIVOT CONTROLLER. --------------------
     function SetFocus(stateType)
     {
+        if (viewState === stateType) return;
         let flyTo = (stateType === StateType.NONE)? MapProperty.country.flyTo : MapProperty.state[stateType]["flyTo"];
         map.flyTo(flyTo.pos, flyTo.zoom);
+        setViewState(stateType)
     }
 
     // --- MAP DRAWING FUNCTION --------------------------
