@@ -6,7 +6,7 @@
       "districts": {
         "1": {
           "id": 1,
-          "party": "republican",
+          "party": "democrat",
           "population": {
             "total": 1240,
             "democrats": 543,
@@ -24,7 +24,7 @@
         },
         "3": {
           "id": 3,
-          "party": "democrat",
+          "party": "republican",
           "population": {
             "total": 1240,
             "democrats": 697,
@@ -33,7 +33,7 @@
         },
         "4": {
           "id": 4,
-          "party": "democrat",
+          "party": "republican",
           "population": {
             "total": 512,
             "democrats": 400,
@@ -42,7 +42,7 @@
         },
         "5": {
           "id": 5,
-          "party": "democrat",
+          "party": "republican",
           "population": {
             "total": 312,
             "democrats": 101,
@@ -60,7 +60,7 @@
         },
         "7": {
           "id": 7,
-          "party": "republican",
+          "party": "democrat",
           "population": {
             "total": 1240,
             "democrats": 543,
@@ -105,7 +105,7 @@
         },
         "12": {
           "id": 12,
-          "party": "democrat",
+          "party": "republican",
           "population": {
             "total": 1240,
             "democrats": 543,
@@ -114,7 +114,7 @@
         },
         "13": {
           "id": 13,
-          "party": "democrat",
+          "party": "republican",
           "population": {
             "total": 1240,
             "democrats": 543,
@@ -123,7 +123,7 @@
         },
         "14": {
           "id": 14,
-          "party": "democrat",
+          "party": "republican",
           "population": {
             "total": 1240,
             "democrats": 543,
@@ -168,7 +168,7 @@
         },
         "19": {
           "id": 19,
-          "party": "republican",
+          "party": "democrat",
           "population": {
             "total": 1240,
             "democrats": 543,
@@ -177,7 +177,7 @@
         },
         "20": {
           "id": 20,
-          "party": "democrat",
+          "party": "republican",
           "population": {
             "total": 1240,
             "democrats": 543,
@@ -186,7 +186,7 @@
         },
         "21": {
           "id": 21,
-          "party": "democrat",
+          "party": "republican",
           "population": {
             "total": 1240,
             "democrats": 543,
@@ -195,7 +195,7 @@
         },
         "22": {
           "id": 22,
-          "party": "democrat",
+          "party": "republican",
           "population": {
             "total": 1240,
             "democrats": 543,
@@ -213,7 +213,7 @@
         },
         "24": {
           "id": 24,
-          "party": "republican",
+          "party": "democrat",
           "population": {
             "total": 1240,
             "democrats": 543,
@@ -231,7 +231,7 @@
         },
         "26": {
           "id": 26,
-          "party": "republican",
+          "party": "democrat",
           "population": {
             "total": 1240,
             "democrats": 543,

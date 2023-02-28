@@ -30,6 +30,10 @@ export const TileLayerType = {
 export const LayerGroupType = {
     STATE_DEFAULT: "stateDefault",
     COUNTRY_DEFAULT: "countryDefault",
+    DEMOCRAT: "democrat",
+    REPUBLICAN: "republican",
+    INCUMBENT: "incumbent",
+    DIFFERENCE: "difference",
 }
 
 export const GeoDataType = {

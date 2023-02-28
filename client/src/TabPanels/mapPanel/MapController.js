@@ -4,8 +4,8 @@ import {useMap} from "react-leaflet";
 import StoreContext from '../../common/Store';
 import MapProperty from './MapProperty.json';
 import {TileLayerType, LayerGroupType, GeoData, GeoDataType, StateTypeList, StateType} from '../../common/Enums';
-
-
+import geoJsonHelper from '../../common/GeoJsonHelper';
+import convertType from '../../common/ConversionHelper';
 let currLayerGroups = {};
 
 export default function MapController()
@@ -22,8 +22,13 @@ export default function MapController()
     function Main()
     {
         ViewSetup();
+        console.log("final : ");
+        console.log(currLayerGroups);
+        FilterSetup();
+        console.log("filter final : ");
+        console.log(currLayerGroups);
     }
-    // --- INIT SETUP ---------------------------
+    // --- SETUP ---------------------------
     function DefaultSetup()
     {
         AddTileLayer(TileLayerType.DEFAULT_WHITE, false);
@@ -39,6 +44,22 @@ export default function MapController()
         else
             SetStateView(store.map.state);
     }
+    function FilterSetup()
+    {
+        store.map.filters.forEach((filterType) => {
+            let data = GetFilteredDistrictJson(filterType);
+            let layerGroupType = convertType.filterToLayerGroup(filterType);
+            let option = {style: MapProperty.state[convertType.filterToStyle(filterType)]};
+            AddGeoJsonLayer(data, layerGroupType, option)
+        })
+    }
+    function GetFilteredDistrictJson(filterType)
+    {
+        let districtJson = GeoData[store.map.state][GeoDataType.DISTRICT];
+        let districtJsonCopy = JSON.parse(JSON.stringify(districtJson)); // deep copy.
+        let ids = store.data[store.map.plan].stateModels[store.map.state].getFilteredDistrictsID(filterType);
+        return geoJsonHelper.getDistrictJsonByIDs(districtJsonCopy, ids);
+    }
     // --- Event Handler -------------------------
     function OnStateClick(stateType)
     {
@@ -49,10 +70,15 @@ export default function MapController()
     function RemoveAllLayer()
     {
         const layerGroupProperties = Object.keys(currLayerGroups);
+        console.log("before : ");
+        console.log(currLayerGroups);
         layerGroupProperties.forEach((prop) => {
-            currLayerGroups[prop].clearLayers();
+            let layerGroup = currLayerGroups[prop];
             delete currLayerGroups[prop];
+            layerGroup.clearLayers();
         })
+        console.log("after : ");
+        console.log(currLayerGroups);
     }
 
     // --- MAP VIEW CONTROLLER. --------------------

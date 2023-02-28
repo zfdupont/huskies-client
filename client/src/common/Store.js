@@ -53,24 +53,21 @@ function StoreContextProvider(props) {
     }
     function createDataState(plan, stateType, data)
     {
-        let curData = store.data;
-        curData[plan][stateType] = data;
-        return curData
     }
     function createCountryModel(countryJsonData)
     {
         let plan = countryJsonData.plan;
-        let stateModels = [];
+        let stateModels = {};
         for (const stateKey in countryJsonData.data)
-            stateModels.push(createStateModel(countryJsonData.data[stateKey]))
+            stateModels[stateKey] = createStateModel(countryJsonData.data[stateKey]);
         return new CountryModel(plan, stateModels);
     }
     function createStateModel(stateJsonData)
     {
         let name = stateJsonData.name;
-        let districtModels = [];
+        let districtModels = {};
         for (const districtKey in stateJsonData.districts)
-            districtModels.push(createDistrictModel(stateJsonData.districts[districtKey]))
+            districtModels[districtKey] = createDistrictModel(stateJsonData.districts[districtKey])
         return new StateModel(name, districtModels);
     }
     function createDistrictModel(districtJsonData)
@@ -98,16 +95,13 @@ function StoreContextProvider(props) {
         switch (type) {
             case StoreActionType.STATE_SELECT:
                 return setStore({
-                    map: createMapState(prev, payload.stateType, prev, prev)
+                    map: createMapState(prev, payload.stateType, prev, prev),
+                    data: store.data,
                 })
             case StoreActionType.STATE_UNSELECT:
                 return setStore({
-                    map: createMapState(prev, StateType.NONE, prev, prev)
-                })
-            case StoreActionType.ADD_STATE_DATA:
-                return setStore({
-                    map: store.map,
-                    data: createDataState(payload.plan, payload.stateType, payload.data)
+                    map: createMapState(prev, StateType.NONE, prev, prev),
+                    data: store.data,
                 })
             case StoreActionType.UPDATE_FILTER:
                 return setStore({
@@ -124,9 +118,7 @@ function StoreContextProvider(props) {
     {
         storeReducer({
             type: StoreActionType.STATE_SELECT,
-            payload: {
-                stateType: stateType
-            }
+            payload: { stateType: stateType }
         })
     }
 
@@ -144,7 +136,7 @@ function StoreContextProvider(props) {
         filters.push(filterType);
         storeReducer({
             type: StoreActionType.UPDATE_FILTER,
-            payload: filters,
+            payload: {filters: filters}
         })
     }
 
@@ -153,7 +145,7 @@ function StoreContextProvider(props) {
         let filters = store.map.filters.filter((filter) => filter !== filterType)
         storeReducer({
             type: StoreActionType.UPDATE_FILTER,
-            payload: filters,
+            payload: {filters: filters}
         })
     }
 
