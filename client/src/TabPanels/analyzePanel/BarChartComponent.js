@@ -42,7 +42,7 @@ const data = [
   }
 ];
 
-export default function BarChartComponent() {
+export default function BarChartComponent(props) {
   return (
     <BarChart
       width={500}
@@ -56,13 +56,13 @@ export default function BarChartComponent() {
       }}
     >
       <text
-        x={400}
+        x={410}
         y={10}
         fill="black"
         textAnchor="middle"
         dominantBaseline="central"
       >
-        <tspan fontSize="14">Geographic Variation</tspan>
+        <tspan fontSize="14">{props.name}</tspan>
       </text>
 
       
