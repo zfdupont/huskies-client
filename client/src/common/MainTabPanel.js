@@ -55,29 +55,35 @@ export default function BasicPanel() {
     }
 
     return (
-        <Box sx={{width: '100%', backgroundColor:'white'}}>
-            <Box sx={{borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                    <Tab label="Map" {...a11yProps(0)}  onClick={() => {onTabClick(TabType.MAP)}}/>
-                    <Tab label="Analyze" {...a11yProps(1)} onClick={() => {onTabClick(TabType.ANALYZE)}}/>
-                    <Tab label="Item 3" {...a11yProps(2)} />
-                </Tabs>
-            </Box>
-            <TabPanel index={0} value={value}>
-                <div style={{position:'absolute', width: '100%', height: "92vh", overflowY: 'scroll'}}>
-                    <MapPanel/>
-                </div>
-            </TabPanel>
-            <TabPanel index={1} value={value}>
-                <div style={{position:'absolute', width: '100%', height: "92vh", overflowY: 'scroll'}}>
-                    <AnalyzePanel/>
-                </div>
-            </TabPanel>
-            <TabPanel index={2} value={value}>
-                <div style={{position:'absolute', width: '100%', height: "92vh", overflowY: 'scroll'}}>
-                    {/*<MapPanel/>*/}
-                </div>
-            </TabPanel>
-        </Box>
+        <div style={{display: "flex", height: '100%', width:'100%', flexFlow: "column"}}>
+            <div style={{flex: "0 1 auto"}}>
+                <Box sx={{width: '100%'}}>
+                    <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
+                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                            <Tab label="Map" {...a11yProps(0)}  onClick={() => {onTabClick(TabType.MAP)}}/>
+                            <Tab label="Analyze" {...a11yProps(1)} onClick={() => {onTabClick(TabType.ANALYZE)}}/>
+                            <Tab label="Item 3" {...a11yProps(2)} />
+                        </Tabs>
+                    </Box>
+                </Box>
+            </div>
+            <div style={{flex: "1 1 auto", backgroundColor:'#f0f0f0'}}>
+                <TabPanel index={0} value={value}>
+                    <div>
+                        <MapPanel/>
+                    </div>
+                </TabPanel>
+                <TabPanel index={1} value={value}>
+                    <div style={{position:'absolute', width: '100%', height: "92vh", overflowY: 'scroll'}}>
+                        <AnalyzePanel/>
+                    </div>
+                </TabPanel>
+                <TabPanel index={2} value={value}>
+                    <div style={{position:'absolute', width: '100%', height: "92vh", overflowY: 'scroll'}}>
+                        {/*<MapPanel/>*/}
+                    </div>
+                </TabPanel>
+            </div>
+        </div>
     );
 }
