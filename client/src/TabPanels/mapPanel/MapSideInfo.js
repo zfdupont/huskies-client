@@ -3,6 +3,10 @@ import {Paper} from "@mui/material";
 
 export default function SideTest()
 {
+    const districts = []; 
+    for(let i = 1; i <= 27; ++i){
+        districts.push(<MapSideItem key={i} id={i}/>)
+    }
     return (
         <Paper style={{display: 'flex', flexFlow: "column", position:'relative', width:'100%', height:'100%'}}>
             <div style={{display:'flex', flex: "0 1 50px", marginBottom:'10px'}}>
@@ -13,23 +17,7 @@ export default function SideTest()
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 0.15,  fontSize:'12px', color:'grey'}}></div>
             </div>
             <div style={{position:'relative', display:'flex', flexFlow: 'column', flex: '1 1 auto', backgroundColor:'white', overflowY: 'scroll'}}>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
-                <MapSideItem/>
+                {districts}
             </div>
         </Paper>
     );
