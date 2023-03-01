@@ -10,5 +10,10 @@
     flex-direction:row;
     display: inline-block;
     vertical-align: text-top;
-    margin: 20 auto;
+    margin: 0 auto;
+}
+
+.chart {
+    /* display: flex;
+    flex-direction: row; */
 }

@@ -8,9 +8,9 @@ export default function AnalyzePanel()
 {
     return (
         <div id='Panel' style={{backgroundColor: 'white'}}>
-            <div id='barChart'>
+            <div className='barChart'>
                 <BarChartComponent name="Geographic Variation"></BarChartComponent>
-                <BarChartComponent name="Population Variation"></BarChartComponent>
+                <BarChartComponent name="Population Variation" style={{display: 'flex', flexDirection: 'row', left: '500px', bottom: '250px'}}></BarChartComponent>
                 <BarChartComponent name="Incumbents Winner"></BarChartComponent>
                 <BarChartComponent name="Number of Democratic Seats"></BarChartComponent>
             </div>
