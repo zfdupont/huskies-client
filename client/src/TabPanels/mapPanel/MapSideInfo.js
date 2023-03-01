@@ -1,12 +1,24 @@
 import * as React from "react";
 
-export default function MapSideinfo()
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend,
+    ReferenceLine
+  } from "recharts";
+import StoreContext from "../../common/Store";
+export default function MapSideinfo(props)
 {
+    const { store } = React.useContext(StoreContext);
     return (
         <div style={{flex:1, backgroundColor:'white'}}>
-            <div>
-                123
-            </div>
+            <span>
+                {store.map.state !== 'none' ? `${store.map.state} District #${store.map.district}` : ""}
+            </span>
         </div>
     )
 }
