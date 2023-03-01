@@ -2,19 +2,19 @@ package com.huskies.server.districtPlan;
 
 import com.huskies.server.district.District;
 
-import javax.persistence.*;
+import com.huskies.server.state.State;
+import jakarta.persistence.*;
 import java.util.Set;
 
 @Entity(name = "DistrictPlan")
 @Table(name = "district_plans")
 public class DistrictPlan {
     @Id private String id;
-    @OneToMany(mappedBy = "district_plans")
+    @OneToMany(mappedBy = "districtPlan")
     Set<District> districts;
 
-    @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
-    private String stateId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private State state;
 
     @Column(name = "name", unique = true) private String name;
 
@@ -59,11 +59,11 @@ public class DistrictPlan {
         this.name = name;
     }
 
-    public String getStateId() {
-        return stateId;
+    public State getState() {
+        return state;
     }
 
-    public void setStateId(String stateId) {
-        this.stateId = stateId;
+    public void setState(State state) {
+        this.state = state;
     }
 }

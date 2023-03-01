@@ -4,13 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import java.util.Map;
 
 @Converter(autoApply = true)
 public class MapConverter implements AttributeConverter<Map<String, Integer>, String> {
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Override
     public String convertToDatabaseColumn(Map<String, Integer> precinctDemographics) {
         String precinctDemographicsJson = null;

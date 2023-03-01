@@ -2,7 +2,8 @@ package com.huskies.server.precinct;
 
 import com.huskies.server.district.District;
 
-import javax.persistence.*;
+import com.huskies.server.mapConverter.MapConverter;
+import jakarta.persistence.*;
 import java.util.Map;
 
 @Entity( name = "Precinct" )
@@ -11,14 +12,13 @@ public class Precinct {
     @Id
     private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "district_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private District district;
 
-    @Convert
+    @Convert(converter = MapConverter.class)
     @Column(name = "demographics") private Map<String, Integer> demographics;
 
-    @Convert
+    @Convert(converter = MapConverter.class)
     @Column(name = "votes") private Map<String, Integer> votes;
 
     public Precinct() {}

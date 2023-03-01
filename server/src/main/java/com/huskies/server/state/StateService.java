@@ -3,12 +3,13 @@ package com.huskies.server.state;
 import com.huskies.server.districtPlan.DistrictPlan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@Component
+@Service
 public class StateService {
     @Autowired StateRepository stateRepo;
 
@@ -25,7 +26,7 @@ public class StateService {
     public void addDistrictPlan(State state, DistrictPlan plan){
         Set<DistrictPlan> plans = state.getPlans();
         plans.add(plan);
-        plan.setStateId(state.getId());
+        plan.setState(state);
     }
 
     public void update(State state){

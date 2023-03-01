@@ -1,9 +1,8 @@
 package com.huskies.server.state;
 
-import com.huskies.server.district.District;
 import com.huskies.server.districtPlan.DistrictPlan;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Set;
 
 @Entity(name = "State")
@@ -12,7 +11,7 @@ public class State {
     @Id private String id;
 
 
-    @OneToMany(mappedBy = "states")
+    @OneToMany(mappedBy = "state")
     private Set<DistrictPlan> plans;
     public State() {}
 
