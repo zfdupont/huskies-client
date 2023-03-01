@@ -1,10 +1,23 @@
-export default function MapSideItem()
+export default function MapSideItem(props)
 {
+    const numToPlace = (n) => {
+        const last = n % 10;
+        switch (last){
+            case 1:
+                return `${n}st`;
+            case 2:
+                return `${n}nd`;
+            case 3:
+                return `${n}rd`;
+            default:
+                return `${n}th`; 
+        }
+    }
     return (
         <div style={{display:'flex', flex: '0 0 70px', margin: '0px 5px 20px 5px'}}>
             <div style={{display:'flex', flexFlow: 'column', flex: 1}}>
                 <div style={{display:'flex', flex: '3', alignItems:'center', justifyContent: 'center', fontSize: '20px', fontWeight: '900', backgroundColor:'white'}}>
-                    1st
+                    {numToPlace(props.id)}
                 </div>
                 <div style={{display:'flex', alignItems:'center', justifyContent:'center', flex: 1.5}}>
                     <div style={{position: 'relative', display:'flex', alignItems:'center', justifyContent:'center', width:'23px', height:'23px', marginRight: 5, color: 'black', fontSize:'14px', borderRadius: '5px', border: 'solid 1px black'}}>
