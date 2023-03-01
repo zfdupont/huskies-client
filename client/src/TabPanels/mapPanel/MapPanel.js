@@ -9,12 +9,9 @@ export default function MapPanel()
 {
     console.log("MapPanel");
     return (
-        <div>
-            <div className='map-content-area' style={{display:'flex', margin: '10px'}}>
-                <MainMap/>
-                {/*<MapTest></MapTest>*/}
-                <MapSideInfo/>
-            </div>
+        <div style={{position: 'absolute', width: 'calc(100% - 20px)', height:'calc(100% - 20px)', padding: '10px', display:'flex'}}>
+            <MainMap/>
+            <MapSideInfo/>
         </div>
     );
 }
