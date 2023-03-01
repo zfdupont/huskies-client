@@ -6,6 +6,7 @@ import StateModel from "../models/StateModel";
 import DistrictModel from "../models/DistrictModel";
 import PopulationModel from "../models/PopulationModel";
 import {StateType, FilterType, TabType} from './Enums';
+import MockData from './MockData';
 export const StoreContext = createContext({});
 
 export const StoreActionType = {
@@ -38,8 +39,8 @@ function StoreContextProvider(props) {
             filters: [],
         },
         data: {
-            "2022": createCountryModel(dummyData1),
-            "2020": createCountryModel(dummyData2),
+            "2022": createCountryModel(MockData("2022")),
+            "2020": createCountryModel(MockData("2020")),
         },
         tab: TabType.MAP
     })
@@ -61,6 +62,7 @@ function StoreContextProvider(props) {
     }
     function createCountryModel(countryJsonData)
     {
+        console.log(countryJsonData)
         let plan = countryJsonData.plan;
         let stateModels = {};
         for (const stateKey in countryJsonData.data)
