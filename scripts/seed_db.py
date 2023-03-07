@@ -20,7 +20,7 @@ def process(row):
 
 if __name__ == '__main__':
     
-    
+    # Download from google drive
     # Configure this path to work for you
     df = pd.read_csv("~/huskies-416-project/data/HOUSE_precinct_general.csv", 
                      usecols=['party_simplified', 'votes', 'district', 'jurisdiction_name', 'jurisdiction_fips', 'state', 'candidate', 'state_fips' ], 
