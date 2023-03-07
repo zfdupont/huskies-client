@@ -1,15 +1,20 @@
 package com.huskies.server.districtPlan;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.huskies.server.district.District;
 
 import com.huskies.server.state.State;
 import jakarta.persistence.*;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "DistrictPlan")
+@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Table(name = "district_plans")
 public class DistrictPlan {
-    @Id private String id;
+    @Id @GeneratedValue( strategy = GenerationType.UUID ) private String id;
     @OneToMany(mappedBy = "districtPlan")
     Set<District> districts;
 
@@ -20,13 +25,9 @@ public class DistrictPlan {
 
     public DistrictPlan() {}
 
-    public DistrictPlan(String id) {
-        this.id = id;
-    }
-
-    public DistrictPlan(String id, String name) {
-        this.id = id;
+    public DistrictPlan(String name) {
         this.name = name;
+        this.districts = new HashSet<>();
     }
 
     public DistrictPlan(String id, Set<District> districts, String name) {

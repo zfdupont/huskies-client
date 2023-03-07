@@ -1,13 +1,18 @@
 package com.huskies.server.district;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.huskies.server.districtPlan.DistrictPlan;
 import com.huskies.server.precinct.Precinct;
 import com.huskies.server.state.State;
 
 import jakarta.persistence.*;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "District")
+@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Table(name = "districts")
 public class District {
 
@@ -15,29 +20,19 @@ public class District {
     @OneToMany(mappedBy = "district")
     private Set<Precinct> precincts;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private DistrictPlan districtPlan;
-
-    @Column(name = "is_incumbent") private boolean isIncumbent;
 
     public District() {}
 
     public District(String id) {
         this.id = id;
+        this.precincts = new HashSet<>();
     }
 
-    public District(String id, Set<Precinct> precincts, boolean isIncumbent) {
+    public District(String id, Set<Precinct> precincts) {
         this.id = id;
         this.precincts = precincts;
-        this.isIncumbent = isIncumbent;
-    }
-
-    public boolean isIncumbent() {
-        return isIncumbent;
-    }
-
-    public void setIncumbent(boolean incumbent) {
-        isIncumbent = incumbent;
     }
 
     public String getId() {
@@ -58,5 +53,13 @@ public class District {
 
     public void addPrecinct(Precinct precinct){
         this.precincts.add(precinct);
+    }
+
+    public DistrictPlan getDistrictPlan() {
+        return districtPlan;
+    }
+
+    public void setDistrictPlan(DistrictPlan districtPlan) {
+        this.districtPlan = districtPlan;
     }
 }
