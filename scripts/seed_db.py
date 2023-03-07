@@ -35,10 +35,11 @@ if __name__ == '__main__':
                 "candidate": row.candidate,
                 "district": row.district,
                 "state": row.state_fips,
-                "party": row.party_simplified,
+                "party": (lambda x: x if x in ['DEMOCRAT', 'REPUBLICAN'] else 'INDEPENDANT')(row.party_simplified),
                 "votes": row.votes,
                 "precinct": row.jurisdiction_fips
             }
+            print(payload)
             r = requests.patch('http://localhost:8080/api/precinct', json=payload)
             progress_bar.update(1)
         
