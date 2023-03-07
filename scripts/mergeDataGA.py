@@ -14,7 +14,7 @@ ddata = ddata[['GEOID20','P0030001','P0030003','P0030004','P0030005','P0030006',
 #merging data sets on GEOID20
 gdf  = edata.merge(gdf, on='GEOID20', how='left')
 gdf  = ddata.merge(gdf, on='GEOID20', how='left')
-#store in MongoDB
+#store as geojson
 gdf = gdf.rename(columns={'G20PRERTRU': '2020VTRUMP', 'G20PREDBID': '2020VBIDEN', 'P0030001':'VAPTOTAL', 'P0030003':'VAPWHITE', 'P0030004':'VAPBLACK','P0030005':'VAPINAMORAK','P0030006':'VAPASIAN','P0030007':'VAPISLAND','P0030008':'VAPOTHER','P0030009':'VAPMIXED','P0040002':'VAPHISP'})
 gdf = gpd.GeoDataFrame(gdf, geometry='geometry')
 
