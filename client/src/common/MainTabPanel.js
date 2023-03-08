@@ -69,7 +69,7 @@ export default function BasicPanel() {
             </div>
             <div style={{flex: "1 1 auto", backgroundColor:'#f0f0f0'}}>
                 <TabPanel index={0} value={value}>
-                    <div style={{position: 'absolute', width: '100%', height: 'calc(100% - 50px)', backgroundColor:'black'}}>
+                    <div style={{position: 'absolute', width: '100%', height: 'calc(100% - 50px)'}}>
                         <MapPanel/>
                     </div>
                 </TabPanel>

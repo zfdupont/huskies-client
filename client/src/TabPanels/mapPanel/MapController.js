@@ -66,11 +66,28 @@ export default function MapController()
         let ids = store.data[store.map.plan].stateModels[store.map.state].getFilteredDistrictsID(filterType);
         return geoJsonHelper.getDistrictJsonByIDs(districtJsonCopy, ids);
     }
-    // --- Event Handler -------------------------
+    // --- EVENT HANDLER -------------------------
     function OnStateClick(stateType)
     {
         store.selectState(stateType);
     }
+    function OnDistrictClick(feature, layer)
+    {
+        ZoomToLayer(layer);
+    }
+    function ZoomToLayer(layer)
+    {
+        let size = GetBoundsSize(layer.getBounds());
+        if (size > 250000) { return map.flyTo(layer.getBounds().getCenter(), 7); }
+        if (size > 100000) { return map.flyTo(layer.getBounds().getCenter(), 8);}
+        if (size > 50000) { return map.flyTo(layer.getBounds().getCenter(), 9);}
+        if (size > 30000) { return map.flyTo(layer.getBounds().getCenter(), 10);}
+        if (size > 25000) { return map.flyTo(layer.getBounds().getCenter(), 11);}
+        if (size > 5000) { return map.flyTo(layer.getBounds().getCenter(), 12);}
+        else return 13;
+    }
+    let GetBoundsSize = (bounds) => bounds.getNorthEast().distanceTo(bounds.getNorthWest());
+
     // --- HELPER FUNCTIONS ----------------------
 
     function RemoveAllLayer()
@@ -113,17 +130,9 @@ export default function MapController()
     {
         let option = {
             style: MapProperty.state.style,
-            onEachFeature: (feature, layer) => { 
-                layer.on('click', () => {
-                    console.log(feature);
-                    console.log(layer);
-                    store.hoverDistrict(feature.properties["DISTRICT"])
-                })
-                layer.on('mouseover', () => {
-                    
-                    // store.hoverDistrict()
-                })
-            }
+            onEachFeature: (feature, layer) => { layer.on('click', () => {
+                OnDistrictClick(feature, layer);
+            })}
         };
         // AddGeoJsonLayer(GeoData[stateType][GeoDataType.STATE], LayerGroupType.STATE_DEFAULT, option);
         AddGeoJsonLayer(GeoData[stateType][GeoDataType.DISTRICT], LayerGroupType.STATE_DEFAULT, option);
@@ -155,10 +164,10 @@ export default function MapController()
         map.flyTo(flyTo.pos, flyTo.zoom);
         setViewState(stateType)
     }
-
-    // --- MAP DRAWING FUNCTION --------------------------
-    function DrawLayersOnMap()
-    {
-
-    }
 }
+// 250,000 : 8
+// 100,000 : 9
+// 50,000 : 10
+// 30,000 : 11
+// 25,000 : 12
+// 5000 : 13

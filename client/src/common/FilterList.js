@@ -44,7 +44,7 @@ export default function NestedList() {
                 <List component="div" disablePadding>
                     <ListItem sx={{ pl: 6 }}>
                         <ListItemText primary="Democrat" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
-                        <Switch {...label} size="small" onClick={(e) => {onToggle(e, FilterType.DEMOCRAT)}}/>
+                        <Switch {...label} size="small" color="warning" onClick={(e) => {onToggle(e, FilterType.DEMOCRAT)}}/>
                     </ListItem>
                     <ListItem sx={{ pl: 6 }}>
                         <ListItemText primary="Republican" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
@@ -56,6 +56,10 @@ export default function NestedList() {
                     </ListItem>
                     <ListItem sx={{ pl: 6 }}>
                         <ListItemText primary="Difference" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
+                        <Switch {...label} disabled={true} size="small" onClick={(e) => {onToggle(e, FilterType.DIFFERENCE)}} />
+                    </ListItem>
+                    <ListItem sx={{ pl: 6 }}>
+                        <ListItemText primary="HeatMap" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}/>
                         <Switch {...label} disabled={true} size="small" onClick={(e) => {onToggle(e, FilterType.DIFFERENCE)}} />
                     </ListItem>
                 </List>
