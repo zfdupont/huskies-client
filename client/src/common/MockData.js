@@ -37,11 +37,11 @@ export default function MockData(plan="2020") {
         return districtObj;
     }
     return {
-        plan,
+        plan: plan,
         data: {
-            "newyork": generateDistricts(26, "newyork"),
-            "illinois": generateDistricts(17, "illinois"),
-            "georgia": generateDistricts(14, "georgia")
+            "newyork": {name:'newyork', districts: generateDistricts(26, "newyork")},
+            "illinois": {name:'newyork', districts: generateDistricts(17, "illinois")},
+            "georgia": {name:'newyork', districts: generateDistricts(14, "georgia")}
         }
     }    
 }

@@ -4,7 +4,7 @@ import dummyData2 from '../0.data/dummyData2.json';
 import CountryModel from "../models/CountryModel";
 import StateModel from "../models/StateModel";
 import DistrictModel from "../models/DistrictModel";
-import PopulationModel from "../models/PopulationModel";
+import DemographicModel from "../models/DemographicModel";
 import {StateType, FilterType, TabType} from './Enums';
 import MockData from './MockData';
 export const StoreContext = createContext({});
@@ -82,16 +82,12 @@ function StoreContextProvider(props) {
        return new DistrictModel(
            districtJsonData.id,
            districtJsonData.party,
-           createPopulationModel(districtJsonData.population)
+           createDemographicModel(districtJsonData.population, districtJsonData.votes)
        )
     }
-    function createPopulationModel(populationJsonData)
+    function createDemographicModel(populationJsonData, votesJsonData)
     {
-        return new PopulationModel(
-            populationJsonData.total,
-            populationJsonData.democrats,
-            populationJsonData.republicans,
-        )
+        return new DemographicModel(populationJsonData,votesJsonData)
     }
 
 // --- REDUCER ---------------------------------------
