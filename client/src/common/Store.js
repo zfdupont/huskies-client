@@ -1,12 +1,11 @@
 import { createContext, useState } from 'react';
-import dummyData1 from '../0.data/dummyData1.json';
-import dummyData2 from '../0.data/dummyData2.json';
 import CountryModel from "../models/CountryModel";
 import StateModel from "../models/StateModel";
 import DistrictModel from "../models/DistrictModel";
 import DemographicModel from "../models/DemographicModel";
 import {StateType, FilterType, TabType} from './Enums';
 import MockData from './MockData';
+import api from './api.js';
 export const StoreContext = createContext({});
 
 export const StoreActionType = {
@@ -184,6 +183,19 @@ function StoreContextProvider(props) {
             payload: { district }
         })
     }
+
+    store.getStateData = function()
+    {
+        async function asyncGetStateData(){
+            const response = await api.getAllStatesData();
+            if (response.data.success)
+            {
+                console.log(response.data)
+            }
+        }
+        asyncGetStateData();
+    }
+
 
 // --- HELPER FUNCTIONS -----------------------------
     store.isTabMatch = (tabType) => { return tabType === store.tab; }
