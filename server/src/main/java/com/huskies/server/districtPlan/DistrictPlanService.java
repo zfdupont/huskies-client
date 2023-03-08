@@ -1,5 +1,6 @@
 package com.huskies.server.districtPlan;
 
+import com.huskies.server.FeatureCollectionPOJO;
 import com.huskies.server.candidate.Candidate;
 import com.huskies.server.candidate.CandidateRepository;
 import com.huskies.server.candidate.CandidateService;
@@ -10,8 +11,31 @@ import com.huskies.server.precinct.PrecinctRepository;
 import com.huskies.server.precinct.PrecinctService;
 import com.huskies.server.state.State;
 import com.huskies.server.state.StateRepository;
+import net.minidev.json.JSONObject;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.geotools.data.DataUtilities;
+import org.geotools.data.FileDataStore;
+import org.geotools.data.FileDataStoreFinder;
+import org.geotools.data.collection.SpatialIndexFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.FeatureCollection;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.*;
+import java.net.URL;
+import java.nio.file.*;
+import java.util.*;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 @Service
 public class DistrictPlanService {
@@ -25,6 +49,92 @@ public class DistrictPlanService {
     @Autowired
     CandidateService candidateService;
 
+    // Source: https://javapapers.com/java/glob-with-java-nio/
+    private static List<String> match(String glob, Path location) throws IOException {
+
+
+        List<String> list = new ArrayList<>();
+
+        FileVisitor<Path> matcherVisitor = new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attribs) throws IOException {
+                FileSystem fs = FileSystems.getDefault();
+                PathMatcher matcher = fs.getPathMatcher(glob);
+                if (matcher.matches(file.toAbsolutePath())) {
+                    list.add(file.toAbsolutePath().toString());
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        };
+        Files.walkFileTree(location, matcherVisitor);
+        return list;
+    }
+
+    private void createJsonFromShapefile(String shapefile, String out) throws IOException, InterruptedException {
+        Path relativePath = Paths.get("");
+        Path path = Path.of(relativePath.toAbsolutePath().getParent().toString() + "/scripts/shapefile_to_json.py");
+        final String command = "python3 " + path;
+        System.out.printf("Converting %s to json...%n", shapefile);
+        assert path.toFile().exists();
+        ProcessBuilder pb = new ProcessBuilder(command + String.format(" %s %s", shapefile, out));
+        pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+        Process p = pb.start();
+        p.wait();
+        System.out.printf("Complete with status code %s%n", p.exitValue());
+    }
+
+    public Map<String, FeatureCollectionPOJO> loadPlansFromJson(){
+        Path relativePath = Paths.get("");
+        String fileGlob = "glob:**/*.zip";
+        Path path = Path.of(relativePath.toAbsolutePath().getParent().toString() + "/data");
+        Map<String, FeatureCollectionPOJO> map = new HashMap<>();
+        try {
+            List<String> files = match(fileGlob, path);
+            files.removeIf(e -> !Pattern.matches(".*\\w{2}\\d{4}.*", e));
+            for(String zip : files){
+                // source: https://stackoverflow.com/questions/15667125/read-content-from-files-which-are-inside-zip-file
+                ZipFile zipFile = new ZipFile(zip);
+
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+                Path shp = null;
+                String filename = zip.replaceAll(".*/(.*).zip$", "$1");
+                while(entries.hasMoreElements()){
+
+                    ZipEntry entry = entries.nextElement();
+                    //check for macosx folder
+                    if(entry.getName().startsWith("__MAXOSX")) continue;
+                    InputStream stream = zipFile.getInputStream(entry);
+                    String ext = entry.getName().replaceAll(".*?(.?.?.?.?)?$", "$1");
+                    if(ext.charAt(0) != '.') continue;
+                    File file = File.createTempFile(filename, ext);
+                    file.deleteOnExit();
+                    try(OutputStream outputStream = new FileOutputStream(file)){
+                        IOUtils.copy(stream, outputStream);
+                        if(!ext.equals(".shp")) continue;
+                        map.put(filename, new FeatureCollectionPOJO(loadShapefile(file)));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            return map;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private FeatureCollection<SimpleFeatureType, SimpleFeature> loadShapefile(File file) throws IOException {
+//        File file = new File("/Users/zfdupont/huskies-416-project/data/ny/2020/cong/ny_cong_2012_to_2021.shp");
+        FileDataStore store = FileDataStoreFinder.getDataStore(file);
+        // load shape file
+        SimpleFeatureSource featureSource = store.getFeatureSource();
+        SimpleFeatureSource cachedSource = DataUtilities.source(
+                new SpatialIndexFeatureCollection(featureSource.getFeatures()));
+        FeatureCollection<SimpleFeatureType, SimpleFeature> collection = cachedSource.getFeatures();
+        return collection;
+    }
 
     public void addPrecinctToPlan(String planName, String candidateName, String precinctId, String districtId,
                                      int votes, char party){
