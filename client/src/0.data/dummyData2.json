@@ -1,0 +1,253 @@
+{
+  "plan": "2022",
+  "data": {
+    "newyork": {
+      "name": "newyork",
+      "districts": {
+        "1": {
+          "id": 1,
+          "party": "republican",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "2": {
+          "id": 2,
+          "party": "republican",
+          "population": {
+            "total": 1123,
+            "democrats": 423,
+            "republicans": 700
+          }
+        },
+        "3": {
+          "id": 3,
+          "party": "democrat",
+          "population": {
+            "total": 1240,
+            "democrats": 697,
+            "republicans": 543
+          }
+        },
+        "4": {
+          "id": 4,
+          "party": "democrat",
+          "population": {
+            "total": 512,
+            "democrats": 400,
+            "republicans": 112
+          }
+        },
+        "5": {
+          "id": 5,
+          "party": "democrat",
+          "population": {
+            "total": 312,
+            "democrats": 101,
+            "republicans": 211
+          }
+        },
+        "6": {
+          "id": 6,
+          "party": "republican",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "7": {
+          "id": 7,
+          "party": "republican",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "8": {
+          "id": 8,
+          "party": "democrat",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "9": {
+          "id": 9,
+          "party": "republican",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "10": {
+          "id": 10,
+          "party": "democrat",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "11": {
+          "id": 11,
+          "party": "democrat",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "12": {
+          "id": 12,
+          "party": "democrat",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "13": {
+          "id": 13,
+          "party": "democrat",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "14": {
+          "id": 14,
+          "party": "democrat",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "15": {
+          "id": 15,
+          "party": "republican",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "16": {
+          "id": 16,
+          "party": "republican",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "17": {
+          "id": 17,
+          "party": "republican",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "18": {
+          "id": 18,
+          "party": "democrat",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "19": {
+          "id": 19,
+          "party": "democrat",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "20": {
+          "id": 20,
+          "party": "democrat",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "21": {
+          "id": 21,
+          "party": "democrat",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "22": {
+          "id": 22,
+          "party": "democrat",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "23": {
+          "id": 23,
+          "party": "republican",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "24": {
+          "id": 24,
+          "party": "republican",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "25": {
+          "id": 25,
+          "party": "democrat",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "26": {
+          "id": 26,
+          "party": "republican",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        },
+        "27": {
+          "id": 27,
+          "party": "democrat",
+          "population": {
+            "total": 1240,
+            "democrats": 543,
+            "republicans": 697
+          }
+        }
+      }
+    }
+  }
+}

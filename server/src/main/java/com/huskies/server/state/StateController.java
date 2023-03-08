@@ -6,6 +6,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.io.IOException;
 @RestController
 @RequestMapping("/api")
 public class StateController {
@@ -25,9 +30,20 @@ public class StateController {
     }
 
     @GetMapping(value="/states", produces = "application/json")
-    public State getState(){
-        // returns all states
-        return null;
+    public @ResponseBody List<String> getState() throws IOException {
+        List<String> geojsons = new ArrayList<>();
+        Path filePath1 = Path.of("src/main/java/com/huskies/server/state/data/GA.json");
+        String geojson1 = new String(Files.readAllBytes(filePath1));
+        geojsons.add(geojson1);
+
+        Path filePath2 = Path.of("src/main/java/com/huskies/server/state/data/NY.json");
+        String geojson2 = new String(Files.readAllBytes(filePath2));
+        geojsons.add(geojson2);
+
+        Path filePath3 = Path.of("src/main/java/com/huskies/server/state/data/IL.json");
+        String geojson3 = new String(Files.readAllBytes(filePath3));
+        geojsons.add(geojson3);
+        return geojsons;
     }
 
 
