@@ -91,33 +91,33 @@ public class DistrictPlanService {
         Map<String, FeatureCollectionPOJO> map = new HashMap<>();
         try {
             List<String> files = match(fileGlob, path);
+            List<File> shp_files = new ArrayList<>();
             files.removeIf(e -> !Pattern.matches(".*\\w{2}\\d{4}.*", e));
+            Path tempDir = Path.of(relativePath.toAbsolutePath().toString() + "/tmp");
+            new File(tempDir.toString()).mkdirs();
             for(String zip : files){
                 // source: https://stackoverflow.com/questions/15667125/read-content-from-files-which-are-inside-zip-file
                 ZipFile zipFile = new ZipFile(zip);
-
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                Path shp = null;
                 String filename = zip.replaceAll(".*/(.*).zip$", "$1");
                 while(entries.hasMoreElements()){
-
                     ZipEntry entry = entries.nextElement();
                     //check for macosx folder
                     if(entry.getName().startsWith("__MACOSX")) continue;
                     InputStream stream = zipFile.getInputStream(entry);
                     String ext = entry.getName().replaceAll(".*?(.?.?.?.?)?$", "$1");
                     if(ext.charAt(0) != '.') continue;
-                    File file = File.createTempFile(filename, ext);
-                    file.deleteOnExit();
+                    File file = new File(String.format("%s/%s%s", tempDir, filename, ext)); file.deleteOnExit();
                     try(OutputStream outputStream = new FileOutputStream(file)){
                         IOUtils.copy(stream, outputStream);
-                        if(!ext.equals(".shp")) continue;
-                        map.put(filename, new FeatureCollectionPOJO(loadShapefile(file)));
+                        if(ext.equals(".shp")) shp_files.add(file);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
+            }
+            for(File file : shp_files){
+                map.put(file.getName().replaceAll("(.?.?.?.?)?$", ""), new FeatureCollectionPOJO(loadShapefile(file)));
             }
             return map;
         } catch (Exception e) {
