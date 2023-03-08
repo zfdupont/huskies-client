@@ -1,8 +1,8 @@
 export default class DistrictModel
 {
-    constructor(id, party, population) {
+    constructor(id, party, demographic) {
         this.id = id;
         this.party = party;
-        this.population = population;
+        this.demographic = demographic;
     }
 }
