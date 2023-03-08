@@ -1,15 +1,5 @@
 import * as React from "react";
 
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    ReferenceLine
-  } from "recharts";
 import StoreContext from "../../common/Store";
 export default function MapSideinfo(props)
 {
