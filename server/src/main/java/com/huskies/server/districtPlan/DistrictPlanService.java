@@ -104,7 +104,7 @@ public class DistrictPlanService {
 
                     ZipEntry entry = entries.nextElement();
                     //check for macosx folder
-                    if(entry.getName().startsWith("__MAXOSX")) continue;
+                    if(entry.getName().startsWith("__MACOSX")) continue;
                     InputStream stream = zipFile.getInputStream(entry);
                     String ext = entry.getName().replaceAll(".*?(.?.?.?.?)?$", "$1");
                     if(ext.charAt(0) != '.') continue;
