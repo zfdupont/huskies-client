@@ -27,15 +27,16 @@ if __name__ == '__main__':
                      dtype=official_dtypes)
     df = df[df['state'].str.contains("GEORGIA|NEW YORK|ILLINOIS") == True]
 
-
+    360010001001000
+    360010001001001
     with tqdm.tqdm(total=len(df)) as progress_bar:
         for row in df.itertuples():
             payload = {
-                "plan": "GA2020",
+                "plan": row.state+"2020",
                 "candidate": row.candidate,
                 "district": row.district,
                 "state": row.state_fips,
-                "party": (lambda x: x if x in ['DEMOCRAT', 'REPUBLICAN'] else 'INDEPENDANT')(row.party_simplified),
+                "party": (lambda x: x if "" else "OTHER")(str(row.party_simplified)),
                 "votes": row.votes,
                 "precinct": row.jurisdiction_fips
             }
