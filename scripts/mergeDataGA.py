@@ -1,6 +1,7 @@
 #pip install in the following order: numpy, pandas, shapely, fiona, pyproj, packaging, geopandas
 import pandas as pd
 import geopandas as gpd
+import maup
 #reading boundary data, filter out name, geoid, and geometry
 pth = './data/GA/ga_vtd_2020_bound.shp'
 gdf = gpd.read_file(pth)
@@ -16,6 +17,14 @@ gdf  = edata.merge(gdf, on='GEOID20', how='left')
 gdf  = ddata.merge(gdf, on='GEOID20', how='left')
 #store as geojson
 gdf = gdf.rename(columns={'G20PRERTRU': '2020VTRUMP', 'G20PREDBID': '2020VBIDEN', 'P0030001':'VAPTOTAL', 'P0030003':'VAPWHITE', 'P0030004':'VAPBLACK','P0030005':'VAPINAMORAK','P0030006':'VAPASIAN','P0030007':'VAPISLAND','P0030008':'VAPOTHER','P0030009':'VAPMIXED','P0040002':'VAPHISP'})
+#get district boundaries
 gdf = gpd.GeoDataFrame(gdf, geometry='geometry')
+gdf2 = gpd.read_file('./data/GA/GAD.geojson')
+#make crs match
+if gdf.crs != gdf2.crs:
+    gdf = gdf.to_crs(gdf2.crs)
+#assign district boundaries to 
+assignments = maup.assign(gdf, gdf2)
+gdf['district_id'] = assignments
 
 gdf.to_file('mergedGA.geojson', driver='GeoJSON')

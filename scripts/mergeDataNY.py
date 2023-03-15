@@ -2,6 +2,7 @@
 import pandas as pd
 import geopandas as gpd
 import numpy as np
+import maup
 #reading boundary data, filter out name, geoid, and geometry
 pth = './data/NY/ny_vtd_2020_bound.shp'
 gdf = gpd.read_file(pth)
@@ -20,5 +21,11 @@ gdf  = ddata.merge(gdf, on='GEOID20', how='left')
 #convert dataframe to geojson
 gdf = gdf.rename(columns={'R_2020_pres': '2020VTRUMP', 'D_2020_pres': '2020VBIDEN', 'TOTAL_VAP_ADJ':'VAPTOTAL', 'WHITE_VAP_ADJ':'VAPWHITE', 'BLACK_VAP_ADJ':'VAPBLACK','AMIND_VAP_ADJ':'VAPINAMORAK','ASIAN_VAP_ADJ':'VAPASIAN','HWN_VAP_ADJ':'VAPISLAND','OTHER_VAP_ADJ':'VAPOTHER','MULTI_VAP_ADJ':'VAPMIXED','HISP_VAP_ADJ':'VAPHISP'})
 gdf = gpd.GeoDataFrame(gdf, geometry='geometry')
-
+gdf2 = gpd.read_file('./data/NY/NYD.geojson')
+#make crs match
+if gdf.crs != gdf2.crs:
+    gdf = gdf.to_crs(gdf2.crs)
+#assign district boundaries to 
+assignments = maup.assign(gdf, gdf2)
+gdf['district_id'] = assignments
 gdf.to_file('mergedNY.geojson', driver='GeoJSON')
