@@ -187,11 +187,9 @@ function StoreContextProvider(props) {
     store.getStateData = function()
     {
         async function asyncGetStateData(){
-            const response = await api.getAllStatesData();
-            if (response.data.success)
-            {
-                console.log(response.data)
-            }
+            api.getAllStatesData().then(res => {
+                console.log(res.data);
+            }).catch(err => console.error(err));
         }
         asyncGetStateData();
     }
