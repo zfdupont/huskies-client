@@ -14,16 +14,16 @@ export default function MapSideItem(props)
         }
     }
     return (
-        <div style={{display:'flex', flex: '0 0 70px', margin: '0px 5px 20px 5px'}}>
+        <div style={{display:'flex', flex: '0 0 60px', margin: '0px 5px 20px 5px'}}>
             <div style={{display:'flex', flexFlow: 'column', flex: 1}}>
                 <div style={{display:'flex', flex: '3', alignItems:'center', justifyContent: 'center', fontSize: '20px', fontWeight: '900', backgroundColor:'white'}}>
                     {numToPlace(props.id)}
                 </div>
                 <div style={{display:'flex', alignItems:'center', justifyContent:'center', flex: 1.5}}>
-                    <div style={{position: 'relative', display:'flex', alignItems:'center', justifyContent:'center', width:'23px', height:'23px', marginRight: 5, color: 'black', fontSize:'14px', borderRadius: '5px', border: 'solid 1px black'}}>
+                    <div style={{position: 'relative', display:'flex', alignItems:'center', justifyContent:'center', width:'18px', height:'18px', marginRight: 5, color: 'black', fontSize:'12px', borderRadius: '5px', border: 'solid 1px black'}}>
                         +2
                     </div>
-                    <div style={{position: 'relative', display:'flex', alignItems:'center', justifyContent:'center', width:'23px', height:'23px', marginLeft: 5, color: 'black', fontSize:'14px', borderRadius: '5px', border: 'solid 1px black'}}>
+                    <div style={{position: 'relative', display:'flex', alignItems:'center', justifyContent:'center', width:'18px', height:'18px', marginLeft: 5, color: 'black', fontSize:'12px', borderRadius: '5px', border: 'solid 1px black'}}>
                         -3
                     </div>
                 </div>
@@ -36,7 +36,10 @@ export default function MapSideItem(props)
             <div style={{display:'flex', flexFlow:'column', flex: 4, fontSize:'14px'}}>
                 <div style={{display: 'flex', flex:1}}>
                     <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1.5, fontWeight:'600', color:'white', backgroundColor:'#d63031'}}>
-                        LaLota* (R)
+                        LaLota (R)
+                    </div>
+                    <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 10px'}}>
+                        v
                     </div>
                     <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 1, color:'gray'}}>
                         173,275
@@ -50,6 +53,9 @@ export default function MapSideItem(props)
                 <div style={{display:'flex', flex:1}}>
                     <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1.5, fontWeight:'400', color:'black'}}>
                         Fleming (D)
+                    </div>
+                    <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 10px'}}>
+
                     </div>
                     <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 1, color:'gray'}}>
                         136.899

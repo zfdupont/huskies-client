@@ -15,7 +15,6 @@ export default function MapPanel()
     console.log("MapPanel");
     return (
         <div style={{position: 'absolute', width: 'calc(100% - 20px)', height:'calc(100% - 20px)', padding: '10px', display:'flex'}}>
-
             <Paper className="map" style={{flex:3.5, marginRight: '10px'}}>
                 <MainMap/>
                 {(store.map.state !== StateType.NONE) && <MapTopInfo/>}

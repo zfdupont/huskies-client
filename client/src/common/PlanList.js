@@ -31,19 +31,19 @@ export default function NestedList() {
                 <ListItemIcon>
                     <Star />
                 </ListItemIcon>
-                <ListItemText style={{position:"absolute", left:'48px'}}  primary={ListTitle} primaryTypographyProps={{fontSize: store.sx.drawerList.mainFontSize}} />
+                <ListItemText style={{position:"absolute", left:'48px'}}  primary={ListTitle} primaryTypographyProps={{fontSize: "14px"}} />
                 {open ? <ExpandLess style={{position:"absolute", left:'160px'}} /> : <ExpandMore style={{position:"absolute", left:'160px'}} />}
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                     <ListItemButton selected={true} sx={{ pl: 6 }}>
-                        <ListItemText primary="2022" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}  />
+                        <ListItemText primary="2022" primaryTypographyProps={{fontSize: "12px"}}  />
                     </ListItemButton>
                     <ListItemButton sx={{ pl: 6 }}>
-                        <ListItemText primary="2020" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}  />
+                        <ListItemText primary="2020" primaryTypographyProps={{fontSize: "12px"}}  />
                     </ListItemButton>
                     <ListItemButton sx={{ pl: 6 }}>
-                        <ListItemText primary="#1423" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}  />
+                        <ListItemText primary="#1423" primaryTypographyProps={{fontSize: "12px"}}  />
                     </ListItemButton>
                 </List>
             </Collapse>

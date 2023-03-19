@@ -34,19 +34,19 @@ export default function NestedList() {
                 <ListItemIcon>
                     <Star />
                 </ListItemIcon>
-                <ListItemText style={{position:"absolute", left:'48px'}} primary="States" primaryTypographyProps={{fontSize: store.sx.drawerList.mainFontSize}} />
+                <ListItemText style={{position:"absolute", left:'48px'}} primary="States" primaryTypographyProps={{fontSize: '14px'}} />
                 {open ? <ExpandLess style={{position:"absolute", left:'160px'}} /> : <ExpandMore style={{position:"absolute", left:'160px'}} />}
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                     <ListItemButton  selected={store.isStateMatch(StateType.NEWYORK)} onClick={(e) => {onStateClick(StateType.NEWYORK)}} sx={{ pl: 6 }}>
-                        <ListItemText primary="New York" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}}  />
+                        <ListItemText primary="New York" primaryTypographyProps={{fontSize: '12px'}}  />
                     </ListItemButton>
                     <ListItemButton  selected={store.isStateMatch(StateType.GEORGIA)} onClick={() => {onStateClick(StateType.GEORGIA)}} sx={{ pl: 6 }}>
-                        <ListItemText primary="Georgia" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}} />
+                        <ListItemText primary="Georgia" primaryTypographyProps={{fontSize: '12px'}} />
                     </ListItemButton>
                     <ListItemButton  selected={store.isStateMatch(StateType.ILLINOIS)} onClick={() => {onStateClick(StateType.ILLINOIS)}} sx={{ pl: 6 }}>
-                        <ListItemText primary="Illinois" primaryTypographyProps={{fontSize: store.sx.drawerList.subFontSize}} />
+                        <ListItemText primary="Illinois" primaryTypographyProps={{fontSize: '12px'}} />
                     </ListItemButton>
                 </List>
             </Collapse>

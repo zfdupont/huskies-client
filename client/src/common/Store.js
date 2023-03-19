@@ -1,14 +1,12 @@
 import { createContext, useState } from 'react';
-import CountryModel from "../models/CountryModel";
-import StateModel from "../models/StateModel";
-import DistrictModel from "../models/DistrictModel";
-import DemographicModel from "../models/DemographicModel";
 import {StateType, FilterType, TabType} from './Enums';
+import {createCountryModel} from "./TypeConvertHelper";
 import MockData from './MockData';
 import api from './api.js';
 export const StoreContext = createContext({});
 
 export const StoreActionType = {
+    INIT_STORE: "init_store",
     STATE_SELECT: "state_select",
     STATE_UNSELECT: "state_unselect",
     ADD_STATE_DATA: "add_state_data",
@@ -17,18 +15,10 @@ export const StoreActionType = {
     DISTRICT_HOVER: "district_hover"
 }
 
-function setStyle(store)
-{
-    store.sx = {
-        drawerList: {
-            mainFontSize: '14px',
-            subFontSize: '12px'
-        }
-    }
-}
-
+// --- CONTEXT PROVIDER---------------------------------
 function StoreContextProvider(props) {
     const [store, setStore] = useState({
+        isReady: false,
         map: {
             plan: "2022",
             state: StateType.NONE,
@@ -43,7 +33,7 @@ function StoreContextProvider(props) {
         },
         tab: TabType.MAP
     })
-    setStyle(store);
+
 // --- STATE HELPER ---------------------------------
     function createMapState(plan, stateType, subPlan, filters, district=1)
     {
@@ -56,38 +46,6 @@ function StoreContextProvider(props) {
             district: district
         }
     }
-    function createDataState(plan, stateType, data)
-    {
-    }
-    function createCountryModel(countryJsonData)
-    {
-        console.log(countryJsonData)
-        let plan = countryJsonData.plan;
-        let stateModels = {};
-        for (const stateKey in countryJsonData.data)
-            stateModels[stateKey] = createStateModel(countryJsonData.data[stateKey]);
-        return new CountryModel(plan, stateModels);
-    }
-    function createStateModel(stateJsonData)
-    {
-        let name = stateJsonData.name;
-        let districtModels = {};
-        for (const districtKey in stateJsonData.districts)
-            districtModels[districtKey] = createDistrictModel(stateJsonData.districts[districtKey])
-        return new StateModel(name, districtModels);
-    }
-    function createDistrictModel(districtJsonData)
-    {
-       return new DistrictModel(
-           districtJsonData.id,
-           districtJsonData.party,
-           createDemographicModel(districtJsonData.population, districtJsonData.votes)
-       )
-    }
-    function createDemographicModel(populationJsonData, votesJsonData)
-    {
-        return new DemographicModel(populationJsonData,votesJsonData)
-    }
 
 // --- REDUCER ---------------------------------------
     // Create State Guide: 1) value -> set value, 2) null -> set null, 3) undefined -> remain previous value.
@@ -95,32 +53,44 @@ function StoreContextProvider(props) {
         let prev; // It must be undefined. -> undefined parameter will keep prev state.
         const {type, payload} = action;
         switch (type) {
+            case StoreActionType.INIT_STORE:
+                return setStore({
+                    isReady: true,
+                    map: store.map,
+                    data: store.data,
+                    tab: store.tab,
+                })
             case StoreActionType.UPDATE_TAB:
                 return setStore({
+                    isReady: store.isReady,
                     map: store.map,
                     data: store.data,
                     tab: payload.tabType,
                 })
             case StoreActionType.STATE_SELECT:
                 return setStore({
+                    isReady: store.isReady,
                     map: createMapState(prev, payload.stateType, prev, prev),
                     data: store.data,
                     tab: store.tab,
                 })
             case StoreActionType.STATE_UNSELECT:
                 return setStore({
+                    isReady: store.isReady,
                     map: createMapState(prev, StateType.NONE, prev, []),
                     data: store.data,
                     tab: store.tab,
                 })
             case StoreActionType.UPDATE_FILTER:
                 return setStore({
+                    isReady: store.isReady,
                     map: createMapState(prev, prev, prev, payload.filters),
                     data: store.data,
                     tab: store.tab,
                 })
             case StoreActionType.DISTRICT_HOVER:
                 return setStore({
+                    isReady: store.isReady,
                     map: createMapState(prev, prev, prev, prev, payload.district),
                     data: store.data,
                     tab: payload.tabType,
@@ -131,6 +101,15 @@ function StoreContextProvider(props) {
     }
 
 // --- REDUCER CALL FUNCTIONS ----------------------
+    store.init = function()
+    {
+
+        storeReducer({
+            type: StoreActionType.INIT_STORE,
+            payload: null,
+        })
+    }
+
     store.selectTab = function(tabType)
     {
         storeReducer({
@@ -184,17 +163,6 @@ function StoreContextProvider(props) {
         })
     }
 
-    store.getStateData = function()
-    {
-        async function asyncGetStateData(){
-            api.getAllStatesData().then(res => {
-                console.log(res.data);
-            }).catch(err => console.error(err));
-        }
-        asyncGetStateData();
-    }
-
-
 // --- HELPER FUNCTIONS -----------------------------
     store.isTabMatch = (tabType) => { return tabType === store.tab; }
     store.getMapPlan = () => { return store.map.plan; }
@@ -203,10 +171,18 @@ function StoreContextProvider(props) {
     store.isStateMatch = (stateType) => { return stateType === store.map.state; }
 
 // --- SERVER REQUEST -------------------------------
-    store.addStateData = function(countryDataJson)
+    store.getStateData = function()
     {
-        store[countryDataJson.plan] = countryDataJson.data;
+        async function asyncGetStateData(){
+            api.getAllStatesData().then(res => {
+                console.log(res.data);
+            }).catch(err => {
+
+            });
+        }
+        asyncGetStateData();
     }
+
 
     return (
         <StoreContext.Provider value={{store}}>
