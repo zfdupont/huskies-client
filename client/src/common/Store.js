@@ -9,6 +9,7 @@ export const StoreActionType = {
     INIT_STORE: "init_store",
     STATE_SELECT: "state_select",
     STATE_UNSELECT: "state_unselect",
+    ADD_COUNTRY_DATA: "add_country_data",
     ADD_STATE_DATA: "add_state_data",
     UPDATE_FILTER: "update_filter",
     UPDATE_TAB: "change_tab",
@@ -22,7 +23,7 @@ function StoreContextProvider(props) {
         map: {
             plan: "2022",
             state: StateType.NONE,
-            district: 1,
+            district: -1,
             prevState: null,
             subPlan: null,
             filters: [],
@@ -35,7 +36,7 @@ function StoreContextProvider(props) {
     })
 
 // --- STATE HELPER ---------------------------------
-    function createMapState(plan, stateType, subPlan, filters, district=1)
+    function createMapState(plan, stateType, subPlan, filters, district)
     {
         return {
             plan: (plan !== undefined)? plan : store.map.plan,
@@ -46,11 +47,17 @@ function StoreContextProvider(props) {
             district: district
         }
     }
+    function createDataState(newCountryModel)
+    {
+        let newData = store.data;
+        newData[newCountryModel.plan] = newCountryModel;
+        return newData;
+    }
 
 // --- REDUCER ---------------------------------------
     // Create State Guide: 1) value -> set value, 2) null -> set null, 3) undefined -> remain previous value.
     const storeReducer = (action) => {
-        let prev; // It must be undefined. -> undefined parameter will keep prev state.
+        let prev; // Intended to be undefined. -> undefined parameter will keep prev state.
         const {type, payload} = action;
         switch (type) {
             case StoreActionType.INIT_STORE:
@@ -70,16 +77,22 @@ function StoreContextProvider(props) {
             case StoreActionType.STATE_SELECT:
                 return setStore({
                     isReady: store.isReady,
-                    map: createMapState(prev, payload.stateType, prev, prev),
+                    map: createMapState(prev, payload.stateType, prev, prev, prev),
                     data: store.data,
                     tab: store.tab,
                 })
             case StoreActionType.STATE_UNSELECT:
                 return setStore({
                     isReady: store.isReady,
-                    map: createMapState(prev, StateType.NONE, prev, []),
+                    map: createMapState(prev, StateType.NONE, prev, [], prev),
                     data: store.data,
                     tab: store.tab,
+                })
+            case StoreActionType.ADD_COUNTRY_DATA:
+                return setStore({
+                    isReady: store.isReady,
+                    map: createMapState(prev, prev, prev, prev, prev),
+                    data: createDataState(payload.countryModel),
                 })
             case StoreActionType.UPDATE_FILTER:
                 return setStore({
@@ -103,7 +116,6 @@ function StoreContextProvider(props) {
 // --- REDUCER CALL FUNCTIONS ----------------------
     store.init = function()
     {
-
         storeReducer({
             type: StoreActionType.INIT_STORE,
             payload: null,
@@ -175,12 +187,24 @@ function StoreContextProvider(props) {
     {
         async function asyncGetStateData(){
             api.getAllStatesData().then(res => {
-                console.log(res.data);
+                return res.data;
             }).catch(err => {
-
+                return null;
             });
         }
-        asyncGetStateData();
+        let countryJson = asyncGetStateData();
+        if (countryJson === null)
+        {
+            countryJson = MockData(2022);
+        }
+        let countryModel = createCountryModel(countryJson);
+
+        storeReducer({
+            type: StoreActionType.ADD_COUNTRY_DATA,
+            payload: {
+                countryModel: countryModel,
+            }
+        })
     }
 
 
