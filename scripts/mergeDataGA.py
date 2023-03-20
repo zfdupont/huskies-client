@@ -11,7 +11,7 @@ edata = pd.read_csv("./data/GA/ga_2020_2020_vtd.csv")
 edata = edata[['GEOID20','G20PRERTRU','G20PREDBID']]
 #reading census data, filter out geoid, area, coordinates, demographic data
 ddata = pd.read_csv("./data/GA/ga_pl2020_vtd.csv")
-ddata = ddata[['GEOID20','P0030001','P0030003','P0030004','P0030005','P0030006','P0030007','P0030008','P0030009','P0040002']]
+ddata = ddata[['GEOID20','P0010001','P0030001','P0030003','P0030004','P0030005','P0030006','P0030007','P0030008','P0030009','P0040002']]
 #merging data sets on GEOID20
 gdf  = edata.merge(gdf, on='GEOID20', how='left')
 gdf  = ddata.merge(gdf, on='GEOID20', how='left')
