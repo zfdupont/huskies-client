@@ -11,18 +11,20 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
 #read the geojson file, change crs for feet distances
+print("reading")
 gdf = gpd.read_file('./mergedGA.geojson')
 gdf = gdf.to_crs("epsg:2248")
 #r tree setup
+print("finding adjacencies")
 idx = index.Index()
 for i, geometry in enumerate(gdf.geometry):
     #store the left, right, up, down boundaries of each geometry alongside index
     idx.insert(i, geometry.bounds)
 #neighbors (edges) list
 neighbors = {}
-for i, geometry in enumerate(gdf.geometry):
+for i, polygon in enumerate(gdf.geometry):
     # Get the bounds of the polygon
-    bounds = geometry.bounds
+    bounds = polygon.bounds
     
     # Find the intersecting bounds in the index
     intersecting = list(idx.intersection(bounds))
@@ -32,15 +34,20 @@ for i, geometry in enumerate(gdf.geometry):
     for j in intersecting:
         if i != j:
             other_polygon = gdf.iloc[j].geometry
-            if geometry.boundary.distance(other_polygon.boundary) <= 200:
+            inter = polygon.intersection(other_polygon.buffer(200))
+            if inter.geom_type == "Polygon" and inter.length / 2 >= 200:
+                neighbors[i].append(j)
+            elif inter.length >= 200:
                 neighbors[i].append(j)
 #create gerrychain grain using neighbors as edges
+print("creating graph")
 graph = Graph(neighbors)
 #add in the geodataframe data
 graph.add_data(gdf)
 #set the graph geometry attribute
 graph.geometry = gdf.geometry
 #election to keep track of
+print("running MGGG Recom")
 elections = [Election("PRE20", {"Democratic": "2020VBIDEN", "Republican": "2020VTRUMP"})]
 #also track total population, total VAP, and black VAP
 my_updaters = {"population": updaters.Tally("POPTOT", alias="population"),"black_vap": updaters.Tally("VAPBLACK", alias="black_vap"),"total_vap": updaters.Tally("VAPTOTAL", alias="total_vap")}
@@ -75,6 +82,7 @@ chain = MarkovChain(
     total_steps=200
 )
 #print election result data
+print("printing election results")
 total_d = 0
 total_r = 0
 counter = 0
@@ -98,6 +106,7 @@ print("Best Result for Democrats:")
 print("Democrats:", highest_d, "Republicans:", len(partition) - highest_d)
 print("Best Result for Republicans:")
 print("Democrats:", len(partition) - highest_r, "Republicans:", highest_r)
+print("plotting")
 #navigate to plan #25
 counter = 25
 for plan in chain:
