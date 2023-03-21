@@ -74,6 +74,30 @@ chain = MarkovChain(
     initial_state=initial_partition,
     total_steps=200
 )
+#print election result data
+total_d = 0
+total_r = 0
+counter = 0
+highest_d = 0
+highest_r = 0
+for partition in chain:
+  dems = partition["PRE20"].percents("Democratic")
+  winner_d = 0
+  for x in dems:
+    if x > 0.5:
+      winner_d += 1
+  winner_r = len(partition) - winner_d
+  total_d += winner_d
+  total_r += winner_r
+  counter += 1
+  highest_d = max(highest_d, winner_d)
+  highest_r = max(highest_r, winner_r)
+print("Average:")
+print("Democrats:", total_d / counter, "Republicans:", total_r / counter)
+print("Best Result for Democrats:")
+print("Democrats:", highest_d, "Republicans:", len(partition) - highest_d)
+print("Best Result for Republicans:")
+print("Democrats:", len(partition) - highest_r, "Republicans:", highest_r)
 #navigate to plan #25
 counter = 25
 for plan in chain:
