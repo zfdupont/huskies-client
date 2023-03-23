@@ -186,19 +186,18 @@ function StoreContextProvider(props) {
 // --- SERVER REQUEST -------------------------------
     store.getStateData = function()
     {
-        // async function asyncGetStateData(){
-        //     api.getAllStatesData().then(res => {
-        //         return res.data;
-        //     }).catch(err => {
-        //         return null;
-        //     });
-        // }
-        // let countryJson = asyncGetStateData();
-        // if (countryJson === null)
-        // {
-        //     countryJson = MockData(2022);
-        // }
-        let countryJson = MockData(2022);
+        async function asyncGetStateData(){
+            api.getAllStatesData().then(res => {
+                return res.data;
+            }).catch(err => {
+                return null;
+            });
+        }
+        let countryJson = asyncGetStateData();
+        if (countryJson === null)
+        {
+            countryJson = MockData(2022);
+        }
         let countryModel = createCountryModel(countryJson);
 
         storeReducer({
