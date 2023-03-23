@@ -14,9 +14,9 @@ export const TabType = {
 
 export const StateType = {
     NONE: "none",
-    NEWYORK: "newyork",
-    GEORGIA: "georgia",
-    ILLINOIS: "illinois",
+    NEWYORK: "NY",
+    GEORGIA: "GA",
+    ILLINOIS: "IL",
 }
 
 export const FilterType = {

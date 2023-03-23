@@ -186,14 +186,9 @@ function StoreContextProvider(props) {
 // --- SERVER REQUEST -------------------------------
     store.getStateData = function()
     {
-        async function asyncGetStateData(){
-            api.getAllStatesData().then(res => {
-                return res.data;
-            }).catch(err => {
-                return null;
-            });
-        }
-        let countryJson = asyncGetStateData();
+
+        let countryJson = api.getAllStatesData(StateType.GEORGIA);
+        console.log(countryJson);
         if (countryJson === null)
         {
             countryJson = MockData(2022);
