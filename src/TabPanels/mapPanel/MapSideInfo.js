@@ -1,0 +1,25 @@
+import MapSideItem from "./MapSideItem";
+import {Paper} from "@mui/material";
+
+export default function SideTest()
+{
+    const districts = []; 
+    for(let i = 1; i <= 27; ++i){
+        districts.push(<MapSideItem key={i} id={i}/>)
+    }
+    return (
+        <Paper style={{display: 'flex', flexFlow: "column", position:'relative', width:'100%', height:'100%'}}>
+            <div style={{display:'flex', flex: "0 1 50px", marginBottom:'10px'}}>
+                <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 1.2,  fontSize:'12px', color:'grey'}}>Districts</div>
+                <div style={{display:'flex', alignItems: 'end', justifyContent:'left', flex: 1.5,  fontSize:'12px', color:'grey'}}>Candidates</div>
+                <div style={{display:'flex', alignItems: 'end', justifyContent:'left', flex: 0,  fontSize:'12px', color:'grey'}}>Inc.</div>
+                <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 1.2,  fontSize:'12px', color:'grey'}}>Votes</div>
+                <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 0.8,  fontSize:'12px', color:'grey'}}>Percent</div>
+                <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 0.15,  fontSize:'12px', color:'grey'}}></div>
+            </div>
+            <div style={{position:'relative', display:'flex', flexFlow: 'column', flex: '1 1 auto', backgroundColor:'white', overflowY: 'scroll'}}>
+                {districts}
+            </div>
+        </Paper>
+    );
+}

@@ -1,0 +1,19 @@
+.Panel {
+    position:'absolute';
+    width:'100%';
+    height:'100%';
+    overflow-y: 'scroll';
+}
+
+.barChart {
+    display:flex; 
+    flex-direction:row;
+    display: inline-block;
+    vertical-align: text-top;
+    margin: 0 auto;
+}
+
+.chart {
+    /* display: flex;
+    flex-direction: row; */
+}
