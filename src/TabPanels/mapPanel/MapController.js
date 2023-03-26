@@ -5,7 +5,7 @@ import StoreContext from '../../common/Store';
 import MapProperty from './MapProperty.json';
 import {TileLayerType, LayerGroupType, GeoData, GeoDataType, StateTypeList, StateType} from '../../common/Enums';
 import geoJsonHelper from '../../common/GeoJsonHelper';
-import convertType from '../../common/ConversionHelper';
+import {filterToLayerGroup, filterToStyle} from "../../common/ConversionHelper";
 let currLayerGroups = {};
 
 export default function MapController()
@@ -54,8 +54,8 @@ export default function MapController()
 
         store.map.filters.forEach((filterType) => {
             let data = GetFilteredDistrictJson(filterType);
-            let layerGroupType = convertType.filterToLayerGroup(filterType);
-            let option = {style: MapProperty.state[convertType.filterToStyle(filterType)]};
+            let layerGroupType = filterToLayerGroup(filterType);
+            let option = {style: MapProperty.state[filterToStyle(filterType)]};
             AddGeoJsonLayer(data, layerGroupType, option)
         })
     }

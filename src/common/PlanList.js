@@ -9,6 +9,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Star from '@mui/icons-material/Star';
 import StoreContext from './Store';
+import {PlanType} from "./Enums";
 
 export default function NestedList() {
     const { store } = useContext(StoreContext);
@@ -19,7 +20,20 @@ export default function NestedList() {
         setOpen(!open);
     };
 
-    let ListTitle = (open)? "Plan" : store.getMapPlan();
+    let listTitle = (open)? "Plan" : store.getMapPlan();
+    let planButtons = [];
+    for (const planKey in PlanType)
+    {
+        let planType = PlanType[planKey];
+        planButtons.push
+        (<ListItemButton selected={store.map.plan === planType} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
+            <ListItemText primary={planType} primaryTypographyProps={{fontSize: "12px"}}  />
+        </ListItemButton>)
+    }
+
+    let onPlanButtonClick = (planType) => {
+        store.selectPlan(planType);
+    }
 
     return (
         <List
@@ -31,20 +45,12 @@ export default function NestedList() {
                 <ListItemIcon>
                     <Star />
                 </ListItemIcon>
-                <ListItemText style={{position:"absolute", left:'48px'}}  primary={ListTitle} primaryTypographyProps={{fontSize: "14px"}} />
+                <ListItemText style={{position:"absolute", left:'48px'}}  primary={listTitle} primaryTypographyProps={{fontSize: "14px"}} />
                 {open ? <ExpandLess style={{position:"absolute", left:'160px'}} /> : <ExpandMore style={{position:"absolute", left:'160px'}} />}
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                    <ListItemButton selected={true} sx={{ pl: 6 }}>
-                        <ListItemText primary="2022" primaryTypographyProps={{fontSize: "12px"}}  />
-                    </ListItemButton>
-                    <ListItemButton sx={{ pl: 6 }}>
-                        <ListItemText primary="2020" primaryTypographyProps={{fontSize: "12px"}}  />
-                    </ListItemButton>
-                    <ListItemButton sx={{ pl: 6 }}>
-                        <ListItemText primary="#1423" primaryTypographyProps={{fontSize: "12px"}}  />
-                    </ListItemButton>
+                    {planButtons}
                 </List>
             </Collapse>
         </List>

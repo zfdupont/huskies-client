@@ -1,12 +1,16 @@
 import { createContext, useState } from 'react';
-import {StateType, FilterType, TabType} from './Enums';
-import {createCountryModel, createStateModel} from "./TypeConvertHelper";
+import {StateType, FilterType, TabType, PlanType} from './Enums';
 import MockData from './MockData';
 import api from './api.js';
+import {createMap} from "leaflet/src/map/Map";
+import {createStateModel} from "./ConversionHelper";
 export const StoreContext = createContext({});
 
 export const StoreActionType = {
     INIT_STORE: "init_store",
+    PLAN_SELECT: "plan_select",
+    SUB_PLAN_SELECT: "sub_plan_select",
+    SUB_PLAN_UNSELECT: "sub_plan_unselect",
     STATE_SELECT: "state_select",
     STATE_UNSELECT: "state_unselect",
     ADD_COUNTRY_DATA: "add_country_data",
@@ -21,11 +25,11 @@ function StoreContextProvider(props) {
     const [store, setStore] = useState({
         isReady: false,
         map: {
-            plan: "2022",
+            plan: null,
+            subPlan: null,
             state: StateType.NONE,
             district: -1,
             prevState: null,
-            subPlan: "2020",
             filters: [],
         },
         data: {
@@ -39,9 +43,9 @@ function StoreContextProvider(props) {
     {
         return {
             plan: (plan !== undefined)? plan : store.map.plan,
+            subPlan: (subPlan !== undefined)? subPlan : store.map.subPlan,
             state: (stateType !== undefined)? stateType : store.map.state,
             prevState: store.map.state,
-            subPlan: (subPlan !== undefined)? subPlan : store.map.subPlan,
             filters: (filters !== undefined)? filters : store.map.filters,
             district: district
         }
@@ -83,6 +87,22 @@ function StoreContextProvider(props) {
                     data: store.data,
                     geojson: store.geojson,
                     tab: payload.tabType,
+                })
+            case StoreActionType.PLAN_SELECT:
+                return setStore({
+                    isReady: store.isReady,
+                    map: createMapState(payload.planType, prev, prev, prev, prev),
+                    data: store.data,
+                    geojson: store.geojson,
+                    tab: store.tab,
+                })
+            case StoreActionType.SUB_PLAN_SELECT:
+                return setStore({
+                    isReady: store.isReady,
+                    map: createMapState(prev, prev, payload.subPlanType, prev, prev),
+                    data: store.data,
+                    geojson: store.geojson,
+                    tab: store.tab,
                 })
             case StoreActionType.STATE_SELECT:
                 return setStore({
@@ -136,6 +156,26 @@ function StoreContextProvider(props) {
             type: StoreActionType.INIT_STORE,
             payload: null,
         })
+    }
+
+    store.selectPlan = function(planType)
+    {
+        storeReducer({
+            type: StoreActionType.PLAN_SELECT,
+            payload: { planType: planType }
+        })
+    }
+    store.selectSubPlan = function(subPlanType)
+    {
+        storeReducer({
+            type: StoreActionType.SUB_PLAN_SELECT,
+            payload: { subPlanType: subPlanType}
+        })
+    }
+
+    store.unselectSubPlan = function(subPlanType)
+    {
+
     }
 
     store.selectTab = function(tabType)
@@ -209,7 +249,11 @@ function StoreContextProvider(props) {
             payload: { district }
         })
     }
-
+// --- ENUM MODIFYING FUNCTIONS -----------------------------
+    store.addPlanTypeToEnum = function(keyValuePair)
+    {
+        PlanType[keyValuePair.key] = keyValuePair.value;
+    }
 // --- HELPER FUNCTIONS -----------------------------
     store.getMapPlan = () => { return store.map.plan; }
     store.getMapSubPlan = () => { return store.map.subPlan; }
@@ -220,6 +264,7 @@ function StoreContextProvider(props) {
     store.isStateMatch = (stateType) => { return stateType === store.map.state; }
     store.isGeojsonUpdated = (plan, stateType) => { return store.geojson[plan]?.[stateType] !== undefined;}
     store.isSubPlanSelected = () => { return store.map.subPlan !== null; }
+    store.isPlanSelected = () => { return store.map.plan !== null; }
 
     return (
         <StoreContext.Provider value={{store}}>
