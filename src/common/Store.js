@@ -9,6 +9,7 @@ export const StoreContext = createContext({});
 export const StoreActionType = {
     INIT_STORE: "init_store",
     PLAN_SELECT: "plan_select",
+    PLAN_UNSELECT: "plan_unselect",
     SUB_PLAN_SELECT: "sub_plan_select",
     SUB_PLAN_UNSELECT: "sub_plan_unselect",
     STATE_SELECT: "state_select",
@@ -96,6 +97,14 @@ function StoreContextProvider(props) {
                     geojson: store.geojson,
                     tab: store.tab,
                 })
+            case StoreActionType.PLAN_UNSELECT:
+                return setStore({
+                    isReady: store.isReady,
+                    map: createMapState(store.map.subPlan, prev, null, prev, prev),
+                    data: store.data,
+                    geojson: store.geojson,
+                    tab: store.tab,
+                })
             case StoreActionType.SUB_PLAN_SELECT:
                 return setStore({
                     isReady: store.isReady,
@@ -107,7 +116,7 @@ function StoreContextProvider(props) {
             case StoreActionType.SUB_PLAN_UNSELECT:
                 return setStore({
                     isReady: store.isReady,
-                    map: createMapState(store.map.subPlan, prev, null, prev, prev),
+                    map: createMapState(prev, prev, null, prev, prev),
                     data: store.data,
                     geojson: store.geojson,
                     tab: store.tab,
@@ -178,8 +187,10 @@ function StoreContextProvider(props) {
         // If only 1 plan is selected, plan can't be unselected.
         if (store.isSubPlanSelected())
         {
-            store.selectPlan(store.map.subPlan);
-            store.unselectSubPlan();
+            storeReducer({
+                type: StoreActionType.PLAN_UNSELECT,
+                payload: null,
+            })
         }
     }
     store.selectSubPlan = function(subPlanType)
