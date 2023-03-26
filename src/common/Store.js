@@ -25,7 +25,7 @@ function StoreContextProvider(props) {
             state: StateType.NONE,
             district: -1,
             prevState: null,
-            subPlan: null,
+            subPlan: "2020",
             filters: [],
         },
         data: {
@@ -211,14 +211,15 @@ function StoreContextProvider(props) {
     }
 
 // --- HELPER FUNCTIONS -----------------------------
-    store.isTabMatch = (tabType) => { return tabType === store.tab; }
     store.getMapPlan = () => { return store.map.plan; }
+    store.getMapSubPlan = () => { return store.map.subPlan; }
+    store.getCurrentStateGeojson = () => { return store.geojson[store.map.plan][store.map.state]}
+    store.isTabMatch = (tabType) => { return tabType === store.tab; }
     store.isStateChanged = () => { return store.map.state !== store.map.prevState; }
     store.isStateNone = () => { return store.map.state === StateType.NONE; }
     store.isStateMatch = (stateType) => { return stateType === store.map.state; }
-    store.getCurrentStateGeojson = () => { return store.geojson[store.map.plan][store.map.state]}
     store.isGeojsonUpdated = (plan, stateType) => { return store.geojson[plan]?.[stateType] !== undefined;}
-
+    store.isSubPlanSelected = () => { return store.map.subPlan !== null; }
 
     return (
         <StoreContext.Provider value={{store}}>
