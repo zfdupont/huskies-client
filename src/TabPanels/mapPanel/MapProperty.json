@@ -46,7 +46,7 @@
       "color": "#0984e3",
       "opacity": 0
     },
-    "newyork": {
+    "NY": {
       "flyTo": {
         "pos": [
           42.579,
@@ -55,7 +55,7 @@
         "zoom": 6.5
       }
     },
-    "georgia": {
+    "GA": {
       "flyTo": {
         "pos": [
           32.428,
@@ -64,7 +64,7 @@
         "zoom": 6.5
       }
     },
-    "illinois": {
+    "IL": {
       "flyTo": {
         "pos": [
           40.08,

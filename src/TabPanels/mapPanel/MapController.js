@@ -35,7 +35,6 @@ export default function MapController()
         map.setMaxBounds(MapProperty.country.default.maxBounds);
         map.setMaxZoom(MapProperty.country.default.maxZoom);
         map.setMinZoom(MapProperty.country.default.minZoom);
-        store.getStateData();
     }
     function AddPanes()
     {
@@ -64,7 +63,8 @@ export default function MapController()
     {
         let districtJson = GeoData[store.map.state][GeoDataType.DISTRICT];
         let districtJsonCopy = JSON.parse(JSON.stringify(districtJson)); // deep copy.
-        let ids = store.data[store.map.plan].stateModels[store.map.state].getFilteredDistrictsID(filterType);
+        let ids = store.data[store.map.plan][store.map.state];
+        ids = ids.getFilteredDistrictsID(filterType);
         return geoJsonHelper.getDistrictJsonByIDs(districtJsonCopy, ids);
     }
     // --- EVENT HANDLER -------------------------
@@ -135,9 +135,8 @@ export default function MapController()
                 OnDistrictClick(feature, layer);
             })}
         };
-        // AddGeoJsonLayer(GeoData[stateType][GeoDataType.STATE], LayerGroupType.STATE_DEFAULT, option);
-        AddGeoJsonLayer(GeoData[stateType][GeoDataType.DISTRICT], LayerGroupType.STATE_DEFAULT, option);
-        // AddTileLayer(TileLayerType.PLACE_LABEL, true);
+        // AddGeoJsonLayer(GeoData[stateType][GeoDataType.DISTRICT], LayerGroupType.STATE_DEFAULT, option);
+        AddGeoJsonLayer(store.getCurrentStateGeojson(), LayerGroupType.STATE_DEFAULT, option);
     }
 
     function AddTileLayer(layerType, isLayerGroup, option = {}){
@@ -166,9 +165,3 @@ export default function MapController()
         setViewState(stateType)
     }
 }
-// 250,000 : 8
-// 100,000 : 9
-// 50,000 : 10
-// 30,000 : 11
-// 25,000 : 12
-// 5000 : 13

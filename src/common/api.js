@@ -4,7 +4,7 @@ const api = axios.create({
     baseURL: 'http://localhost:8080/api',
 })
 
-export const getAllStatesData = (stateType) => api.get(`/states/${stateType}`).then(res => {
+export const getStateGeoJson = (stateType) => api.get(`/states/${stateType}`).then(res => {
     return res.data;
 }).catch(err => {
     return null;
@@ -12,7 +12,7 @@ export const getAllStatesData = (stateType) => api.get(`/states/${stateType}`).t
 
 
 const apis = {
-    getAllStatesData,
+    getStateGeoJson,
 }
 
 export default apis

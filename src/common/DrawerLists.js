@@ -11,8 +11,6 @@ import {TabType} from "./Enums";
 export default function DrawerLists()
 {
     const {store} = useContext(StoreContext);
-    console.log(store.isTabMatch(TabType.MAP));
-    console.log(!store.isStateNone());
     return (
         <div>
             <PlanList/>

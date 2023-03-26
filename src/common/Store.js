@@ -1,6 +1,6 @@
 import { createContext, useState } from 'react';
 import {StateType, FilterType, TabType} from './Enums';
-import {createCountryModel} from "./TypeConvertHelper";
+import {createCountryModel, createStateModel} from "./TypeConvertHelper";
 import MockData from './MockData';
 import api from './api.js';
 export const StoreContext = createContext({});
@@ -29,9 +29,8 @@ function StoreContextProvider(props) {
             filters: [],
         },
         data: {
-            "2022": createCountryModel(MockData("2022")),
-            "2020": createCountryModel(MockData("2020")),
         },
+        geojson: {},
         tab: TabType.MAP
     })
 
@@ -47,11 +46,20 @@ function StoreContextProvider(props) {
             district: district
         }
     }
-    function createDataState(newCountryModel)
+    function createDataState(plan, stateType, stateData)
     {
         let newData = store.data;
-        newData[newCountryModel.plan] = newCountryModel;
+        if (!newData[plan]) newData[plan] = {};
+        newData[plan][stateType] = stateData;
         return newData;
+    }
+
+    function createGeojsonState(plan, stateType, stateGeojson)
+    {
+        let newGeojson = store.geojson;
+        if (!newGeojson[plan]) newGeojson[plan] = {};
+        newGeojson[plan][stateType] = stateGeojson;
+        return newGeojson;
     }
 
 // --- REDUCER ---------------------------------------
@@ -65,6 +73,7 @@ function StoreContextProvider(props) {
                     isReady: true,
                     map: store.map,
                     data: store.data,
+                    geojson: store.geojson,
                     tab: store.tab,
                 })
             case StoreActionType.UPDATE_TAB:
@@ -72,13 +81,15 @@ function StoreContextProvider(props) {
                     isReady: store.isReady,
                     map: store.map,
                     data: store.data,
+                    geojson: store.geojson,
                     tab: payload.tabType,
                 })
             case StoreActionType.STATE_SELECT:
                 return setStore({
                     isReady: store.isReady,
                     map: createMapState(prev, payload.stateType, prev, prev, prev),
-                    data: store.data,
+                    data: createDataState(store.map.plan, payload.stateType, payload.stateData),
+                    geojson: createGeojsonState(store.map.plan, payload.stateType, payload.geojson),
                     tab: store.tab,
                 })
             case StoreActionType.STATE_UNSELECT:
@@ -86,13 +97,15 @@ function StoreContextProvider(props) {
                     isReady: store.isReady,
                     map: createMapState(prev, StateType.NONE, prev, [], prev),
                     data: store.data,
+                    geojson: store.geojson,
                     tab: store.tab,
                 })
             case StoreActionType.ADD_COUNTRY_DATA:
                 return setStore({
                     isReady: store.isReady,
                     map: createMapState(prev, prev, prev, prev, prev),
-                    data: createDataState(payload.countryModel),
+                    data: createDataState(),
+                    geojson: store.geojson,
                     tab: store.tab,
                 })
             case StoreActionType.UPDATE_FILTER:
@@ -100,6 +113,7 @@ function StoreContextProvider(props) {
                     isReady: store.isReady,
                     map: createMapState(prev, prev, prev, payload.filters),
                     data: store.data,
+                    geojson: store.geojson,
                     tab: store.tab,
                 })
             case StoreActionType.DISTRICT_HOVER:
@@ -107,6 +121,7 @@ function StoreContextProvider(props) {
                     isReady: store.isReady,
                     map: createMapState(prev, prev, prev, prev, payload.district),
                     data: store.data,
+                    geojson: store.geojson,
                     tab: store.tab,
                 })
             default:
@@ -131,11 +146,30 @@ function StoreContextProvider(props) {
         })
     }
 
-    store.selectState = function(stateType)
+    store.selectState = async function(stateType)
     {
+        let promise = api.getStateGeoJson(stateType);
+        let geojson;
+        if (store.isGeojsonUpdated(store.map.plan, stateType))
+        {
+            console.log("cached state data used.");
+            geojson = store.geojson[store.map.plan][stateType];
+        }
+        else
+        {
+            geojson = await promise.then((result) => {
+                return result;
+            });
+        }
+        let stateModel = createStateModel(MockData(2022).data["newyork"]);
+
         storeReducer({
             type: StoreActionType.STATE_SELECT,
-            payload: { stateType: stateType }
+            payload: {
+                stateType: stateType,
+                stateData: stateModel,
+                geojson: geojson,
+            }
         })
     }
 
@@ -182,26 +216,8 @@ function StoreContextProvider(props) {
     store.isStateChanged = () => { return store.map.state !== store.map.prevState; }
     store.isStateNone = () => { return store.map.state === StateType.NONE; }
     store.isStateMatch = (stateType) => { return stateType === store.map.state; }
-
-// --- SERVER REQUEST -------------------------------
-    store.getStateData = function()
-    {
-
-        let countryJson = api.getAllStatesData(StateType.GEORGIA);
-        console.log(countryJson);
-        if (countryJson === null)
-        {
-            countryJson = MockData(2022);
-        }
-        let countryModel = createCountryModel(countryJson);
-
-        storeReducer({
-            type: StoreActionType.ADD_COUNTRY_DATA,
-            payload: {
-                countryModel: countryModel,
-            }
-        })
-    }
+    store.getCurrentStateGeojson = () => { return store.geojson[store.map.plan][store.map.state]}
+    store.isGeojsonUpdated = (plan, stateType) => { return store.geojson[plan]?.[stateType] !== undefined;}
 
 
     return (

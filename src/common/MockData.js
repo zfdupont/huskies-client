@@ -18,6 +18,9 @@ export default function MockData(plan="2020") {
             districtObj[i.toString()] = {
                 "id": i,
                 "name": name,
+                "DemocratsCandidate": "NameDemCand",
+                "RepublicanCandidate": "NameRepCand",
+                "Incumbent": "NameDemCandidate",
                 "party": (blueVotes > redVotes ? "democrat" : "republican"),
                 "votes": {
                     "total": totalVotes,
