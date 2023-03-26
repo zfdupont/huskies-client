@@ -104,6 +104,14 @@ function StoreContextProvider(props) {
                     geojson: store.geojson,
                     tab: store.tab,
                 })
+            case StoreActionType.SUB_PLAN_UNSELECT:
+                return setStore({
+                    isReady: store.isReady,
+                    map: createMapState(store.map.subPlan, prev, null, prev, prev),
+                    data: store.data,
+                    geojson: store.geojson,
+                    tab: store.tab,
+                })
             case StoreActionType.STATE_SELECT:
                 return setStore({
                     isReady: store.isReady,
@@ -165,6 +173,15 @@ function StoreContextProvider(props) {
             payload: { planType: planType }
         })
     }
+    store.unselectPlan = function()
+    {
+        // If only 1 plan is selected, plan can't be unselected.
+        if (store.isSubPlanSelected())
+        {
+            store.selectPlan(store.map.subPlan);
+            store.unselectSubPlan();
+        }
+    }
     store.selectSubPlan = function(subPlanType)
     {
         storeReducer({
@@ -173,9 +190,12 @@ function StoreContextProvider(props) {
         })
     }
 
-    store.unselectSubPlan = function(subPlanType)
+    store.unselectSubPlan = function()
     {
-
+        storeReducer({
+            type: StoreActionType.SUB_PLAN_UNSELECT,
+            payload: null
+        })
     }
 
     store.selectTab = function(tabType)
