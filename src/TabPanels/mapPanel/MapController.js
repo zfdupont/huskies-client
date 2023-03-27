@@ -101,6 +101,11 @@ export default function MapController()
         })
     }
 
+    function ApplyMixingValueToStyle(stateType, style)
+    {
+        // if (stateType === store.getMap)
+    }
+
     // --- MAP VIEW CONTROLLER. --------------------
     function SetCountryView()
     {
@@ -109,7 +114,17 @@ export default function MapController()
     }
     function SetStateView(stateType)
     {
-        AddStateDefaultLayer(stateType);
+        console.log("Map controller : state view setup");
+        if (!store.isStateDataReady()) return;
+
+        if (store.isPlanSelected())
+        {
+            AddStateDistrictLayer(store.getMapPlan(), stateType);
+        }
+        if (store.isSubPlanSelected())
+        {
+            AddStateDistrictLayer(store.getMapSubPlan(), stateType);
+        }
         SetFocus(stateType);
     }
 
@@ -127,7 +142,7 @@ export default function MapController()
         // AddTileLayer(TileLayerType.PLACE_LABEL, true);
     }
 
-    function AddStateDefaultLayer(stateType)
+    function AddStateDistrictLayer(planType, stateType)
     {
         let option = {
             style: MapProperty.state.style,
@@ -135,8 +150,7 @@ export default function MapController()
                 OnDistrictClick(feature, layer);
             })}
         };
-        // AddGeoJsonLayer(GeoData[stateType][GeoDataType.DISTRICT], LayerGroupType.STATE_DEFAULT, option);
-        AddGeoJsonLayer(store.getCurrentStateGeojson(), LayerGroupType.STATE_DEFAULT, option);
+        AddGeoJsonLayer(store.getCurrentStateGeojson(planType), LayerGroupType.STATE_DEFAULT, option);
     }
 
     function AddTileLayer(layerType, isLayerGroup, option = {}){

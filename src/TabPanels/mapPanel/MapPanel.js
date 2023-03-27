@@ -8,6 +8,7 @@ import MapSideInfo from "./MapSideInfo";
 import MapTopInfo from "./MapTopInfo";
 import StoreReducer from '../../common/Store';
 import {StateType} from "../../common/Enums";
+import MapBottomSlider from "./MapBottomSlider";
 
 export default function MapPanel()
 {
@@ -18,6 +19,7 @@ export default function MapPanel()
             <Paper className="map" style={{flex:3.5, marginRight: '10px'}}>
                 <MainMap/>
                 {(store.map.state !== StateType.NONE) && <MapTopInfo/>}
+                {(store.map.state !== StateType.NONE) && <MapBottomSlider/>}
             </Paper>
             <div style={{flex:1.5, backgroundColor:'white'}}>
                 {(store.map.state !== StateType.NONE) && <MapSideInfo/>}
