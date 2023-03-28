@@ -1,340 +1,299 @@
-import {createContext, useEffect, useState} from 'react';
-import {StateType, FilterType, TabType, PlanType, GeoData, GeoDataType} from './Enums';
+import {createContext, useState} from 'react';
+import {StateType, TabType, PlanType, GeoData, GeoDataType} from './Enums';
 import MockData from './MockData';
 import api from './api.js';
 import {createStateModel} from "./ConversionHelper";
 export const StoreContext = createContext({});
 
-export const StoreActionType = {
-    INIT_STORE: "init_store",
+export const MapActionType = {
     PLAN_SELECT: "plan_select",
     PLAN_UNSELECT: "plan_unselect",
     SUB_PLAN_SELECT: "sub_plan_select",
     SUB_PLAN_UNSELECT: "sub_plan_unselect",
     STATE_SELECT: "state_select",
     STATE_UNSELECT: "state_unselect",
-    ADD_COUNTRY_DATA: "add_country_data",
-    ADD_STATE_DATA: "add_state_data",
     UPDATE_FILTER: "update_filter",
-    UPDATE_TAB: "change_tab",
     DISTRICT_HOVER: "district_hover",
     MIXING_VALUE_CHANGE: "mixing_value_change",
 }
 
+export const DataActionType = {
+    ADD_STATE_DATA: "add_state_data",
+}
+
+export const PageActionType = {
+    UPDATE_TAB: "change_tab",
+}
+
+
 // --- CONTEXT PROVIDER---------------------------------
 function StoreContextProvider(props) {
-    const [store, setStore] = useState({
-        isReady: false,
-        map: {
-            plan: null,
-            subPlan: null,
-            state: StateType.NONE,
-            district: -1,
-            prevState: null,
-            filters: [],
-            mixingValue: -1,
-        },
-        data: {
-        },
+    const [storeMap, setStoreMap] = useState({
+        plan: null,
+        subPlan: null,
+        state: StateType.NONE,
+        district: -1,
+        prevState: null,
+        filters: [],
+        mixingValue: -1,
+    })
+    const [storeData, setStoreData] = useState({
+        modelData: {},
         geojson: {},
+    })
+    const [storePage, setStorePage] = useState({
         tab: TabType.MAP
     })
-
+    console.log("Store");
 // --- STATE HELPER ---------------------------------
     function createMapState(plan, stateType, subPlan, filters, district, mixingValue)
     {
         return {
-            plan: (plan !== undefined)? plan : store.map.plan,
-            subPlan: (subPlan !== undefined)? subPlan : store.map.subPlan,
-            state: (stateType !== undefined)? stateType : store.map.state,
-            prevState: store.map.state,
-            filters: (filters !== undefined)? filters : store.map.filters,
+            plan: (plan !== undefined)? plan : storeMap.plan,
+            subPlan: (subPlan !== undefined)? subPlan : storeMap.subPlan,
+            state: (stateType !== undefined)? stateType : storeMap.state,
+            prevState: storeMap.state,
+            filters: (filters !== undefined)? filters : storeMap.filters,
             district: district,
-            mixingValue: (filters !== undefined)? mixingValue : store.map.mixingValue,
+            mixingValue: (filters !== undefined)? mixingValue : storeMap.mixingValue,
         }
     }
-    function createDataState(planType, stateType, stateData)
+    function createDataState(planType, stateType, modelData, geojson)
     {
-        let newData = store.data;
-        newData[planType] = newData[planType] ?? {}; // set {} if null.
-        newData[planType][stateType] = stateData;
-        return newData;
+        let newData = storeData;
+        newData.modelData[planType] = newData.modelData[planType] ?? {}; // set {} if null.
+        newData.geojson[planType] = newData.geojson[planType] ?? {};
+
+        newData.modelData[planType][stateType] = modelData;
+        newData.geojson[planType][stateType] = geojson;
+
+        return {
+            modelData: newData.modelData,
+            geojson: newData.geojson,
+        };
     }
 
-    function createGeojsonState(planType, stateType, geojson)
+    function createPageState(tabType)
     {
-        let newGeojson = store.geojson;
-        newGeojson[planType] = newGeojson[planType] ?? {}; // set {} if null.
-        newGeojson[planType][stateType] = geojson;
-        return newGeojson;
+        return {
+            tab: (tabType !== undefined)? tabType : storePage.tab
+        }
     }
+
 
 // --- REDUCER ---------------------------------------
     // Create State Guide: 1) value -> set value, 2) null -> set null, 3) undefined -> remain previous value.
-    const storeReducer = (action) => {
+    const storeMapReducer = (action) => {
         let prev; // Intended to be undefined. -> undefined parameter will keep prev state.
         const {type, payload} = action;
         switch (type) {
-            case StoreActionType.INIT_STORE:
-                return setStore({
-                    isReady: true,
-                    map: store.map,
-                    data: store.data,
-                    geojson: store.geojson,
-                    tab: store.tab,
-                })
-            case StoreActionType.UPDATE_TAB:
-                return setStore({
-                    isReady: store.isReady,
-                    map: store.map,
-                    data: store.data,
-                    geojson: store.geojson,
-                    tab: payload.tabType,
-                })
-            case StoreActionType.PLAN_SELECT:
-                return setStore({
-                    isReady: store.isReady,
-                    map: createMapState(payload.planType, prev, prev, prev, prev, prev),
-                    data: store.data,
-                    geojson: store.geojson,
-                    tab: store.tab,
-                })
-            case StoreActionType.PLAN_UNSELECT:
-                return setStore({
-                    isReady: store.isReady,
-                    map: createMapState(store.map.subPlan, prev, null, prev, prev, prev),
-                    data: store.data,
-                    geojson: store.geojson,
-                    tab: store.tab,
-                })
-            case StoreActionType.SUB_PLAN_SELECT:
-                return setStore({
-                    isReady: store.isReady,
-                    map: createMapState(prev, prev, payload.subPlanType, prev, prev, prev),
-                    data: store.data,
-                    geojson: store.geojson,
-                    tab: store.tab,
-                })
-            case StoreActionType.SUB_PLAN_UNSELECT:
-                return setStore({
-                    isReady: store.isReady,
-                    map: createMapState(prev, prev, null, prev, prev, prev),
-                    data: store.data,
-                    geojson: store.geojson,
-                    tab: store.tab,
-                })
-            case StoreActionType.STATE_SELECT:
-                console.log("State selected");
-                setStore({
-                    isReady: store.isReady,
-                    map: createMapState(prev, payload.stateType, prev, prev, prev, prev),
-                    data: store.data,
-                    geojson: store.geojson,
-                    tab: store.tab,
-                })
-                console.log(store);
-                return;
-            case StoreActionType.STATE_UNSELECT:
-                return setStore({
-                    isReady: store.isReady,
-                    map: createMapState(prev, StateType.NONE, prev, [], prev, prev),
-                    data: store.data,
-                    geojson: store.geojson,
-                    tab: store.tab,
-                })
-            case StoreActionType.ADD_STATE_DATA:
-                console.log("Data added");
-                console.log(store.map);
-                return setStore({
-                    isReady: store.isReady,
-                    map: store.map,
-                    data: createDataState(payload.planType, payload.stateType, payload.stateData),
-                    geojson: createGeojsonState(payload.planType, payload.stateType, payload.geojson),
-                    tab: store.tab,
-                })
-            case StoreActionType.UPDATE_FILTER:
-                return setStore({
-                    isReady: store.isReady,
-                    map: createMapState(prev, prev, prev, payload.filters, prev, prev),
-                    data: store.data,
-                    geojson: store.geojson,
-                    tab: store.tab,
-                })
-            case StoreActionType.DISTRICT_HOVER:
-                return setStore({
-                    isReady: store.isReady,
-                    map: createMapState(prev, prev, prev, prev, payload.district, prev),
-                    data: store.data,
-                    geojson: store.geojson,
-                    tab: store.tab,
-                })
-            case StoreActionType.MIXING_VALUE_CHANGE:
-                return setStore({
-                    isReady: store.isReady,
-                    map: createMapState(prev, prev, prev, prev, prev, payload.value),
-                    data: store.data,
-                    geojson: store.geojson,
-                    tab: store.tab,
-                })
+            case MapActionType.PLAN_SELECT:
+                return setStoreMap(createMapState(payload.planType, prev, prev, prev, prev, prev));
+            case MapActionType.PLAN_UNSELECT:
+                return setStoreMap(createMapState(storeMap.subPlan, prev, null, prev, prev, prev));
+            case MapActionType.SUB_PLAN_SELECT:
+                return setStoreMap(createMapState(prev, prev, payload.subPlanType, prev, prev, prev))
+            case MapActionType.SUB_PLAN_UNSELECT:
+                return setStoreMap(createMapState(prev, prev, null, prev, prev, prev))
+            case MapActionType.STATE_SELECT:
+                return setStoreMap(createMapState(prev, payload.stateType, prev, prev, prev, prev))
+            case MapActionType.STATE_UNSELECT:
+                return setStoreMap(createMapState(prev, StateType.NONE, prev, [], prev, prev))
+            case MapActionType.UPDATE_FILTER:
+                return setStoreMap(createMapState(prev, prev, prev, payload.filters, prev, prev))
+            case MapActionType.DISTRICT_HOVER:
+                return setStoreMap(createMapState(prev, prev, prev, prev, payload.district, prev))
+            case MapActionType.MIXING_VALUE_CHANGE:
+                return setStoreMap(createMapState(prev, prev, prev, prev, prev, payload.value))
             default:
-                return store;
+                return storeMap;
+        }
+    }
+    const storeDataReducer = (action) => {
+        let prev; // Intended to be undefined. -> undefined parameter will keep prev state.
+        const {type, payload} = action;
+        switch (type) {
+            case DataActionType.ADD_STATE_DATA:
+                return setStoreData(createDataState(payload.planType, payload.stateType, payload.modelData, payload.geojson))
+            default:
+                return storeData;
+        }
+    }
+    const storePageReducer = (action) => {
+        let prev; // Intended to be undefined. -> undefined parameter will keep prev state.
+        const {type, payload} = action;
+        switch (type) {
+            case PageActionType.UPDATE_TAB:
+                return setStorePage(createPageState(payload.tabType))
+            default:
+                return storePage;
         }
     }
 
-// --- REDUCER CALL FUNCTIONS ----------------------
-    store.init = function()
-    {
-        storeReducer({
-            type: StoreActionType.INIT_STORE,
-            payload: null,
-        })
-    }
+// --- STORE MAP FUNCTIONS -----------------------------
 
-    store.selectPlan = function(planType)
+    storeMap.selectPlan = function(planType)
     {
-        storeReducer({
-            type: StoreActionType.PLAN_SELECT,
+        storeMapReducer({
+            type: MapActionType.PLAN_SELECT,
             payload: { planType: planType }
         })
     }
-    store.unselectPlan = function()
+    storeMap.unselectPlan = function()
     {
         // If only 1 plan is selected, plan can't be unselected.
-        if (store.isSubPlanSelected())
+        if (storeMap.isSubPlanSelected())
         {
-            storeReducer({
-                type: StoreActionType.PLAN_UNSELECT,
+            storeMapReducer({
+                type: MapActionType.PLAN_UNSELECT,
                 payload: null,
             })
         }
     }
-    store.selectSubPlan = async function(subPlanType)
+    storeMap.selectSubPlan = async function(subPlanType)
     {
-        storeReducer({
-            type: StoreActionType.SUB_PLAN_SELECT,
+        storeMapReducer({
+            type: MapActionType.SUB_PLAN_SELECT,
             payload: { subPlanType: subPlanType}
         })
 
-        if (store.isStateNone()) return;
-        await store.addStateData(subPlanType, store.map.state);
+        if (storeMap.isStateNone()) return;
+        await storeData.addStateData(subPlanType, storeMap.state);
     }
 
-    store.unselectSubPlan = function()
+    storeMap.unselectSubPlan = function()
     {
-        storeReducer({
-            type: StoreActionType.SUB_PLAN_UNSELECT,
+        storeMapReducer({
+            type: MapActionType.SUB_PLAN_UNSELECT,
             payload: null
         })
     }
 
-    store.selectTab = function(tabType)
+    storeMap.selectState = async function(stateType)
     {
-        storeReducer({
-            type: StoreActionType.UPDATE_TAB,
-            payload: { tabType: tabType }
+        console.log("state selected")
+        storeMapReducer({
+            type: MapActionType.STATE_SELECT,
+            payload: {
+                stateType: stateType,
+            }
         })
-    }
-    store.selectState = async function(stateType)
-    {
-        setTimeout(async () => {
-            storeReducer({
-                type: StoreActionType.STATE_SELECT,
-                payload: {
-                    stateType: stateType,
-                }
-            })
 
-            if (!store.isPlanSelected()) return; // None of Plan selected -> ERROR: Should not be called.
-            await store.addStateData(store.map.plan, stateType);
+        if (!storeMap.isPlanSelected()) return; // None of Plan selected -> ERROR: Should not be called.
+        await storeData.addStateData(storeMap.plan, stateType);
 
-            if (!store.isSubPlanSelected()) return;
-            await store.addStateData(store.map.subPlan, stateType);
-        }, 0);
+        if (!storeMap.isSubPlanSelected()) return;
+        await storeData.addStateData(storeMap.subPlan, stateType);
     }
 
-    store.addStateData = async (planType, stateType) => {
-        // if the state is already selected -> request data.
-        let geojson =  await store.apiGetStateGeojson(planType, stateType);
-        let stateData =  await store.apiGetStateData(planType, stateType);
-
-        storeReducer({
-            type: StoreActionType.ADD_STATE_DATA,
-            payload: {planType: planType, stateType: stateType, geojson: geojson, stateData: stateData}
-        })
-    }
 
     // Move to country view
     // Reset added filter layers.
-    store.unselectState = function()
+    storeMap.unselectState = function()
     {
-        storeReducer({
-            type: StoreActionType.STATE_UNSELECT,
+        storeMapReducer({
+            type: MapActionType.STATE_UNSELECT,
             payload: null,
         })
     }
 
-    store.addFilter = function(filterType)
+    storeMap.addFilter = function(filterType)
     {
-        let filters = store.map.filters;
+        let filters = storeMap.filters;
         filters.push(filterType);
-        storeReducer({
-            type: StoreActionType.UPDATE_FILTER,
+        storeMapReducer({
+            type: MapActionType.UPDATE_FILTER,
             payload: {filters: filters}
         })
     }
 
-    store.removeFilter = function(filterType)
+    storeMap.removeFilter = function(filterType)
     {
-        let filters = store.map.filters.filter((filter) => filter !== filterType)
-        storeReducer({
-            type: StoreActionType.UPDATE_FILTER,
+        let filters = storeMap.filters.filter((filter) => filter !== filterType)
+        storeMapReducer({
+            type: MapActionType.UPDATE_FILTER,
             payload: {filters: filters}
         })
     }
 
-    store.hoverDistrict = function(district)
+    storeMap.hoverDistrict = function(district)
     {
-        storeReducer({
-            type: StoreActionType.DISTRICT_HOVER,
+        storeMapReducer({
+            type: MapActionType.DISTRICT_HOVER,
             payload: {district: district}
         })
     }
 
-    store.onMapMixingValueChange = function(value)
+    storeMap.onMapMixingValueChange = function(value)
     {
-        storeReducer({
-            type: StoreActionType.MIXING_VALUE_CHANGE,
+        storeMapReducer({
+            type: MapActionType.MIXING_VALUE_CHANGE,
             payload: {value: value},
         })
     }
 
 // --- ENUM MODIFYING FUNCTIONS -----------------------------
-    store.addPlanTypeToEnum = function(keyValuePair)
+    storeMap.addPlanTypeToEnum = function(keyValuePair)
     {
         PlanType[keyValuePair.key] = keyValuePair.value;
     }
-// --- HELPER FUNCTIONS -----------------------------
-    store.getMapPlan = () => { return store.map.plan; }
-    store.getMapSubPlan = () => { return store.map.subPlan; }
-    store.getCurrentStateGeojson = (planType) => { return store.geojson[planType][store.map.state]}
-    store.isTabMatch = (tabType) => { return tabType === store.tab; }
-    store.isStateChanged = () => { return store.map.state !== store.map.prevState; }
-    store.isStateNone = () => { return store.map.state === StateType.NONE; }
-    store.isStateMatch = (stateType) => { return stateType === store.map.state; }
-    store.isGeojsonUpdated = (plan, stateType) => { return store.geojson[plan]?.[stateType] !== undefined;}
-    store.isSubPlanSelected = () => { return store.map.subPlan !== null; }
-    store.isPlanSelected = () => { return store.map.plan !== null; }
-    store.isStateDataReady = () => {
-        if (!store.data[store.map.plan]?.[store.map.state]) return false;
-        if (!store.isSubPlanSelected()) return true;
-        if (!store.data[store.map.subPlan]?.[store.map.state]) return false;
-        return true;
+
+// --- STORE DATA FUNCTIONS -----------------------------
+    storeData.addStateData = async (planType, stateType) => {
+        // if the state is already selected -> request data.
+        let geojson =  await apiGetStateGeojson(planType, stateType);
+        let modelData =  await apiGetStateData(planType, stateType);
+
+        storeDataReducer({
+            type: DataActionType.ADD_STATE_DATA,
+            payload: {planType: planType, stateType: stateType, geojson: geojson, modelData: modelData}
+        })
+    }
+// --- STORE PAGE FUNCTIONS -----------------------------
+    storePage.selectTab = function(tabType)
+    {
+        storePageReducer({
+            type: PageActionType.UPDATE_TAB,
+            payload: { tabType: tabType }
+        })
     }
 
+// --- HELPER FUNCTIONS -----------------------------
+    // STORE MAP
+    storeMap.getMapPlan = () => { return storeMap.plan; }
+    storeMap.getMapSubPlan = () => { return storeMap.subPlan; }
+    storeMap.isStateChanged = () => { return storeMap.state !== storeMap.prevState; }
+    storeMap.isStateNone = () => { return storeMap.state === StateType.NONE; }
+    storeMap.isStateMatch = (stateType) => { return stateType === storeMap.state; }
+    storeMap.isSubPlanSelected = () => { return storeMap.subPlan !== null; }
+    storeMap.isPlanSelected = () => { return storeMap.plan !== null; }
+    // STORE DATA
+    storeData.getCurrentStateGeojson = (planType) => { return storeData.geojson[planType][storeMap.state]}
+    storeData.isReadyToDisplayCurrentMap = () => {
+        if (!storeMap.isSubPlanSelected()) return storeData.isStateDataReady(storeMap.plan, storeMap.state);
+        return storeData.isStateDataReady(storeMap.plan, storeMap.state) && storeData.isStateDataReady(storeMap.subPlan, storeMap.state);
+    }
+    storeData.isStateDataReady = (planType, stateType) => {
+        return storeData.isModelDataReady(planType, stateType) && storeData.isGeojsonReady(planType, stateType);
+    }
+    storeData.isModelDataReady = (planType, stateType) => {
+        if (!storeData.modelData[planType]) return false;
+        if (!storeData.modelData[planType][stateType]) return false;
+        return true;
+    }
+    storeData.isGeojsonReady = (planType, stateType) => {
+        if (!storeData.geojson[planType]) return false;
+        if (!storeData.geojson[planType][stateType]) return false;
+        return true;
+    }
+    // STORE PAGE
+    storePage.isTabMatch = (tabType) => { return tabType === storePage.tab; }
+
+
 // --- API FUNCTIONS -----------------------------
-    store.apiGetStateGeojson = async (planType, stateType) =>
+    let apiGetStateGeojson = async (planType, stateType) =>
     {
-        // TODO : return saved data if the data already in the store.
+        // TODO : return saved data if the data already in the storeMap.
         // TODO : remove if server api ready;
         if (planType === PlanType.Y2020)
             return GeoData[stateType][GeoDataType.DISTRICT];
@@ -342,15 +301,15 @@ function StoreContextProvider(props) {
         return await api.getStateGeoJson(planType, stateType);
     }
 
-    store.apiGetStateData = async (planType, stateType) =>
+    let apiGetStateData = async (planType, stateType) =>
     {
-        // TODO : return saved data if the data already in the store.
+        // TODO : return saved data if the data already in the storeMap.
         // TODO : Change into api if server api ready.
         return createStateModel(MockData(planType).data[stateType]);
     }
 
     return (
-        <StoreContext.Provider value={{store}}>
+        <StoreContext.Provider value={{storeMap, storeData, storePage}}>
             {props.children}
         </StoreContext.Provider>
     )

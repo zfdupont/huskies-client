@@ -12,16 +12,16 @@ import MapBottomSlider from "./MapBottomSlider";
 
 export default function MapPanel()
 {
-    let {store} = useContext(StoreReducer);
+    let { storeMap } = useContext(StoreReducer);
     return (
         <div style={{position: 'absolute', width: 'calc(100% - 20px)', height:'calc(100% - 20px)', padding: '10px', display:'flex'}}>
             <Paper className="map" style={{flex:3.5, marginRight: '10px'}}>
                 <MainMap/>
-                {(store.map.state !== StateType.NONE) && <MapTopInfo/>}
-                {(store.map.state !== StateType.NONE) && <MapBottomSlider/>}
+                {(storeMap.state !== StateType.NONE) && <MapTopInfo/>}
+                {(storeMap.state !== StateType.NONE) && <MapBottomSlider/>}
             </Paper>
             <div style={{flex:1.5, backgroundColor:'white'}}>
-                {(store.map.state !== StateType.NONE) && <MapSideInfo/>}
+                {(storeMap.state !== StateType.NONE) && <MapSideInfo/>}
             </div>
         </div>
     );

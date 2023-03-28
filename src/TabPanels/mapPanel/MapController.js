@@ -1,4 +1,4 @@
-import {useContext, useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import L from "leaflet";
 import {useMap} from "react-leaflet";
 import StoreContext from '../../common/Store';
@@ -10,7 +10,7 @@ let currLayerGroups = {};
 
 export default function MapController()
 {
-    const { store } = useContext(StoreContext);
+    const { storeMap, storeData } = useContext(StoreContext);
     const [ viewState, setViewState ] = useState(StateType.NONE);
     const map = useMap(); // This is Hooks, not re-rendered.
 
@@ -43,16 +43,16 @@ export default function MapController()
     }
     function ViewSetup()
     {
-        if (store.map.state === StateType.NONE)
+        if (storeMap.isStateNone())
             SetCountryView();
         else
-            SetStateView(store.map.state);
+            SetStateView(storeMap.state);
     }
     function FilterSetup()
     {
-        if (store.map.state === StateType.NONE) return;
+        if (storeMap.isStateNone()) return;
 
-        store.map.filters.forEach((filterType) => {
+        storeMap.filters.forEach((filterType) => {
             let data = GetFilteredDistrictJson(filterType);
             let layerGroupType = filterToLayerGroup(filterType);
             let option = {style: MapProperty.state[filterToStyle(filterType)]};
@@ -61,16 +61,17 @@ export default function MapController()
     }
     function GetFilteredDistrictJson(filterType)
     {
-        let districtJson = GeoData[store.map.state][GeoDataType.DISTRICT];
+        let districtJson = GeoData[storeMap.state][GeoDataType.DISTRICT];
         let districtJsonCopy = JSON.parse(JSON.stringify(districtJson)); // deep copy.
-        let ids = store.data[store.map.plan][store.map.state];
+        let ids = storeMap[storeMap.plan][storeMap.state];
         ids = ids.getFilteredDistrictsID(filterType);
         return geoJsonHelper.getDistrictJsonByIDs(districtJsonCopy, ids);
     }
     // --- EVENT HANDLER -------------------------
     function OnStateClick(stateType)
     {
-        store.selectState(stateType);
+        storeMap.selectState(stateType);
+        storeData.addStateData(storeMap.plan, stateType);
     }
     function OnDistrictClick(feature, layer)
     {
@@ -79,7 +80,7 @@ export default function MapController()
     function ZoomToLayer(layer)
     {
         let size = GetBoundsSize(layer.getBounds());
-        if (size > 250000) { return map.flyTo(layer.getBounds().getCenter(), 7); }
+        if (size > 250000) { return map.flyTo(layer.getBounds().getCenter(), 7);}
         if (size > 100000) { return map.flyTo(layer.getBounds().getCenter(), 8);}
         if (size > 50000) { return map.flyTo(layer.getBounds().getCenter(), 9);}
         if (size > 30000) { return map.flyTo(layer.getBounds().getCenter(), 10);}
@@ -103,7 +104,7 @@ export default function MapController()
 
     function ApplyMixingValueToStyle(stateType, style)
     {
-        // if (stateType === store.getMap)
+        // if (stateType === storeMap.getMap)
     }
 
     // --- MAP VIEW CONTROLLER. --------------------
@@ -114,15 +115,16 @@ export default function MapController()
     }
     function SetStateView(stateType)
     {
-        if (!store.isStateDataReady()) return;
+        console.log("SetStateView");
+        if (!storeData.isReadyToDisplayCurrentMap()) return;
 
-        if (store.isPlanSelected())
+        if (storeMap.isPlanSelected())
         {
-            AddStateDistrictLayer(store.getMapPlan(), stateType);
+            AddStateDistrictLayer(storeMap.getMapPlan(), stateType);
         }
-        if (store.isSubPlanSelected())
+        if (storeMap.isSubPlanSelected())
         {
-            AddStateDistrictLayer(store.getMapSubPlan(), stateType);
+            AddStateDistrictLayer(storeMap.getMapSubPlan(), stateType);
         }
         SetFocus(stateType);
     }
@@ -149,7 +151,7 @@ export default function MapController()
                 OnDistrictClick(feature, layer);
             })}
         };
-        AddGeoJsonLayer(store.getCurrentStateGeojson(planType), LayerGroupType.STATE_DEFAULT, option);
+        AddGeoJsonLayer(storeData.getCurrentStateGeojson(planType), LayerGroupType.STATE_DEFAULT, option);
     }
 
     function AddTileLayer(layerType, isLayerGroup, option = {}){

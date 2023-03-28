@@ -6,11 +6,11 @@ import MapController from "./MapController";
 
 export default function MainMap()
 {
-    const { store } = useContext(StoreContext);
+    const { storeMap } = useContext(StoreContext);
     return (
         <MapContainer id='map-container' center={[40.35, -97.5]} zoom={4.3} scrollWheelZoom={true}>
-            {store.isPlanSelected() && <MapController/>}
-            {!store.isPlanSelected() && <div style={{display:"flex", justifyContent: 'center'}}>The Plan is not selected</div>}
+            {storeMap.isPlanSelected() && <MapController/>}
+            {!storeMap.isPlanSelected() && <div style={{display:"flex", justifyContent: 'center'}}>The Plan is not selected</div>}
         </MapContainer>
     )
 }

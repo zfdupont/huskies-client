@@ -19,12 +19,12 @@ const TableButtonType = {
 }
 export default function SideTest()
 {
-    const { store } = useContext(StoreContext);
+    const { storeMap } = useContext(StoreContext);
     const [ state, setState ] = useState({
         selectedTableMenu: TableButtonType.NONE,
     });
     useEffect(() => {
-        if (store.isSubPlanSelected())
+        if (storeMap.isSubPlanSelected())
         {
             onTableMenuClicked(TableButtonType.PREVIOUS);
         }
@@ -36,11 +36,11 @@ export default function SideTest()
     }
 
     let tableMenu = null;
-    if (store.isSubPlanSelected())
+    if (storeMap.isSubPlanSelected())
     {
         const buttons = [
-            <Button variant={ButtonToggle[TableButtonType.PREVIOUS === state.selectedTableMenu]} onClick={() => onTableMenuClicked(TableButtonType.PREVIOUS)}>{store.getMapPlan()}</Button>,
-            <Button variant={ButtonToggle[TableButtonType.AFTER === state.selectedTableMenu]} onClick={() => onTableMenuClicked(TableButtonType.AFTER)}>{store.getMapSubPlan()}</Button>,
+            <Button variant={ButtonToggle[TableButtonType.PREVIOUS === state.selectedTableMenu]} onClick={() => onTableMenuClicked(TableButtonType.PREVIOUS)}>{storeMap.getMapPlan()}</Button>,
+            <Button variant={ButtonToggle[TableButtonType.AFTER === state.selectedTableMenu]} onClick={() => onTableMenuClicked(TableButtonType.AFTER)}>{storeMap.getMapSubPlan()}</Button>,
             <Button variant={ButtonToggle[TableButtonType.COMPARE === state.selectedTableMenu]} onClick={() => onTableMenuClicked(TableButtonType.COMPARE)}>Compare</Button>,
         ];
 
@@ -68,7 +68,7 @@ export default function SideTest()
     return (
         <Paper style={{display: 'flex', flexFlow: "column", position:'relative', width:'100%', height:'100%'}}>
             <div style={{display:'flex', flex: "0", justifyContent: 'center'}}>
-                {store.isSubPlanSelected() && tableMenu}
+                {storeMap.isSubPlanSelected() && tableMenu}
             </div>
             <div style={{display:'flex', flex: "0 1 50px", marginBottom:'10px'}}>
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 1.2,  fontSize:'12px', color:'grey'}}>Districts</div>

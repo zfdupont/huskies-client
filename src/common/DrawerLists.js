@@ -10,12 +10,12 @@ import {TabType} from "./Enums";
 
 export default function DrawerLists()
 {
-    const {store} = useContext(StoreContext);
+    const { storeMap, storePage } = useContext(StoreContext);
     return (
         <div>
             <PlanList/>
             <StateList/>
-            { !store.isStateNone() && store.isTabMatch(TabType.MAP) && <FilterList/>}
+            { !storeMap.isStateNone() && storePage.isTabMatch(TabType.MAP) && <FilterList/>}
         </div>
     );
 }
