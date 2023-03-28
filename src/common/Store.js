@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import {createContext, useEffect, useState} from 'react';
 import {StateType, FilterType, TabType, PlanType, GeoData, GeoDataType} from './Enums';
 import MockData from './MockData';
 import api from './api.js';
@@ -124,13 +124,16 @@ function StoreContextProvider(props) {
                     tab: store.tab,
                 })
             case StoreActionType.STATE_SELECT:
-                return setStore({
+                console.log("State selected");
+                setStore({
                     isReady: store.isReady,
                     map: createMapState(prev, payload.stateType, prev, prev, prev, prev),
                     data: store.data,
                     geojson: store.geojson,
                     tab: store.tab,
                 })
+                console.log(store);
+                return;
             case StoreActionType.STATE_UNSELECT:
                 return setStore({
                     isReady: store.isReady,
@@ -140,6 +143,8 @@ function StoreContextProvider(props) {
                     tab: store.tab,
                 })
             case StoreActionType.ADD_STATE_DATA:
+                console.log("Data added");
+                console.log(store.map);
                 return setStore({
                     isReady: store.isReady,
                     map: store.map,
@@ -231,18 +236,20 @@ function StoreContextProvider(props) {
     }
     store.selectState = async function(stateType)
     {
-        storeReducer({
-            type: StoreActionType.STATE_SELECT,
-            payload: {
-                stateType: stateType,
-            }
-        })
+        setTimeout(async () => {
+            storeReducer({
+                type: StoreActionType.STATE_SELECT,
+                payload: {
+                    stateType: stateType,
+                }
+            })
 
-        if (!store.isPlanSelected()) return; // None of Plan selected -> ERROR: Should not be called.
-        await store.addStateData(store.map.plan, stateType);
+            if (!store.isPlanSelected()) return; // None of Plan selected -> ERROR: Should not be called.
+            await store.addStateData(store.map.plan, stateType);
 
-        if (!store.isSubPlanSelected()) return;
-        await store.addStateData(store.map.subPlan, stateType);
+            if (!store.isSubPlanSelected()) return;
+            await store.addStateData(store.map.subPlan, stateType);
+        }, 0);
     }
 
     store.addStateData = async (planType, stateType) => {

@@ -13,7 +13,6 @@ import MapBottomSlider from "./MapBottomSlider";
 export default function MapPanel()
 {
     let {store} = useContext(StoreReducer);
-    console.log("MapPanel");
     return (
         <div style={{position: 'absolute', width: 'calc(100% - 20px)', height:'calc(100% - 20px)', padding: '10px', display:'flex'}}>
             <Paper className="map" style={{flex:3.5, marginRight: '10px'}}>

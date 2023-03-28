@@ -114,7 +114,6 @@ export default function MapController()
     }
     function SetStateView(stateType)
     {
-        console.log("Map controller : state view setup");
         if (!store.isStateDataReady()) return;
 
         if (store.isPlanSelected())
