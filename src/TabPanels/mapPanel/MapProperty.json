@@ -36,13 +36,13 @@
     },
     "demStyle": {
       "fill": true,
-      "fillOpacity": 0.6,
+      "fillOpacity": 1,
       "color": "#ff7675",
       "opacity": 0
     },
     "repStyle": {
       "fill": true,
-      "fillOpacity": 0.6,
+      "fillOpacity": 1,
       "color": "#0984e3",
       "opacity": 0
     },

@@ -55,14 +55,14 @@ export default function MapController()
         storeMap.filters.forEach((filterType) => {
             let data = GetFilteredDistrictJson(storeMap.plan, filterType);
             let layerGroupType = filterToLayerGroup(filterType);
-            let option = {style: MapProperty.state[filterToStyle(filterType)]};
+            let option = {style: ApplyMixingValueToStyle(storeMap.plan, MapProperty.state[filterToStyle(filterType)], true)};
             AddGeoJsonLayer(data, layerGroupType, option)
 
             if (!storeMap.isSubPlanSelected()) return;
 
             data = GetFilteredDistrictJson(storeMap.subPlan, filterType);
             layerGroupType = filterToLayerGroup(filterType);
-            option = {style: MapProperty.state[filterToStyle(filterType)]};
+            option = {style: ApplyMixingValueToStyle(storeMap.subPlan, MapProperty.state[filterToStyle(filterType)], true)};
             AddGeoJsonLayer(data, layerGroupType, option)
         })
     }
@@ -111,19 +111,14 @@ export default function MapController()
         })
     }
 
-    function ApplyMixingValueToStyle(planType, style)
+    function ApplyMixingValueToStyle(planType, style, applyFillOpacity = false)
     {
-        if (!storeMap.isSubPlanSelected()) return style;
+        if (!storeMap.isSubPlanSelected()) return style; // If no sub plan selected, remain the same.
 
-        console.log(storeMap.mixingValue);
-        if (storeMap.plan === planType)
-        {
-            style.opacity = Math.abs(storeMap.mixingValue - 50) * 2 / 100;
-        }
-        else
-        {
-            style.opacity = storeMap.mixingValue * 2 / 100;
-        }
+        let mValue = storeMap.mixingValue;
+        let opacity = (storeMap.subPlan === planType)? (100 - mValue) / 100 : mValue / 100;
+        style.opacity = opacity;
+        if (applyFillOpacity) style.fillOpacity = opacity;
         return style;
     }
 
