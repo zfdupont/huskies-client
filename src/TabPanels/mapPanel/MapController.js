@@ -53,18 +53,27 @@ export default function MapController()
         if (storeMap.isStateNone()) return;
 
         storeMap.filters.forEach((filterType) => {
-            let data = GetFilteredDistrictJson(filterType);
+            let data = GetFilteredDistrictJson(storeMap.plan, filterType);
             let layerGroupType = filterToLayerGroup(filterType);
             let option = {style: MapProperty.state[filterToStyle(filterType)]};
             AddGeoJsonLayer(data, layerGroupType, option)
+
+            if (!storeMap.isSubPlanSelected()) return;
+
+            data = GetFilteredDistrictJson(storeMap.subPlan, filterType);
+            layerGroupType = filterToLayerGroup(filterType);
+            option = {style: MapProperty.state[filterToStyle(filterType)]};
+            AddGeoJsonLayer(data, layerGroupType, option)
         })
     }
-    function GetFilteredDistrictJson(filterType)
+    function GetFilteredDistrictJson(planType, filterType)
     {
-        let districtJson = GeoData[storeMap.state][GeoDataType.DISTRICT];
+        if (!storeData.isGeojsonReady(planType, storeMap.getState())) return;
+
+        let districtJson = storeData.getStateGeoJson(planType, storeMap.getState());
         let districtJsonCopy = JSON.parse(JSON.stringify(districtJson)); // deep copy.
-        let ids = storeMap[storeMap.plan][storeMap.state];
-        ids = ids.getFilteredDistrictsID(filterType);
+        let stateModelData = storeData.getStateModelData(storeMap.plan, storeMap.state);
+        let ids = stateModelData.getFilteredDistrictsID(filterType);
         return geoJsonHelper.getDistrictJsonByIDs(districtJsonCopy, ids);
     }
     // --- EVENT HANDLER -------------------------
@@ -102,9 +111,20 @@ export default function MapController()
         })
     }
 
-    function ApplyMixingValueToStyle(stateType, style)
+    function ApplyMixingValueToStyle(planType, style)
     {
-        // if (stateType === storeMap.getMap)
+        if (!storeMap.isSubPlanSelected()) return style;
+
+        console.log(storeMap.mixingValue);
+        if (storeMap.plan === planType)
+        {
+            style.opacity = Math.abs(storeMap.mixingValue - 50) * 2 / 100;
+        }
+        else
+        {
+            style.opacity = storeMap.mixingValue * 2 / 100;
+        }
+        return style;
     }
 
     // --- MAP VIEW CONTROLLER. --------------------
@@ -115,7 +135,6 @@ export default function MapController()
     }
     function SetStateView(stateType)
     {
-        console.log("SetStateView");
         if (!storeData.isReadyToDisplayCurrentMap()) return;
 
         if (storeMap.isPlanSelected())
@@ -143,10 +162,10 @@ export default function MapController()
         // AddTileLayer(TileLayerType.PLACE_LABEL, true);
     }
 
-    function AddStateDistrictLayer(planType, stateType)
+    function AddStateDistrictLayer(planType)
     {
         let option = {
-            style: MapProperty.state.style,
+            style: ApplyMixingValueToStyle(planType, MapProperty.state.style),
             onEachFeature: (feature, layer) => { layer.on('click', () => {
                 OnDistrictClick(feature, layer);
             })}

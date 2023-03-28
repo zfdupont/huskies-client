@@ -1,10 +1,13 @@
 import * as React from 'react';
+import {useContext} from 'react';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import Typography from "@mui/material/Typography";
+import StoreContext from '../../common/Store';
 
 export default function MapBottomSlider()
 {
+    const { storeMap } = useContext(StoreContext);
     const marks = [
         {
             value: 0,
@@ -19,6 +22,7 @@ export default function MapBottomSlider()
     function onValueChange(event)
     {
         console.log(event.target.value);
+        storeMap.mixingValueChange(event.target.value);
     }
 
     return(

@@ -1,7 +1,7 @@
 import {createContext, useState} from 'react';
 import {StateType, TabType, PlanType, GeoData, GeoDataType} from './Enums';
 import MockData from './MockData';
-import api from './api.js';
+import api, {getStateGeoJson} from './api.js';
 import {createStateModel} from "./ConversionHelper";
 export const StoreContext = createContext({});
 
@@ -55,7 +55,7 @@ function StoreContextProvider(props) {
             prevState: storeMap.state,
             filters: (filters !== undefined)? filters : storeMap.filters,
             district: district,
-            mixingValue: (filters !== undefined)? mixingValue : storeMap.mixingValue,
+            mixingValue: (mixingValue !== undefined)? mixingValue : storeMap.mixingValue,
         }
     }
     function createDataState(planType, stateType, modelData, geojson)
@@ -224,8 +224,9 @@ function StoreContextProvider(props) {
         })
     }
 
-    storeMap.onMapMixingValueChange = function(value)
+    storeMap.mixingValueChange = function(value)
     {
+        console.log(value);
         storeMapReducer({
             type: MapActionType.MIXING_VALUE_CHANGE,
             payload: {value: value},
@@ -262,13 +263,16 @@ function StoreContextProvider(props) {
     // STORE MAP
     storeMap.getMapPlan = () => { return storeMap.plan; }
     storeMap.getMapSubPlan = () => { return storeMap.subPlan; }
+    storeMap.getState = () => { return storeMap.state; }
     storeMap.isStateChanged = () => { return storeMap.state !== storeMap.prevState; }
     storeMap.isStateNone = () => { return storeMap.state === StateType.NONE; }
     storeMap.isStateMatch = (stateType) => { return stateType === storeMap.state; }
     storeMap.isSubPlanSelected = () => { return storeMap.subPlan !== null; }
     storeMap.isPlanSelected = () => { return storeMap.plan !== null; }
     // STORE DATA
-    storeData.getCurrentStateGeojson = (planType) => { return storeData.geojson[planType][storeMap.state]}
+    storeData.getStateGeoJson = (planType, stateType) => { return storeData.geojson[planType][stateType]};
+    storeData.getStateModelData = (planType, stateType) => { return storeData.modelData[planType][stateType]};
+    storeData.getCurrentStateGeojson = (planType) => { return storeData.geojson[planType][storeMap.state]};
     storeData.isReadyToDisplayCurrentMap = () => {
         if (!storeMap.isSubPlanSelected()) return storeData.isStateDataReady(storeMap.plan, storeMap.state);
         return storeData.isStateDataReady(storeMap.plan, storeMap.state) && storeData.isStateDataReady(storeMap.subPlan, storeMap.state);
