@@ -8,6 +8,8 @@ import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Star from '@mui/icons-material/Star';
+import LooksOneOutlinedIcon from '@mui/icons-material/LooksOneOutlined';
+import LooksTwoOutlinedIcon from '@mui/icons-material/LooksTwoOutlined';
 import StoreContext from './Store';
 import {PlanType} from "./Enums";
 
@@ -29,11 +31,13 @@ export default function NestedList() {
     for (const planKey in PlanType)
     {
         let planType = PlanType[planKey];
-        planButtons.push
-            // eslint-disable-next-line no-loop-func
-        (<ListItemButton key={planType} selected={isPlanSelected(planType)} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
-            <ListItemText primary={planType} primaryTypographyProps={{fontSize: "12px"}}  />
-        </ListItemButton>)
+        planButtons.push(
+            <ListItemButton key={planType} selected={isPlanSelected(planType)} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
+                <ListItemText primary={planType} primaryTypographyProps={{fontSize: "12px"}}  />
+                {(storeMap.getMapPlan() === planType) && <LooksOneOutlinedIcon color="primary" />}
+                {(storeMap.getMapSubPlan() === planType) && <LooksTwoOutlinedIcon color="success" />}
+            </ListItemButton>
+        )
     }
 
     function getListTitle()
