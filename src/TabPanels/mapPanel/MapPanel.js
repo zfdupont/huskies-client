@@ -17,11 +17,11 @@ export default function MapPanel()
         <div style={{position: 'absolute', width: 'calc(100% - 20px)', height:'calc(100% - 20px)', padding: '10px', display:'flex'}}>
             <Paper className="map" style={{flex:3.5, marginRight: '10px'}}>
                 <MainMap/>
-                {(storeMap.state !== StateType.NONE) && <MapTopInfo/>}
-                {(storeMap.state !== StateType.NONE) && <MapBottomSlider/>}
+                {(!storeMap.isStateNone()) && <MapTopInfo/>}
+                {(!storeMap.isStateNone()) && (storeMap.isSubPlanSelected()) && <MapBottomSlider/>}
             </Paper>
             <div style={{flex:1.5, backgroundColor:'white'}}>
-                {(storeMap.state !== StateType.NONE) && <MapSideInfo/>}
+                {(!storeMap.isStateNone()) && <MapSideInfo/>}
             </div>
         </div>
     );

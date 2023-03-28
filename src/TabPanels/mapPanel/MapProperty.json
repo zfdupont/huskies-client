@@ -37,13 +37,13 @@
     "demStyle": {
       "fill": true,
       "fillOpacity": 1,
-      "color": "#ff7675",
+      "color": "#d62000",
       "opacity": 0
     },
     "repStyle": {
       "fill": true,
       "fillOpacity": 1,
-      "color": "#0984e3",
+      "color": "#0020e3",
       "opacity": 0
     },
     "NY": {

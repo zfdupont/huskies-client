@@ -44,7 +44,6 @@ function StoreContextProvider(props) {
     const [storePage, setStorePage] = useState({
         tab: TabType.MAP
     })
-    console.log("Store");
 // --- STATE HELPER ---------------------------------
     function createMapState(plan, stateType, subPlan, filters, district, mixingValue)
     {
@@ -171,7 +170,6 @@ function StoreContextProvider(props) {
 
     storeMap.selectState = async function(stateType)
     {
-        console.log("state selected")
         storeMapReducer({
             type: MapActionType.STATE_SELECT,
             payload: {
@@ -226,7 +224,6 @@ function StoreContextProvider(props) {
 
     storeMap.mixingValueChange = function(value)
     {
-        console.log(value);
         storeMapReducer({
             type: MapActionType.MIXING_VALUE_CHANGE,
             payload: {value: value},

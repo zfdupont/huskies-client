@@ -18,17 +18,16 @@ export default function MapBottomSlider()
     const marks = [
         {
             value: 0,
-            label: <Typography style={{ fontSize: 14, fontWeight: 700, color:"black"}}>2020</Typography>,
+            label: <Typography style={{ fontSize: 14, fontWeight: 700, color:"black"}}>{storeMap.getMapSubPlan()}</Typography>,
         },
         {
             value: 100,
-            label: <Typography style={{ fontSize: 14, fontWeight: 700, color:"black" }}>2022</Typography>,
+            label: <Typography style={{ fontSize: 14, fontWeight: 700, color:"black" }}>{storeMap.getMapPlan()}</Typography>,
         },
     ];
 
     function onValueChange(event)
     {
-        console.log(event.target.value);
         storeMap.mixingValueChange(event.target.value);
     }
 
