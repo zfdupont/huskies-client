@@ -238,7 +238,8 @@ function StoreContextProvider(props) {
 
 // --- STORE DATA FUNCTIONS -----------------------------
     storeData.addStateData = async (planType, stateType) => {
-        // if the state is already selected -> request data.
+        if (storeData.isStateDataReady(planType, stateType)) return;
+
         let geojson =  await apiGetStateGeojson(planType, stateType);
         let modelData =  await apiGetStateData(planType, stateType);
 

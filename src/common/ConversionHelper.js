@@ -45,12 +45,12 @@ export function createDistrictModel(districtJsonData)
 {
     return new DistrictModel(
         districtJsonData.id,
+        districtJsonData.democratsCandidate,
+        districtJsonData.republicanCandidate,
+        districtJsonData.incumbent,
         districtJsonData.party,
-        createDemographicModel(districtJsonData.population, districtJsonData.votes)
+        districtJsonData.votes,
+        districtJsonData.population,
     )
-}
-export function createDemographicModel(populationJsonData, votesJsonData)
-{
-    return new DemographicModel(populationJsonData,votesJsonData)
 }
 

@@ -17,27 +17,26 @@ const TableButtonType = {
     AFTER: "after",
     COMPARE: "compare",
 }
+
+
 export default function SideTest()
 {
-    const { storeMap } = useContext(StoreContext);
+    const { storeMap, storeData } = useContext(StoreContext);
     const [ state, setState ] = useState({
         selectedTableMenu: TableButtonType.NONE,
     });
-    useEffect(() => {
-        if (storeMap.isSubPlanSelected())
-        {
-            onTableMenuClicked(TableButtonType.PREVIOUS);
-        }
-    }, [])
 
-    const districts = []; 
-    for(let i = 1; i <= 27; ++i){
-        districts.push(<MapSideItem key={i} id={i}/>)
-    }
+    let districtInfo = [];
+    if (storeData.isReadyToDisplayCurrentMap())
+        districtInfo = getDistrictInfo();
 
-    let tableMenu = null;
+
+    let tableMenu;
     if (storeMap.isSubPlanSelected())
     {
+        if (state.selectedTableMenu === TableButtonType.NONE)
+            setState({selectedTableMenu: TableButtonType.PREVIOUS});
+
         const buttons = [
             <Button variant={ButtonToggle[TableButtonType.PREVIOUS === state.selectedTableMenu]} onClick={() => onTableMenuClicked(TableButtonType.PREVIOUS)}>{storeMap.getMapPlan()}</Button>,
             <Button variant={ButtonToggle[TableButtonType.AFTER === state.selectedTableMenu]} onClick={() => onTableMenuClicked(TableButtonType.AFTER)}>{storeMap.getMapSubPlan()}</Button>,
@@ -61,6 +60,24 @@ export default function SideTest()
         </Box>
     }
 
+    function getDistrictInfo()
+    {
+        const districts = [];
+        const planType = getPlanTypeByButtonType(state.selectedTableMenu);
+        let stateModelData = storeData.getStateModelData(planType, storeMap.getState());
+        for (let id in stateModelData.districts)
+        {
+            districts.push(<MapSideItem districtModelData={stateModelData.districts[id]}/>)
+        }
+        return districts;
+    }
+    function getPlanTypeByButtonType(tableButtonType)
+    {
+        if (tableButtonType === TableButtonType.NONE) return storeMap.getMapPlan();
+        if (tableButtonType === TableButtonType.PREVIOUS) return storeMap.getMapSubPlan();
+        if (tableButtonType === TableButtonType.AFTER) return storeMap.getMapPlan();
+    }
+
     let onTableMenuClicked = (tableButtonType) => {
         setState({selectedTableMenu: tableButtonType});
     }
@@ -79,7 +96,7 @@ export default function SideTest()
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 0.15,  fontSize:'12px', color:'grey'}}></div>
             </div>
             <div style={{position:'relative', display:'flex', flexFlow: 'column', flex: '1 1 auto', backgroundColor:'white', overflowY: 'scroll'}}>
-                {districts}
+                {districtInfo}
             </div>
         </Paper>
     );
