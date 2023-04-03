@@ -57,7 +57,7 @@ export default function MapSideItem(props)
             <div style={{display:'flex', flexFlow:'column', flex: 4, fontSize:'12px'}}>
                 <div style={{display: 'flex', flex:1}}>
                     <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1.5, fontWeight:'600', color:'white', backgroundColor: colors[winId]}}>
-                        {candidates[winId]}{partyInitials[winId]}
+                        {candidates[winId]} {partyInitials[winId]}
                     </div>
                     <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 10px'}}>
                         {(candidates[winId] === model.incumbent) && "v"}
@@ -73,7 +73,7 @@ export default function MapSideItem(props)
                 <div style={{flex:'0 0 1px', backgroundColor:'darkgray'}}></div>
                 <div style={{display:'flex', flex:1}}>
                     <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1.5, fontWeight:'400', color:'black'}}>
-                        {candidates[winId]}{partyInitials[winId]}
+                        {candidates[loseId]} {partyInitials[loseId]}
                     </div>
                     <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 10px'}}>
                         {(candidates[loseId] === model.incumbent) && "v"}
