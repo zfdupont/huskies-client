@@ -123,6 +123,7 @@ export default function SideTest()
     }
     function getPlanTypeByButtonType(tableButtonType)
     {
+        if (!storeMap.isSubPlanSelected()) return storeMap.getMapPlan();
         if (tableButtonType === TableButtonType.NONE) return storeMap.getMapPlan();
         if (tableButtonType === TableButtonType.PREVIOUS) return storeMap.getMapSubPlan();
         if (tableButtonType === TableButtonType.AFTER) return storeMap.getMapPlan();
