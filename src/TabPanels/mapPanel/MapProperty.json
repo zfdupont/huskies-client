@@ -32,18 +32,18 @@
       "fillOpacity": 0,
       "color": "black",
       "weight": 2,
-      "opacity": 0.5
+      "opacity": 1
     },
     "demStyle": {
       "fill": true,
-      "fillOpacity": 0.6,
-      "color": "#ff7675",
+      "fillOpacity": 1,
+      "color": "#d62000",
       "opacity": 0
     },
     "repStyle": {
       "fill": true,
-      "fillOpacity": 0.6,
-      "color": "#0984e3",
+      "fillOpacity": 1,
+      "color": "#0020e3",
       "opacity": 0
     },
     "NY": {

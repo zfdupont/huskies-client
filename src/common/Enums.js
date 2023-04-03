@@ -12,6 +12,13 @@ export const TabType = {
     ANALYZE: "analyze",
 }
 
+// New plan type can be added in the runtime. Y = Year, S = Simulation.
+export let PlanType = {
+    Y2022: "2022",
+    Y2020: "2020",
+    S1423: "#1423",
+}
+
 export const StateType = {
     NONE: "none",
     NEWYORK: "NY",

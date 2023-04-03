@@ -16,7 +16,7 @@ import StoreContext from "./Store";
 import {FilterType} from './Enums';
 
 export default function NestedList() {
-    const { store } = useContext(StoreContext);
+    const { storeMap }= useContext(StoreContext);
     const [open, setOpen] = React.useState(true);
     const label = { inputProps: { 'aria-label': 'Switch demo' } };
     const onListClick = () => {
@@ -24,7 +24,7 @@ export default function NestedList() {
     };
 
     const onToggle = (e, filterType) => {
-        (e.target.checked)? store.addFilter(filterType) : store.removeFilter(filterType)
+        (e.target.checked)? storeMap.addFilter(filterType) : storeMap.removeFilter(filterType)
     };
 
     return (

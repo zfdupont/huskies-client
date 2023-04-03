@@ -1,16 +1,16 @@
-import {useContext, useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import L from "leaflet";
 import {useMap} from "react-leaflet";
 import StoreContext from '../../common/Store';
 import MapProperty from './MapProperty.json';
 import {TileLayerType, LayerGroupType, GeoData, GeoDataType, StateTypeList, StateType} from '../../common/Enums';
 import geoJsonHelper from '../../common/GeoJsonHelper';
-import convertType from '../../common/ConversionHelper';
+import {filterToLayerGroup, filterToStyle} from "../../common/ConversionHelper";
 let currLayerGroups = {};
 
 export default function MapController()
 {
-    const { store } = useContext(StoreContext);
+    const { storeMap, storeData } = useContext(StoreContext);
     const [ viewState, setViewState ] = useState(StateType.NONE);
     const map = useMap(); // This is Hooks, not re-rendered.
 
@@ -43,34 +43,44 @@ export default function MapController()
     }
     function ViewSetup()
     {
-        if (store.map.state === StateType.NONE)
+        if (storeMap.isStateNone())
             SetCountryView();
         else
-            SetStateView(store.map.state);
+            SetStateView(storeMap.state);
     }
     function FilterSetup()
     {
-        if (store.map.state === StateType.NONE) return;
+        if (storeMap.isStateNone()) return;
 
-        store.map.filters.forEach((filterType) => {
-            let data = GetFilteredDistrictJson(filterType);
-            let layerGroupType = convertType.filterToLayerGroup(filterType);
-            let option = {style: MapProperty.state[convertType.filterToStyle(filterType)]};
+        storeMap.filters.forEach((filterType) => {
+            let data = GetFilteredDistrictJson(storeMap.plan, filterType);
+            let layerGroupType = filterToLayerGroup(filterType);
+            let option = {style: ApplyMixingValueToStyle(storeMap.plan, MapProperty.state[filterToStyle(filterType)], true)};
+            AddGeoJsonLayer(data, layerGroupType, option)
+
+            if (!storeMap.isSubPlanSelected()) return;
+
+            data = GetFilteredDistrictJson(storeMap.subPlan, filterType);
+            layerGroupType = filterToLayerGroup(filterType);
+            option = {style: ApplyMixingValueToStyle(storeMap.subPlan, MapProperty.state[filterToStyle(filterType)], true)};
             AddGeoJsonLayer(data, layerGroupType, option)
         })
     }
-    function GetFilteredDistrictJson(filterType)
+    function GetFilteredDistrictJson(planType, filterType)
     {
-        let districtJson = GeoData[store.map.state][GeoDataType.DISTRICT];
+        if (!storeData.isGeojsonReady(planType, storeMap.getState())) return;
+
+        let districtJson = storeData.getStateGeoJson(planType, storeMap.getState());
         let districtJsonCopy = JSON.parse(JSON.stringify(districtJson)); // deep copy.
-        let ids = store.data[store.map.plan][store.map.state];
-        ids = ids.getFilteredDistrictsID(filterType);
+        let stateModelData = storeData.getStateModelData(storeMap.plan, storeMap.state);
+        let ids = stateModelData.getFilteredDistrictsID(filterType);
         return geoJsonHelper.getDistrictJsonByIDs(districtJsonCopy, ids);
     }
     // --- EVENT HANDLER -------------------------
     function OnStateClick(stateType)
     {
-        store.selectState(stateType);
+        storeMap.selectState(stateType);
+        storeData.addStateData(storeMap.plan, stateType);
     }
     function OnDistrictClick(feature, layer)
     {
@@ -79,7 +89,7 @@ export default function MapController()
     function ZoomToLayer(layer)
     {
         let size = GetBoundsSize(layer.getBounds());
-        if (size > 250000) { return map.flyTo(layer.getBounds().getCenter(), 7); }
+        if (size > 250000) { return map.flyTo(layer.getBounds().getCenter(), 7);}
         if (size > 100000) { return map.flyTo(layer.getBounds().getCenter(), 8);}
         if (size > 50000) { return map.flyTo(layer.getBounds().getCenter(), 9);}
         if (size > 30000) { return map.flyTo(layer.getBounds().getCenter(), 10);}
@@ -101,6 +111,17 @@ export default function MapController()
         })
     }
 
+    function ApplyMixingValueToStyle(planType, style, applyFillOpacity = false)
+    {
+        if (!storeMap.isSubPlanSelected()) return style; // If no sub plan selected, remain the same.
+        let styleCopy = JSON.parse(JSON.stringify(style));
+        let mValue = storeMap.mixingValue;
+        let opacity = (storeMap.subPlan === planType)? (100 - mValue) / 100 : mValue / 100;
+        styleCopy.opacity = opacity;
+        if (applyFillOpacity) styleCopy.fillOpacity = opacity;
+        return styleCopy;
+    }
+
     // --- MAP VIEW CONTROLLER. --------------------
     function SetCountryView()
     {
@@ -109,7 +130,16 @@ export default function MapController()
     }
     function SetStateView(stateType)
     {
-        AddStateDefaultLayer(stateType);
+        if (!storeData.isReadyToDisplayCurrentMap()) return;
+
+        if (storeMap.isPlanSelected())
+        {
+            AddStateDistrictLayer(storeMap.getMapPlan(), stateType);
+        }
+        if (storeMap.isSubPlanSelected())
+        {
+            AddStateDistrictLayer(storeMap.getMapSubPlan(), stateType);
+        }
         SetFocus(stateType);
     }
 
@@ -127,16 +157,15 @@ export default function MapController()
         // AddTileLayer(TileLayerType.PLACE_LABEL, true);
     }
 
-    function AddStateDefaultLayer(stateType)
+    function AddStateDistrictLayer(planType)
     {
         let option = {
-            style: MapProperty.state.style,
+            style: ApplyMixingValueToStyle(planType, MapProperty.state.style),
             onEachFeature: (feature, layer) => { layer.on('click', () => {
                 OnDistrictClick(feature, layer);
             })}
         };
-        // AddGeoJsonLayer(GeoData[stateType][GeoDataType.DISTRICT], LayerGroupType.STATE_DEFAULT, option);
-        AddGeoJsonLayer(store.getCurrentStateGeojson(), LayerGroupType.STATE_DEFAULT, option);
+        AddGeoJsonLayer(storeData.getCurrentStateGeojson(planType), LayerGroupType.STATE_DEFAULT, option);
     }
 
     function AddTileLayer(layerType, isLayerGroup, option = {}){

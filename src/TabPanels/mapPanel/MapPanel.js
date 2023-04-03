@@ -8,19 +8,20 @@ import MapSideInfo from "./MapSideInfo";
 import MapTopInfo from "./MapTopInfo";
 import StoreReducer from '../../common/Store';
 import {StateType} from "../../common/Enums";
+import MapBottomSlider from "./MapBottomSlider";
 
 export default function MapPanel()
 {
-    let {store} = useContext(StoreReducer);
-    console.log("MapPanel");
+    let { storeMap } = useContext(StoreReducer);
     return (
         <div style={{position: 'absolute', width: 'calc(100% - 20px)', height:'calc(100% - 20px)', padding: '10px', display:'flex'}}>
             <Paper className="map" style={{flex:3.5, marginRight: '10px'}}>
                 <MainMap/>
-                {(store.map.state !== StateType.NONE) && <MapTopInfo/>}
+                {(!storeMap.isStateNone()) && <MapTopInfo/>}
+                {(!storeMap.isStateNone()) && (storeMap.isSubPlanSelected()) && <MapBottomSlider/>}
             </Paper>
             <div style={{flex:1.5, backgroundColor:'white'}}>
-                {(store.map.state !== StateType.NONE) && <MapSideInfo/>}
+                {(!storeMap.isStateNone()) && <MapSideInfo/>}
             </div>
         </div>
     );

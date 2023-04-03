@@ -18,9 +18,9 @@ export default function MockData(plan="2020") {
             districtObj[i.toString()] = {
                 "id": i,
                 "name": name,
-                "DemocratsCandidate": "NameDemCand",
-                "RepublicanCandidate": "NameRepCand",
-                "Incumbent": "NameDemCandidate",
+                "democratsCandidate": "NameCand1",
+                "republicanCandidate": "NameCand2",
+                "incumbent": "NameCand1",
                 "party": (blueVotes > redVotes ? "democrat" : "republican"),
                 "votes": {
                     "total": totalVotes,
@@ -42,9 +42,9 @@ export default function MockData(plan="2020") {
     return {
         plan: plan,
         data: {
-            "newyork": {name:'newyork', districts: generateDistricts(26, "newyork")},
-            "illinois": {name:'newyork', districts: generateDistricts(17, "illinois")},
-            "georgia": {name:'newyork', districts: generateDistricts(14, "georgia")}
+            "NY": {name:'newyork', districts: generateDistricts(26, "newyork")},
+            "GA": {name:'Georgia', districts: generateDistricts(17, "georgia")},
+            "IL": {name:'Illinois', districts: generateDistricts(14, "illinois")}
         }
     }    
 }

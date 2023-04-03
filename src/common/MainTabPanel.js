@@ -43,7 +43,7 @@ function a11yProps(index) {
 }
 
 export default function BasicPanel() {
-    const {store} = useContext(StoreContext);
+    const { storeMap } = useContext(StoreContext);
     const [value, setValue] = React.useState(0);
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -51,7 +51,7 @@ export default function BasicPanel() {
 
     function onTabClick(tabType)
     {
-        store.selectTab(tabType);
+        storeMap.selectTab(tabType);
     }
 
     return (
