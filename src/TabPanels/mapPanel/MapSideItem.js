@@ -46,26 +46,26 @@ export default function MapSideItem(props)
     }
 
     return (
-        <div id="map-side-item" style={{display:'flex', flex: '0 0 60px', margin: '0px 5px 5px 5px', backgroundColor: bgColor, padding:"5px", borderRadius: '10px'}} onClick={onItemClick}>
+        <div id="map-side-item" style={{display:'flex', flex: '0 0 50px', margin: '0px 5px 5px 5px', backgroundColor: bgColor, padding:"5px", borderRadius: '10px'}} onClick={onItemClick}>
             <div style={{display:'flex', flexFlow: 'column', flex: 1}}>
-                <div style={{display:'flex', flex: '3', alignItems:'center', justifyContent: 'center', fontSize: '20px', fontWeight: '900'}}>
+                <div style={{display:'flex', flex: '3', alignItems:'center', justifyContent: 'center', fontSize: '16px', fontWeight: '900'}}>
                     {numToPlace(model.id)}
                 </div>
                 <div style={{display:'flex', alignItems:'center', justifyContent:'center', flex: 1.5}}>
-                    <div style={{position: 'relative', display:'flex', alignItems:'center', justifyContent:'center', width:'18px', height:'18px', marginRight: 5, color: 'black', fontSize:'12px', borderRadius: '5px', border: 'solid 1px black'}}>
+                    <div style={{position: 'relative', display:'flex', alignItems:'center', justifyContent:'center', width:'15px', height:'15px', marginRight: 5, color: 'black', fontSize:'10px', borderRadius: '5px', border: 'solid 1px black'}}>
                         +2
                     </div>
-                    <div style={{position: 'relative', display:'flex', alignItems:'center', justifyContent:'center', width:'18px', height:'18px', marginLeft: 5, color: 'black', fontSize:'12px', borderRadius: '5px', border: 'solid 1px black'}}>
+                    <div style={{position: 'relative', display:'flex', alignItems:'center', justifyContent:'center', width:'15px', height:'15px', marginLeft: 5, color: 'black', fontSize:'10px', borderRadius: '5px', border: 'solid 1px black'}}>
                         -3
                     </div>
                 </div>
-                <div style={{display:'flex', alignItems:'center', justifyContent:'center', flex: 1.5, fontSize: '12px'}}>
+                <div style={{display:'flex', alignItems:'center', justifyContent:'center', flex: 1.5, fontSize: '10px'}}>
                     Precinct
                 </div>
             </div>
             <div style={{flex: '0 0 1px', backgroundColor:'darkgray'}}/>
             <div style={{flex: '0 0 10px'}}/>
-            <div style={{display:'flex', flexFlow:'column', flex: 4, fontSize:'12px'}}>
+            <div style={{display:'flex', flexFlow:'column', flex: 4, fontSize:'10px'}}>
                 <div style={{display: 'flex', flex:1}}>
                     <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1.5, fontWeight:'600', color:'white', backgroundColor: colors[winId]}}>
                         {candidates[winId]} {partyInitials[winId]}

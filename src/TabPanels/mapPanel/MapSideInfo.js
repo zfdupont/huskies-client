@@ -120,7 +120,7 @@ export default function SideTest()
                 <Button variant={ButtonToggle[TableButtonType.AFTER === state.selectedTableMenu]}
                         onClick={() => onTableMenuClicked(TableButtonType.AFTER)}>{storeMap.getMapSubPlan()}</Button>,
                 <Button variant={ButtonToggle[TableButtonType.COMPARE === state.selectedTableMenu]}
-                        onClick={() => onTableMenuClicked(TableButtonType.COMPARE)}>{compareText}</Button>,
+                        onClick={() => onTableMenuClicked(TableButtonType.COMPARE)}>2020 -> {storeMap.getMapPlan()}</Button>,
             ];
 
             return(
@@ -158,7 +158,7 @@ export default function SideTest()
         if (infoItem)
         {
             infoItem.scrollIntoView({behavior: "smooth"});
-        }//
+        }
     }
 
 
