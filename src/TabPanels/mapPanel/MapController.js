@@ -24,6 +24,7 @@ export default function MapController()
     {
         RemoveAllLayer();
         FilterSetup();
+        HighlightSetup();
         ViewSetup();
     }
     // --- SETUP ---------------------------
@@ -66,6 +67,25 @@ export default function MapController()
             AddGeoJsonLayer(data, layerGroupType, option)
         })
     }
+
+    function HighlightSetup()
+    {
+        if (
+            !storeData.isReadyToDisplayCurrentMap() ||
+            storeMap.isStateNone() ||
+            storeMap.getHighlightDistrictId() === -1
+        ) return;
+
+        let geojson = storeData.getStateGeoJson(storeMap.getMapPlan(), storeMap.getState())
+        let geojsonCopy = JSON.parse(JSON.stringify(geojson))
+        let selectedDistrictJson = geoJsonHelper.getDistrictJsonByIDs(geojsonCopy, [storeMap.getHighlightDistrictId()])
+        let option = {style: MapProperty.state["highlight"]}
+        let layerGroup = AddGeoJsonLayer(selectedDistrictJson, LayerGroupType.HIGHLIGHT, option);
+        let innerLayers = layerGroup.getLayers()[0]._layers
+        let key = Object.keys(innerLayers)[0];
+        ZoomToLayer(innerLayers[key])
+
+    }
     function GetFilteredDistrictJson(planType, filterType)
     {
         if (!storeData.isGeojsonReady(planType, storeMap.getState())) return;
@@ -85,9 +105,11 @@ export default function MapController()
     function OnDistrictClick(feature, layer)
     {
         ZoomToLayer(layer);
+        storeMap.highlightDistrict(feature.properties.district_id);
     }
     function ZoomToLayer(layer)
     {
+        if (!layer) return 7;
         let size = GetBoundsSize(layer.getBounds());
         if (size > 250000) { return map.flyTo(layer.getBounds().getCenter(), 7);}
         if (size > 100000) { return map.flyTo(layer.getBounds().getCenter(), 8);}
@@ -97,7 +119,10 @@ export default function MapController()
         if (size > 5000) { return map.flyTo(layer.getBounds().getCenter(), 12);}
         else return 13;
     }
-    let GetBoundsSize = (bounds) => bounds.getNorthEast().distanceTo(bounds.getNorthWest());
+    function GetBoundsSize(bounds) {
+        if (!bounds) return 999999;
+        return bounds.getNorthEast().distanceTo(bounds.getNorthWest());
+    }
 
     // --- HELPER FUNCTIONS ----------------------
 
@@ -183,6 +208,7 @@ export default function MapController()
             currLayerGroups[layerGroupType] = layerGroup;
         }
         L.geoJSON(geoData, option).addTo(layerGroup);
+        return layerGroup;
     }
 
     // --- MAP ZOOM/PIVOT CONTROLLER. --------------------
