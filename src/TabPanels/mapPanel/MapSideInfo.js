@@ -3,7 +3,7 @@ import {Paper} from "@mui/material";
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import {useContext, useEffect, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import StoreContext from "../../common/Store";
 import MapSideCompareItem from "./MapSideCompareItem";
 
@@ -21,9 +21,11 @@ const TableButtonType = {
 
 export default function SideTest()
 {
+    const infoTableRef = useRef();
     const { storeMap, storeData } = useContext(StoreContext);
     const [ state, setState ] = useState({
         selectedTableMenu: TableButtonType.NONE,
+        selectedDistrictId: -1,
     });
 
     let compareText = (state.selectedTableMenu === TableButtonType.COMPARE)? `${storeMap.getMapSubPlan()}->${storeMap.getMapPlan()}` : "Compare";
@@ -32,6 +34,23 @@ export default function SideTest()
     let districtInfo = getDistrictInfo();
     let compareInfo = getCompareInfo();
     let currentInfo = (state.selectedTableMenu === TableButtonType.COMPARE)? compareInfo : districtInfo;
+    selectedDistrictIdSetup();
+
+    function selectedDistrictIdSetup()
+    {
+        if (state.selectedDistrictId !== storeMap.getHighlightDistrictId())
+        {
+            setState(() => {
+                return {
+                    selectedTableMenu: state.selectedTableMenu,
+                    selectedDistrictId: storeMap.getHighlightDistrictId(),
+                }
+            })
+            infoScrollSetup();
+        }
+    }
+
+
     function getDistrictInfo()
     {
         const districts = [];
@@ -133,6 +152,16 @@ export default function SideTest()
         setState({selectedTableMenu: tableButtonType});
     }
 
+    function infoScrollSetup()
+    {
+        const infoItem = infoTableRef.current.children[storeMap.getHighlightDistrictId()-1];
+        if (infoItem)
+        {
+            infoItem.scrollIntoView({behavior: "smooth"});
+        }//
+    }
+
+
     return (
         <Paper style={{display: 'flex', flexFlow: "column", position:'relative', width:'100%', height:'100%'}}>
             <div style={{display:'flex', flex: "0", justifyContent: 'center'}}>
@@ -141,7 +170,7 @@ export default function SideTest()
             <div style={{flex: "0", justifyContent: 'left'}}>
                 {titles}
             </div>
-            <div style={{position:'relative', display:'flex', flexFlow: 'column', flex: '1 1 auto', backgroundColor:'white', overflowY: 'scroll'}}>
+            <div ref={infoTableRef} style={{position:'relative', display:'flex', flexFlow: 'column', flex: '1 1 auto', backgroundColor:'white', overflowY: 'scroll'}}>
                 {currentInfo}
             </div>
         </Paper>

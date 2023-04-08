@@ -105,9 +105,11 @@ export default function MapController()
     function OnDistrictClick(feature, layer)
     {
         ZoomToLayer(layer);
+        storeMap.highlightDistrict(feature.properties.district_id);
     }
     function ZoomToLayer(layer)
     {
+        if (!layer) return 7;
         let size = GetBoundsSize(layer.getBounds());
         if (size > 250000) { return map.flyTo(layer.getBounds().getCenter(), 7);}
         if (size > 100000) { return map.flyTo(layer.getBounds().getCenter(), 8);}
@@ -118,6 +120,7 @@ export default function MapController()
         else return 13;
     }
     function GetBoundsSize(bounds) {
+        if (!bounds) return 999999;
         return bounds.getNorthEast().distanceTo(bounds.getNorthWest());
     }
 

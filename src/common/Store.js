@@ -33,7 +33,7 @@ function StoreContextProvider(props) {
         plan: null,
         subPlan: null,
         state: StateType.NONE,
-        districtId: 2,
+        districtId: -1,
         prevState: null,
         filters: [],
         mixingValue: -1,
@@ -225,7 +225,6 @@ function StoreContextProvider(props) {
         {
             districtId = -1; // remove highlight
         }
-        console.log(districtId);
         storeMapReducer({
             type: MapActionType.DISTRICT_HIGHLIGHT,
             payload: {districtId: districtId}

@@ -1,6 +1,7 @@
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { pink } from '@mui/material/colors';
+import {useRef} from "react";
 
 const numToPlace = (n) => {
     const last = n % 10;
@@ -25,14 +26,16 @@ function applyColor(num)
 }
 export default function MapSideCompareItem(props)
 {
+    const infoRef = useRef(null);
+
+
+
     let modelA = props.modelA;
     let modelB = props.modelB;
 
     let demVotesDiff = modelB.votes.democrats - modelA.votes.democrats;
     let repVotesDiff = modelB.votes.republicans - modelA.votes.republicans;
     let populationDiff = modelB.populations.total - modelA.populations.total;
-
-
 
     return (
         <div style={{display:'flex', flex: '0 0 30px', margin: '0px 5px 20px 5px'}}>
