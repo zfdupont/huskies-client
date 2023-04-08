@@ -13,12 +13,13 @@ export const MapActionType = {
     STATE_SELECT: "state_select",
     STATE_UNSELECT: "state_unselect",
     UPDATE_FILTER: "update_filter",
-    DISTRICT_HOVER: "district_hover",
+    DISTRICT_HIGHLIGHT: "district_hover",
     MIXING_VALUE_CHANGE: "mixing_value_change",
 }
 
 export const DataActionType = {
     ADD_STATE_DATA: "add_state_data",
+    SET_DISTRICT_BOUND_DATA: "add_district_bound_data",
 }
 
 export const PageActionType = {
@@ -32,7 +33,7 @@ function StoreContextProvider(props) {
         plan: null,
         subPlan: null,
         state: StateType.NONE,
-        district: -1,
+        districtId: 2,
         prevState: null,
         filters: [],
         mixingValue: -1,
@@ -40,12 +41,13 @@ function StoreContextProvider(props) {
     const [storeData, setStoreData] = useState({
         modelData: {},
         geojson: {},
+        districtBoundData: {},
     })
     const [storePage, setStorePage] = useState({
         tab: TabType.MAP
     })
 // --- STATE HELPER ---------------------------------
-    function createMapState(plan, stateType, subPlan, filters, district, mixingValue)
+    function createMapState(plan, stateType, subPlan, filters, districtId, mixingValue)
     {
         return {
             plan: (plan !== undefined)? plan : storeMap.plan,
@@ -53,11 +55,11 @@ function StoreContextProvider(props) {
             state: (stateType !== undefined)? stateType : storeMap.state,
             prevState: storeMap.state,
             filters: (filters !== undefined)? filters : storeMap.filters,
-            district: district,
+            districtId: (districtId !== undefined)? districtId : storeMap.districtId,
             mixingValue: (mixingValue !== undefined)? mixingValue : storeMap.mixingValue,
         }
     }
-    function createDataState(planType, stateType, modelData, geojson)
+    function createDataState(planType, stateType, modelData, geojson, districtBoundData)
     {
         let newData = storeData;
         newData.modelData[planType] = newData.modelData[planType] ?? {}; // set {} if null.
@@ -69,6 +71,7 @@ function StoreContextProvider(props) {
         return {
             modelData: newData.modelData,
             geojson: newData.geojson,
+            districtBoundData: (districtBoundData !== undefined)? districtBoundData : storeData.districtBoundData,
         };
     }
 
@@ -100,8 +103,8 @@ function StoreContextProvider(props) {
                 return setStoreMap(createMapState(prev, StateType.NONE, prev, [], prev, prev))
             case MapActionType.UPDATE_FILTER:
                 return setStoreMap(createMapState(prev, prev, prev, payload.filters, prev, prev))
-            case MapActionType.DISTRICT_HOVER:
-                return setStoreMap(createMapState(prev, prev, prev, prev, payload.district, prev))
+            case MapActionType.DISTRICT_HIGHLIGHT:
+                return setStoreMap(createMapState(prev, prev, prev, prev, payload.districtId, prev))
             case MapActionType.MIXING_VALUE_CHANGE:
                 return setStoreMap(createMapState(prev, prev, prev, prev, prev, payload.value))
             default:
@@ -114,6 +117,8 @@ function StoreContextProvider(props) {
         switch (type) {
             case DataActionType.ADD_STATE_DATA:
                 return setStoreData(createDataState(payload.planType, payload.stateType, payload.modelData, payload.geojson))
+            case DataActionType.SET_DISTRICT_BOUND_DATA:
+                return setStoreData(createDataState(prev, prev, prev, prev, payload.districtBoundData))
             default:
                 return storeData;
         }
@@ -214,11 +219,16 @@ function StoreContextProvider(props) {
         })
     }
 
-    storeMap.hoverDistrict = function(district)
+    storeMap.highlightDistrict = function(districtId)
     {
+        if (storeMap.districtId === districtId)
+        {
+            districtId = -1; // remove highlight
+        }
+        console.log(districtId);
         storeMapReducer({
-            type: MapActionType.DISTRICT_HOVER,
-            payload: {district: district}
+            type: MapActionType.DISTRICT_HIGHLIGHT,
+            payload: {districtId: districtId}
         })
     }
 
@@ -248,6 +258,14 @@ function StoreContextProvider(props) {
             payload: {planType: planType, stateType: stateType, geojson: geojson, modelData: modelData}
         })
     }
+
+    storeData.setDistrictBoundData = function(districtBoundData)
+    {
+        storeDataReducer({
+            type: DataActionType.SET_DISTRICT_BOUND_DATA,
+            payload: districtBoundData,
+        })
+    }
 // --- STORE PAGE FUNCTIONS -----------------------------
     storePage.selectTab = function(tabType)
     {
@@ -262,6 +280,7 @@ function StoreContextProvider(props) {
     storeMap.getMapPlan = () => { return storeMap.plan; }
     storeMap.getMapSubPlan = () => { return storeMap.subPlan; }
     storeMap.getState = () => { return storeMap.state; }
+    storeMap.getHighlightDistrictId = () => { return storeMap.districtId; }
     storeMap.isStateChanged = () => { return storeMap.state !== storeMap.prevState; }
     storeMap.isStateNone = () => { return storeMap.state === StateType.NONE; }
     storeMap.isStateMatch = (stateType) => { return stateType === storeMap.state; }

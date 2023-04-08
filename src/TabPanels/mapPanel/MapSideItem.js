@@ -1,3 +1,6 @@
+import { useContext } from 'react';
+import StoreContext from "../../common/Store";
+import '../../App.css';
 const numToPlace = (n) => {
     const last = n % 10;
     switch (last){
@@ -23,6 +26,9 @@ const partyId = {
 }
 export default function MapSideItem(props)
 {
+
+    const { storeMap } = useContext(StoreContext);
+
     let model = props.districtModelData;
 
     let winId = (model.votes.democrats > model.votes.republicans)? partyId.democrats : partyId.republican;
@@ -30,14 +36,19 @@ export default function MapSideItem(props)
     let candidates = [model.democratsCandidate, model.republicanCandidate];
     let voteResults = [model.votes.democrats, model.votes.republicans];
     let colors = [partyColor.democrats, partyColor.republican];
-    let partyInitials = ["(D)", "(R)"]
-    let winVotePercent = Math.ceil((voteResults[winId]  / model.votes.total) * 100 )
+    let partyInitials = ["(D)", "(R)"];
+    let winVotePercent = Math.ceil((voteResults[winId]  / model.votes.total) * 100 );
     let loseVotePercent = 100 - winVotePercent;
-    console.log(model);
+    let bgColor = (storeMap.getHighlightDistrictId() !== model.id)? 'white' : "#ffe8a4";
+    function onItemClick()
+    {
+        storeMap.highlightDistrict(model.id);
+    }
+
     return (
-        <div style={{display:'flex', flex: '0 0 60px', margin: '0px 5px 20px 5px'}}>
+        <div id="map-side-item" style={{display:'flex', flex: '0 0 60px', margin: '0px 5px 5px 5px', backgroundColor: bgColor, padding:"5px", borderRadius: '10px'}} onClick={onItemClick}>
             <div style={{display:'flex', flexFlow: 'column', flex: 1}}>
-                <div style={{display:'flex', flex: '3', alignItems:'center', justifyContent: 'center', fontSize: '20px', fontWeight: '900', backgroundColor:'white'}}>
+                <div style={{display:'flex', flex: '3', alignItems:'center', justifyContent: 'center', fontSize: '20px', fontWeight: '900'}}>
                     {numToPlace(model.id)}
                 </div>
                 <div style={{display:'flex', alignItems:'center', justifyContent:'center', flex: 1.5}}>
@@ -53,7 +64,7 @@ export default function MapSideItem(props)
                 </div>
             </div>
             <div style={{flex: '0 0 1px', backgroundColor:'darkgray'}}/>
-            <div style={{flex: '0 0 10px', backgroundColor:'white'}}/>
+            <div style={{flex: '0 0 10px'}}/>
             <div style={{display:'flex', flexFlow:'column', flex: 4, fontSize:'12px'}}>
                 <div style={{display: 'flex', flex:1}}>
                     <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1.5, fontWeight:'600', color:'white', backgroundColor: colors[winId]}}>

@@ -40,7 +40,7 @@ export default function SideTest()
         let stateModelData = storeData.getStateModelData(planType, storeMap.getState());
         for (let id in stateModelData.districts)
         {
-            districts.push(<MapSideItem districtModelData={stateModelData.districts[id]}/>);
+            districts.push(<MapSideItem key={id} districtModelData={stateModelData.districts[id]}/>);
         }
         return districts;
     }
@@ -52,7 +52,7 @@ export default function SideTest()
         let stateModelData2 = storeData.getStateModelData(storeMap.getMapSubPlan(), storeMap.getState());
         for (let id in stateModelData1.districts)
         {
-            compares.push(<MapSideCompareItem modelA={stateModelData1.districts[id]} modelB={stateModelData2.districts[id]}/>);
+            compares.push(<MapSideCompareItem key={id} modelA={stateModelData1.districts[id]} modelB={stateModelData2.districts[id]}/>);
         }
         return compares;
     }

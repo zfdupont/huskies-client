@@ -46,6 +46,11 @@
       "color": "#0020e3",
       "opacity": 0
     },
+    "highlight": {
+      "fill": false,
+      "color": "#FFE8A4",
+      "weight" : 10
+    },
     "NY": {
       "flyTo": {
         "pos": [

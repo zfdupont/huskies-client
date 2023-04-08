@@ -46,6 +46,7 @@ export const LayerGroupType = {
     REPUBLICAN: "republican",
     INCUMBENT: "incumbent",
     DIFFERENCE: "difference",
+    HIGHLIGHT: "highlight",
 }
 
 export const GeoDataType = {
