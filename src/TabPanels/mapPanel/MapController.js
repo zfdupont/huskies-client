@@ -138,10 +138,9 @@ export default function MapController()
 
     function ApplyMixingValueToStyle(planType, style, applyFillOpacity = false)
     {
-        if (!storeMap.isSubPlanSelected()) return style; // If no sub plan selected, remain the same.
         let styleCopy = JSON.parse(JSON.stringify(style));
         let mValue = storeMap.mixingValue;
-        let opacity = (storeMap.subPlan === planType)? (100 - mValue) / 100 : mValue / 100;
+        let opacity = (storeMap.getMapPlan() === planType)? (100 - mValue) / 100 : mValue / 100;
         styleCopy.opacity = opacity;
         if (applyFillOpacity) styleCopy.fillOpacity = opacity;
         return styleCopy;
@@ -163,7 +162,7 @@ export default function MapController()
         }
         if (storeMap.isSubPlanSelected())
         {
-            AddStateDistrictLayer(storeMap.getMapSubPlan(), stateType);
+            AddStateDistrictLayer(storeMap.getSubPlan(), stateType);
         }
         SetFocus(stateType);
     }

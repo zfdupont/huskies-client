@@ -1,33 +1,51 @@
 import * as React from 'react';
-import { useContext, useEffect, useState } from 'react';
+import {useContext, useEffect, useState} from 'react';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import Typography from "@mui/material/Typography";
 import StoreContext from '../../common/Store';
-import {Chip} from "@mui/material";
+import {Chip, Menu, MenuItem} from "@mui/material";
 
-const defaultMixingValue = 50;
+const defaultMixingValue = 0;
 
 export default function MapBottomSlider()
 {
-    const { storeMap } = useContext(StoreContext);
+    const { storeMap, storeData } = useContext(StoreContext);
     const [sliderValue, setSliderValue] = useState(defaultMixingValue);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
 
     useEffect(() => {
-        storeMap.mixingValueChange(defaultMixingValue)
+        storeMap.mixingValueChange(defaultMixingValue);
     }, [])
 
-    const marks = [
-        {
-            value: 0,
-            // label: <Typography style={{ fontSize: 14, fontWeight: 700, color:"black", backgroundColor: "white"}}>{storeMap.getMapSubPlan()}</Typography>,
-            label: <Chip label="2022" size="small" variant="outlined" />
-        },
-        {
-            value: 100,
-            label: <Typography style={{ fontSize: 14, fontWeight: 700, color:"black", backgroundColor: "white"}}>{storeMap.getMapPlan()}</Typography>,
-        },
-    ];
+
+    let subPlanListComponent = getSubPlanListComponent();
+
+
+    setDefaultSubPlan();
+
+    function setDefaultSubPlan()
+    {
+        if (storeMap.subPlan) return;
+
+        let PlanType = storeData.getPlanType();
+        if (storeMap.getMapPlan() === PlanType.Y2020) {
+            storeMap.selectSubPlan(storeData.getPlanType().Y2022);
+        }
+        if (storeMap.getMapPlan() === PlanType.Y2022) {
+            storeMap.selectSubPlan(storeData.getPlanType().Y2020);
+        }
+    }
+    function getSubPlanListComponent()
+    {
+        let PlanType = storeData.getPlanType();
+        let subPlanKeys = Object.keys(PlanType).filter((key) => PlanType[key] !== storeMap.getMapPlan());
+
+        return subPlanKeys.map((key) =>
+            <MenuItem key={key} onClick={() => onSubPlanSelect(PlanType[key])}>{PlanType[key]}</MenuItem>
+        );
+    }
 
     function onValueChange(event, newValue)
     {
@@ -42,9 +60,24 @@ export default function MapBottomSlider()
         storeMap.mixingValueChange(value);
     }
 
+    function onSubPlanSelectClick(event)
+    {
+        setAnchorEl(event.currentTarget);
+    }
+    function onSubPlanSelectClose()
+    {
+        setAnchorEl(null);
+    }
+
+    function onSubPlanSelect(planType)
+    {
+        storeMap.selectSubPlan(planType);
+        onSubPlanSelectClose();
+    }
+
     return(
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', position:'relative', left:'5%', top:'-100px', width:'90%', height:'50px', zIndex: 701}}>
-            <Chip label={storeMap.getMapSubPlan()} size="small" color="primary" onClick={() => onChipClick(1)} sx={{marginRight: '10px'}}/>
+            <Chip label={storeMap.getMapPlan()} size="small" color="primary" onClick={() => onChipClick(1)} sx={{marginRight: '10px'}}/>
             <Box sx={{ width: 300 }}>
                 <Slider
                     track={false}
@@ -54,7 +87,18 @@ export default function MapBottomSlider()
                     valueLabelDisplay="auto"
                 />
             </Box>
-            <Chip label={storeMap.getMapPlan()} size="small" color="primary" onClick={() => onChipClick(2)} sx={{marginLeft: '10px'}}/>
+            <Chip label={storeMap.getSubPlan()} size="small" color="primary" onClick={onSubPlanSelectClick} sx={{marginLeft: '10px'}}/>
+            <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={onSubPlanSelectClose}
+                MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                }}
+            >
+                {subPlanListComponent}
+            </Menu>
         </div>
     )
 }

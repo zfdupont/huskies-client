@@ -18,7 +18,7 @@ export default function MapPanel()
             <Paper className="map" style={{flex:3.5, marginRight: '10px'}}>
                 <MainMap/>
                 {(!storeMap.isStateNone()) && <MapTopInfo/>}
-                {(!storeMap.isStateNone()) && (storeMap.isSubPlanSelected()) && <MapBottomSlider/>}
+                {(!storeMap.isStateNone()) && <MapBottomSlider/>}
             </Paper>
             <div style={{flex:1.5, backgroundColor:'white'}}>
                 {(!storeMap.isStateNone()) && <MapSideInfo/>}
