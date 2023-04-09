@@ -12,6 +12,7 @@ export default function MapController()
 {
     const { storeMap, storeData } = useContext(StoreContext);
     const [ viewState, setViewState ] = useState(StateType.NONE);
+    const [ highlightDistrictId, setHighlightDistrictId ] = useState(-1);
     const map = useMap(); // This is Hooks, not re-rendered.
 
     useEffect(() => {
@@ -83,8 +84,12 @@ export default function MapController()
         let layerGroup = AddGeoJsonLayer(selectedDistrictJson, LayerGroupType.HIGHLIGHT, option);
         let innerLayers = layerGroup.getLayers()[0]._layers
         let key = Object.keys(innerLayers)[0];
-        ZoomToLayer(innerLayers[key])
 
+        if (storeMap.getHighlightDistrictId() !== highlightDistrictId)
+        {
+            setHighlightDistrictId(storeMap.getHighlightDistrictId());
+            ZoomToLayer(innerLayers[key])
+        }
     }
     function GetFilteredDistrictJson(planType, filterType)
     {
@@ -138,10 +143,9 @@ export default function MapController()
 
     function ApplyMixingValueToStyle(planType, style, applyFillOpacity = false)
     {
-        if (!storeMap.isSubPlanSelected()) return style; // If no sub plan selected, remain the same.
         let styleCopy = JSON.parse(JSON.stringify(style));
         let mValue = storeMap.mixingValue;
-        let opacity = (storeMap.subPlan === planType)? (100 - mValue) / 100 : mValue / 100;
+        let opacity = (storeMap.getMapPlan() === planType)? (100 - mValue) / 100 : mValue / 100;
         styleCopy.opacity = opacity;
         if (applyFillOpacity) styleCopy.fillOpacity = opacity;
         return styleCopy;
@@ -159,11 +163,11 @@ export default function MapController()
 
         if (storeMap.isPlanSelected())
         {
-            AddStateDistrictLayer(storeMap.getMapPlan(), stateType);
+            AddStateDistrictLayer(storeMap.getMapPlan(), MapProperty.state.style);
         }
         if (storeMap.isSubPlanSelected())
         {
-            AddStateDistrictLayer(storeMap.getMapSubPlan(), stateType);
+            AddStateDistrictLayer(storeMap.getSubPlan(), MapProperty.state.subStyle);
         }
         SetFocus(stateType);
     }
@@ -182,14 +186,18 @@ export default function MapController()
         // AddTileLayer(TileLayerType.PLACE_LABEL, true);
     }
 
-    function AddStateDistrictLayer(planType)
+    function AddStateDistrictLayer(planType, style)
     {
         let option = {
-            style: ApplyMixingValueToStyle(planType, MapProperty.state.style),
-            onEachFeature: (feature, layer) => { layer.on('click', () => {
-                OnDistrictClick(feature, layer);
-            })}
+            style: ApplyMixingValueToStyle(planType, style, false),
+            onEachFeature: null,
         };
+        if (true || planType !== storeMap.getSubPlan())
+        {
+            option.onEachFeature = (feature, layer) => { layer.on('click', () => {
+            OnDistrictClick(feature, layer);
+            })}
+        }
         AddGeoJsonLayer(storeData.getCurrentStateGeojson(planType), LayerGroupType.STATE_DEFAULT, option);
     }
 

@@ -6,6 +6,8 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import {useContext, useEffect, useRef, useState} from "react";
 import StoreContext from "../../common/Store";
 import MapSideCompareItem from "./MapSideCompareItem";
+import {PlanType} from "../../common/Enums";
+import store from "../../common/Store";
 
 const ButtonToggle = {
     true: "outlined",
@@ -14,27 +16,29 @@ const ButtonToggle = {
 
 const TableButtonType = {
     NONE: "none",
-    PREVIOUS: "previous",
-    AFTER: "after",
+    MAIN: "main",
     COMPARE: "compare",
 }
 
-export default function SideTest()
+export default function MapSideInfo()
 {
     const infoTableRef = useRef();
     const { storeMap, storeData } = useContext(StoreContext);
     const [ state, setState ] = useState({
-        selectedTableMenu: TableButtonType.NONE,
+        selectedTableMenu: TableButtonType.MAIN,
         selectedDistrictId: -1,
     });
 
-    let compareText = (state.selectedTableMenu === TableButtonType.COMPARE)? `${storeMap.getMapSubPlan()}->${storeMap.getMapPlan()}` : "Compare";
     let tableMenu = getTableMenu();
     let titles = getTitles();
     let districtInfo = getDistrictInfo();
     let compareInfo = getCompareInfo();
     let currentInfo = (state.selectedTableMenu === TableButtonType.COMPARE)? compareInfo : districtInfo;
     selectedDistrictIdSetup();
+
+    useEffect(() => {
+        infoScrollSetup();
+    });
 
     function selectedDistrictIdSetup()
     {
@@ -46,7 +50,6 @@ export default function SideTest()
                     selectedDistrictId: storeMap.getHighlightDistrictId(),
                 }
             })
-            infoScrollSetup();
         }
     }
 
@@ -54,9 +57,8 @@ export default function SideTest()
     function getDistrictInfo()
     {
         const districts = [];
-        if (state.selectedTableMenu === TableButtonType.COMPARE || !storeData.isReadyToDisplayCurrentMap()) return districts;
-        const planType = getPlanTypeByButtonType(state.selectedTableMenu);
-        let stateModelData = storeData.getStateModelData(planType, storeMap.getState());
+        if (!storeData.isReadyToDisplayCurrentMap()) return districts;
+        let stateModelData = storeData.getStateModelData(storeMap.getMapPlan(), storeMap.getState());
         for (let id in stateModelData.districts)
         {
             districts.push(<MapSideItem key={id} districtModelData={stateModelData.districts[id]}/>);
@@ -66,12 +68,12 @@ export default function SideTest()
     function getCompareInfo()
     {
         const compares = [];
-        if (!storeMap.isSubPlanSelected() || !storeData.isReadyToDisplayCurrentMap()) return compares;
-        let stateModelData1 = storeData.getStateModelData(storeMap.getMapPlan(), storeMap.getState());
-        let stateModelData2 = storeData.getStateModelData(storeMap.getMapSubPlan(), storeMap.getState());
-        for (let id in stateModelData1.districts)
+        if (!storeData.isReadyToDisplayCurrentMap()) return compares;
+        let modelData = storeData.getStateModelData(storeMap.getMapPlan(), storeMap.getState());
+        let modelData2020 = storeData.getStateModelData(PlanType.Y2020, storeMap.getState());
+        for (let id in modelData.districts)
         {
-            compares.push(<MapSideCompareItem key={id} modelA={stateModelData1.districts[id]} modelB={stateModelData2.districts[id]}/>);
+            compares.push(<MapSideCompareItem key={id} model={modelData.districts[id]} model2020={modelData2020.districts[id]}/>);
         }
         return compares;
     }
@@ -79,7 +81,6 @@ export default function SideTest()
     {
         if (state.selectedTableMenu !== TableButtonType.COMPARE) return getDistrictInfoTitle();
         else return getCompareInfoTitle();
-
     }
 
     function getDistrictInfoTitle()
@@ -110,62 +111,49 @@ export default function SideTest()
 
     function getTableMenu()
     {
-        if (storeMap.isSubPlanSelected()) {
-            if (state.selectedTableMenu === TableButtonType.NONE)
-                setState({selectedTableMenu: TableButtonType.PREVIOUS});
+        const buttons = [
+            <Button key="1" variant={ButtonToggle[state.selectedTableMenu === TableButtonType.MAIN]}
+                    onClick={() => onTableMenuClicked(TableButtonType.MAIN)}>{storeMap.getMapPlan()}
+            </Button>,
+            storeMap.getMapPlan() !== storeData.getPlanType().Y2020 && <Button key="2" variant={ButtonToggle[state.selectedTableMenu === TableButtonType.COMPARE]}
+                     onClick={() => onTableMenuClicked(TableButtonType.COMPARE)}>Compare to 2020
+            </Button>,
+        ];
 
-            const buttons = [
-                <Button variant={ButtonToggle[TableButtonType.PREVIOUS === state.selectedTableMenu]}
-                        onClick={() => onTableMenuClicked(TableButtonType.PREVIOUS)}>{storeMap.getMapPlan()}</Button>,
-                <Button variant={ButtonToggle[TableButtonType.AFTER === state.selectedTableMenu]}
-                        onClick={() => onTableMenuClicked(TableButtonType.AFTER)}>{storeMap.getMapSubPlan()}</Button>,
-                <Button variant={ButtonToggle[TableButtonType.COMPARE === state.selectedTableMenu]}
-                        onClick={() => onTableMenuClicked(TableButtonType.COMPARE)}>{compareText}</Button>,
-            ];
-
-            return(
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        '& > *': {
-                            m: 1,
-                        },
-                    }}
-                >
-                    <ButtonGroup size="small" aria-label="small button group">
-                        {buttons}
-                    </ButtonGroup>
-                </Box>)
-        }
+        return(
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    '& > *': {
+                        m: 1,
+                    },
+                }}
+            >
+                <ButtonGroup size="small" aria-label="small button group">
+                    {buttons}
+                </ButtonGroup>
+            </Box>)
     }
-    function getPlanTypeByButtonType(tableButtonType)
-    {
-        if (!storeMap.isSubPlanSelected()) return storeMap.getMapPlan();
-        if (tableButtonType === TableButtonType.NONE) return storeMap.getMapPlan();
-        if (tableButtonType === TableButtonType.PREVIOUS) return storeMap.getMapSubPlan();
-        if (tableButtonType === TableButtonType.AFTER) return storeMap.getMapPlan();
-    }
-
     let onTableMenuClicked = (tableButtonType) => {
         setState({selectedTableMenu: tableButtonType});
     }
 
     function infoScrollSetup()
     {
-        const infoItem = infoTableRef.current.children[storeMap.getHighlightDistrictId()-1];
+        if (storeMap.getHighlightDistrictId() === -1) return;
+        const infoItem = infoTableRef?.current?.children[storeMap.getHighlightDistrictId()-1];
         if (infoItem)
         {
             infoItem.scrollIntoView({behavior: "smooth"});
-        }//
+        }
     }
-
 
     return (
         <Paper style={{display: 'flex', flexFlow: "column", position:'relative', width:'100%', height:'100%'}}>
             <div style={{display:'flex', flex: "0", justifyContent: 'center'}}>
-                {storeMap.isSubPlanSelected() && tableMenu}
+                {tableMenu}
             </div>
             <div style={{flex: "0", justifyContent: 'left'}}>
                 {titles}
