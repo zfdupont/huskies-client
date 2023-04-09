@@ -158,11 +158,11 @@ export default function MapController()
 
         if (storeMap.isPlanSelected())
         {
-            AddStateDistrictLayer(storeMap.getMapPlan(), stateType);
+            AddStateDistrictLayer(storeMap.getMapPlan(), MapProperty.state.style);
         }
         if (storeMap.isSubPlanSelected())
         {
-            AddStateDistrictLayer(storeMap.getSubPlan(), stateType);
+            AddStateDistrictLayer(storeMap.getSubPlan(), MapProperty.state.subStyle);
         }
         SetFocus(stateType);
     }
@@ -181,14 +181,18 @@ export default function MapController()
         // AddTileLayer(TileLayerType.PLACE_LABEL, true);
     }
 
-    function AddStateDistrictLayer(planType)
+    function AddStateDistrictLayer(planType, style)
     {
         let option = {
-            style: ApplyMixingValueToStyle(planType, MapProperty.state.style),
-            onEachFeature: (feature, layer) => { layer.on('click', () => {
-                OnDistrictClick(feature, layer);
-            })}
+            style: ApplyMixingValueToStyle(planType, style, false),
+            onEachFeature: null,
         };
+        if (true || planType !== storeMap.getSubPlan())
+        {
+            option.onEachFeature = (feature, layer) => { layer.on('click', () => {
+            OnDistrictClick(feature, layer);
+            })}
+        }
         AddGeoJsonLayer(storeData.getCurrentStateGeojson(planType), LayerGroupType.STATE_DEFAULT, option);
     }
 

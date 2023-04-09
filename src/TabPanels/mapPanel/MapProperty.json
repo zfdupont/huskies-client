@@ -34,6 +34,13 @@
       "weight": 2,
       "opacity": 1
     },
+    "subStyle": {
+      "fill": false,
+      "fillOpacity": 0,
+      "color": "black",
+      "weight": 2,
+      "opacity": 1
+    },
     "demStyle": {
       "fill": true,
       "fillOpacity": 1,

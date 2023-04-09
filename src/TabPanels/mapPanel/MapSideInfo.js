@@ -3,10 +3,11 @@ import {Paper} from "@mui/material";
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import {useContext, useEffect, useRef, useState} from "react";
+import {useContext, useRef, useState} from "react";
 import StoreContext from "../../common/Store";
 import MapSideCompareItem from "./MapSideCompareItem";
 import {PlanType} from "../../common/Enums";
+import store from "../../common/Store";
 
 const ButtonToggle = {
     true: "outlined",
@@ -24,10 +25,7 @@ export default function MapSideInfo()
     const infoTableRef = useRef();
     const { storeMap, storeData } = useContext(StoreContext);
     const [ state, setState ] = useState({
-        selectedTableMenu: {
-            [TableButtonType.MAIN]: true,
-            [TableButtonType.COMPARE]: false,
-        },
+        selectedTableMenu: TableButtonType.MAIN,
         selectedDistrictId: -1,
     });
 
@@ -111,10 +109,12 @@ export default function MapSideInfo()
     function getTableMenu()
     {
         const buttons = [
-            <Button key="1" variant={ButtonToggle[state.selectedTableMenu[TableButtonType.MAIN]]}
-                    onClick={() => onTableMenuClicked(TableButtonType.MAIN)}>{storeMap.getMapPlan()}</Button>,
-            <Button key="2" variant={ButtonToggle[state.selectedTableMenu[TableButtonType.MAIN]]}
-                    onClick={() => onTableMenuClicked(TableButtonType.COMPARE)}>Compare to 2020</Button>,
+            <Button key="1" variant={ButtonToggle[state.selectedTableMenu === TableButtonType.MAIN]}
+                    onClick={() => onTableMenuClicked(TableButtonType.MAIN)}>{storeMap.getMapPlan()}
+            </Button>,
+            storeMap.getMapPlan() !== storeData.getPlanType().Y2020 && <Button key="2" variant={ButtonToggle[state.selectedTableMenu === TableButtonType.COMPARE]}
+                     onClick={() => onTableMenuClicked(TableButtonType.COMPARE)}>Compare to 2020
+            </Button>,
         ];
 
         return(
