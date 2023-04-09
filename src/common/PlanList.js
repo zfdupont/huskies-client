@@ -14,7 +14,7 @@ import StoreContext from './Store';
 import {PlanType} from "./Enums";
 
 export default function NestedList() {
-    const { storeMap } = useContext(StoreContext);
+    const { storeMap, storeData } = useContext(StoreContext);
     const [open, setOpen] = React.useState(true);
 
     useEffect(() => {
@@ -28,37 +28,28 @@ export default function NestedList() {
 
     let listTitle = (open)? "Plan" : getListTitle();
     let planButtons = [];
+    let PlanType = storeData.getPlanType();
     for (const planKey in PlanType)
     {
         let planType = PlanType[planKey];
         planButtons.push(
             <ListItemButton key={planType} selected={isPlanSelected(planType)} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
                 <ListItemText primary={planType} primaryTypographyProps={{fontSize: "12px"}}  />
-                {(storeMap.getMapPlan() === planType) && <LooksOneOutlinedIcon color="primary" />}
-                {(storeMap.getMapSubPlan() === planType) && <LooksTwoOutlinedIcon color="success" />}
             </ListItemButton>
         )
     }
 
     function getListTitle()
     {
-        if (storeMap.isSubPlanSelected()) return `${storeMap.getMapPlan()} | ${storeMap.getMapSubPlan()}`;
         return storeMap.getMapPlan();
     }
 
     function isPlanSelected(planType){
-        return (storeMap.getMapPlan() === planType || storeMap.getMapSubPlan() === planType)
+        return (storeMap.getMapPlan() === planType)
     }
 
     function onPlanButtonClick(planType){
-        // Unselect plan.
-        if (storeMap.getMapPlan() === planType) {storeMap.unselectPlan(); return;}
-        // None of the plan is selected.
-        if (storeMap.getMapPlan() === null) {storeMap.selectPlan(planType); return;}
-        // Unselect sub plan.
-        if (storeMap.getMapSubPlan() === planType) {storeMap.unselectSubPlan(); return;}
-        // Select sub plan.
-        storeMap.selectSubPlan(planType);
+        storeMap.selectPlan(planType);
     }
 
     return (
