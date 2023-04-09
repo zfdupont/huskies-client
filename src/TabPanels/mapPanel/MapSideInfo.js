@@ -25,11 +25,7 @@ export default function MapSideInfo()
     const infoTableRef = useRef();
     const { storeMap, storeData } = useContext(StoreContext);
     const [ state, setState ] = useState({
-<<<<<<< HEAD
-        selectedTableMenu: TableButtonType.NONE,
-=======
         selectedTableMenu: TableButtonType.MAIN,
->>>>>>> GUI-11
         selectedDistrictId: -1,
     });
 
@@ -40,12 +36,10 @@ export default function MapSideInfo()
     let currentInfo = (state.selectedTableMenu === TableButtonType.COMPARE)? compareInfo : districtInfo;
     selectedDistrictIdSetup();
 
-<<<<<<< HEAD
-=======
     useEffect(() => {
         infoScrollSetup();
     });
->>>>>>> GUI-11
+
     function selectedDistrictIdSetup()
     {
         if (state.selectedDistrictId !== storeMap.getHighlightDistrictId())
@@ -56,11 +50,6 @@ export default function MapSideInfo()
                     selectedDistrictId: storeMap.getHighlightDistrictId(),
                 }
             })
-<<<<<<< HEAD
-            infoScrollSetup();
-=======
-
->>>>>>> GUI-11
         }
     }
 
@@ -84,11 +73,7 @@ export default function MapSideInfo()
         let modelData2020 = storeData.getStateModelData(PlanType.Y2020, storeMap.getState());
         for (let id in modelData.districts)
         {
-<<<<<<< HEAD
-            compares.push(<MapSideCompareItem key={id} modelA={stateModelData1.districts[id]} modelB={stateModelData2.districts[id]}/>);
-=======
             compares.push(<MapSideCompareItem key={id} model={modelData.districts[id]} model2020={modelData2020.districts[id]}/>);
->>>>>>> GUI-11
         }
         return compares;
     }
