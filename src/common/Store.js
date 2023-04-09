@@ -158,7 +158,7 @@ function StoreContextProvider(props) {
     storeMap.selectSubPlan = async function(planType)
     {
         if (storeMap.subPlan === planType || storeMap.plan === planType) return;
-        console.log("in");
+
         storeMapReducer({
             type: MapActionType.SUB_PLAN_SELECT,
             payload: {subPlanType: planType}

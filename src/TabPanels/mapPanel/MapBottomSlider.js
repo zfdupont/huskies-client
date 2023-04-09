@@ -2,7 +2,6 @@ import * as React from 'react';
 import {useContext, useEffect, useState} from 'react';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
-import Typography from "@mui/material/Typography";
 import StoreContext from '../../common/Store';
 import {Chip, Menu, MenuItem} from "@mui/material";
 
@@ -12,18 +11,20 @@ export default function MapBottomSlider()
 {
     const { storeMap, storeData } = useContext(StoreContext);
     const [sliderValue, setSliderValue] = useState(defaultMixingValue);
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
     useEffect(() => {
         storeMap.mixingValueChange(defaultMixingValue);
+        setDefaultSubPlan();
     }, [])
 
+    useEffect(() => {
+        setDefaultSubPlan();
+    }, [storeMap.subPlan])
 
+    let subPlanText = (storeMap.getSubPlan())? storeMap.getSubPlan() : "0000";
     let subPlanListComponent = getSubPlanListComponent();
-
-
-    setDefaultSubPlan();
 
     function setDefaultSubPlan()
     {
@@ -49,14 +50,14 @@ export default function MapBottomSlider()
 
     function onValueChange(event, newValue)
     {
-        setSliderValue(newValue);
+        setSliderValue(() => (newValue));
         storeMap.mixingValueChange(newValue);
     }
 
     function onChipClick(chipType)
     {
         let value = (chipType === 1)? 0 : 100;
-        setSliderValue(value);
+        // setSliderValue(value);
         storeMap.mixingValueChange(value);
     }
 
@@ -87,7 +88,7 @@ export default function MapBottomSlider()
                     valueLabelDisplay="auto"
                 />
             </Box>
-            <Chip label={storeMap.getSubPlan()} size="small" color="primary" onClick={onSubPlanSelectClick} sx={{marginLeft: '10px'}}/>
+            <Chip label={subPlanText} size="small" color="primary" onClick={onSubPlanSelectClick} sx={{marginLeft: '10px'}}/>
             <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}
