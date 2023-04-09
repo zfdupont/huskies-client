@@ -3,7 +3,7 @@ import {Paper} from "@mui/material";
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import {useContext, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import StoreContext from "../../common/Store";
 import MapSideCompareItem from "./MapSideCompareItem";
 import {PlanType} from "../../common/Enums";
@@ -36,6 +36,9 @@ export default function MapSideInfo()
     let currentInfo = (state.selectedTableMenu === TableButtonType.COMPARE)? compareInfo : districtInfo;
     selectedDistrictIdSetup();
 
+    useEffect(() => {
+        infoScrollSetup();
+    });
     function selectedDistrictIdSetup()
     {
         if (state.selectedDistrictId !== storeMap.getHighlightDistrictId())
@@ -46,7 +49,7 @@ export default function MapSideInfo()
                     selectedDistrictId: storeMap.getHighlightDistrictId(),
                 }
             })
-            infoScrollSetup();
+
         }
     }
 
@@ -70,7 +73,7 @@ export default function MapSideInfo()
         let modelData2020 = storeData.getStateModelData(PlanType.Y2020, storeMap.getState());
         for (let id in modelData.districts)
         {
-            compares.push(<MapSideCompareItem key={id} modelA={modelData.districts[id]} modelB={modelData2020.districts[id]}/>);
+            compares.push(<MapSideCompareItem key={id} model={modelData.districts[id]} model2020={modelData2020.districts[id]}/>);
         }
         return compares;
     }
@@ -133,21 +136,14 @@ export default function MapSideInfo()
                 </ButtonGroup>
             </Box>)
     }
-    function getPlanTypeByButtonType(tableButtonType)
-    {
-        if (!storeMap.isSubPlanSelected()) return storeMap.getMapPlan();
-        if (tableButtonType === TableButtonType.NONE) return storeMap.getMapPlan();
-        if (tableButtonType === TableButtonType.PREVIOUS) return storeMap.getMapSubPlan();
-        if (tableButtonType === TableButtonType.AFTER) return storeMap.getMapPlan();
-    }
-
     let onTableMenuClicked = (tableButtonType) => {
         setState({selectedTableMenu: tableButtonType});
     }
 
     function infoScrollSetup()
     {
-        const infoItem = infoTableRef.current.children[storeMap.getHighlightDistrictId()-1];
+        if (storeMap.getHighlightDistrictId() === -1) return;
+        const infoItem = infoTableRef?.current?.children[storeMap.getHighlightDistrictId()-1];
         if (infoItem)
         {
             infoItem.scrollIntoView({behavior: "smooth"});
@@ -155,6 +151,7 @@ export default function MapSideInfo()
     }
 
 
+    console.log("Last")
     return (
         <Paper style={{display: 'flex', flexFlow: "column", position:'relative', width:'100%', height:'100%'}}>
             <div style={{display:'flex', flex: "0", justifyContent: 'center'}}>
