@@ -150,8 +150,6 @@ export default function MapSideInfo()
         }
     }
 
-
-    console.log("Last")
     return (
         <Paper style={{display: 'flex', flexFlow: "column", position:'relative', width:'100%', height:'100%'}}>
             <div style={{display:'flex', flex: "0", justifyContent: 'center'}}>

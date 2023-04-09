@@ -12,6 +12,7 @@ export default function MapController()
 {
     const { storeMap, storeData } = useContext(StoreContext);
     const [ viewState, setViewState ] = useState(StateType.NONE);
+    const [ highlightDistrictId, setHighlightDistrictId ] = useState(-1);
     const map = useMap(); // This is Hooks, not re-rendered.
 
     useEffect(() => {
@@ -83,8 +84,12 @@ export default function MapController()
         let layerGroup = AddGeoJsonLayer(selectedDistrictJson, LayerGroupType.HIGHLIGHT, option);
         let innerLayers = layerGroup.getLayers()[0]._layers
         let key = Object.keys(innerLayers)[0];
-        ZoomToLayer(innerLayers[key])
 
+        if (storeMap.getHighlightDistrictId() !== highlightDistrictId)
+        {
+            setHighlightDistrictId(storeMap.getHighlightDistrictId());
+            ZoomToLayer(innerLayers[key])
+        }
     }
     function GetFilteredDistrictJson(planType, filterType)
     {
