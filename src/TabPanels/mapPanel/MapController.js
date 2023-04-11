@@ -1,33 +1,50 @@
-import {useContext, useEffect, useState} from "react";
+import {useCallback, useContext, useEffect, useImperativeHandle, useRef, useState} from "react";
 import L from "leaflet";
 import {useMap} from "react-leaflet";
 import StoreContext from '../../common/Store';
 import MapProperty from './MapProperty.json';
-import {TileLayerType, LayerGroupType, GeoData, GeoDataType, StateTypeList, StateType} from '../../common/Enums';
+import {
+    TileLayerType,
+    LayerGroupType,
+    GeoData,
+    GeoDataType,
+    StateTypeList,
+    StateType,
+    RefType
+} from '../../common/Enums';
 import geoJsonHelper from '../../common/GeoJsonHelper';
 import {filterToLayerGroup, filterToStyle} from "../../common/ConversionHelper";
 let currLayerGroups = {};
 
 export default function MapController()
 {
-    const { storeMap, storeData } = useContext(StoreContext);
+    const { storeMap, storeData, callbacks } = useContext(StoreContext);
     const [ viewState, setViewState ] = useState(StateType.NONE);
     const [ highlightDistrictId, setHighlightDistrictId ] = useState(-1);
+    const mapControllerRef = useRef(null);
     const map = useMap(); // This is Hooks, not re-rendered.
+    const resetStateMap = useCallback(() => {
+        setViewState(StateType.NONE);
+    }, [])
 
     useEffect(() => {
         DefaultSetup();
+        callbacks.addOnResetState(resetStateMap);
         return setViewState(StateType.NONE);
     }, [])
+
 
     Main();
     function Main()
     {
+        // ResetCheck();
         RemoveAllLayer();
         FilterSetup();
         HighlightSetup();
         ViewSetup();
     }
+
+
     // --- SETUP ---------------------------
     function DefaultSetup()
     {
@@ -192,12 +209,11 @@ export default function MapController()
             style: ApplyMixingValueToStyle(planType, style, false),
             onEachFeature: null,
         };
-        if (true || planType !== storeMap.getSubPlan())
-        {
-            option.onEachFeature = (feature, layer) => { layer.on('click', () => {
-            OnDistrictClick(feature, layer);
-            })}
-        }
+
+        option.onEachFeature = (feature, layer) => { layer.on('click', () => {
+        OnDistrictClick(feature, layer);
+        })}
+
         AddGeoJsonLayer(storeData.getCurrentStateGeojson(planType), LayerGroupType.STATE_DEFAULT, option);
     }
 
@@ -227,4 +243,8 @@ export default function MapController()
         map.flyTo(flyTo.pos, flyTo.zoom);
         setViewState(stateType)
     }
+    return (
+        <div ref={mapControllerRef}>
+        </div>
+    )
 }
