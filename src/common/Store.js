@@ -1,5 +1,5 @@
 import {createContext, useState} from 'react';
-import {StateType, TabType, PlanType, GeoData, GeoDataType} from './Enums';
+import {StateType, TabType, PlanType, GeoData, GeoDataType, RefType} from './Enums';
 import MockData from './MockData';
 import api, {getStateGeoJson} from './api.js';
 import {createStateModel} from "./ConversionHelper";
@@ -14,6 +14,8 @@ export const MapActionType = {
     UPDATE_FILTER: "update_filter",
     DISTRICT_HIGHLIGHT: "district_hover",
     MIXING_VALUE_CHANGE: "mixing_value_change",
+    RESET_PAGE: "reset_page",
+    RESET_STATE: "reset_state",
 }
 
 export const DataActionType = {
@@ -37,6 +39,8 @@ function StoreContextProvider(props) {
         prevState: null,
         filters: [],
         mixingValue: -1,
+        resetState: 0,
+        resetPage: 0,
     })
     const [storeData, setStoreData] = useState({
         planType: PlanType,
@@ -47,9 +51,13 @@ function StoreContextProvider(props) {
     const [storePage, setStorePage] = useState({
         tab: TabType.MAP
     })
+
+    const [callbacks, setCallbacks] = useState({
+        resetState: [],
+    })
 // --- STATE HELPER ---------------------------------
 
-    function createMapState(plan, subPlan, stateType, filters, districtId, mixingValue)
+    function createMapState(plan, subPlan, stateType, filters, districtId, mixingValue, resetState, resetPage)
     {
         if (plan === storeMap.subPlan)
         {
@@ -63,6 +71,8 @@ function StoreContextProvider(props) {
             filters: (filters !== undefined)? filters : storeMap.filters,
             districtId: (districtId !== undefined)? districtId : storeMap.districtId,
             mixingValue: (mixingValue !== undefined)? mixingValue : storeMap.mixingValue,
+            resetState: (resetState !== undefined)? resetState : storeMap.resetState,
+            resetPage: (resetPage !== undefined)? resetPage : storeMap.resetPage,
         }
     }
 
@@ -103,19 +113,23 @@ function StoreContextProvider(props) {
         const {type, payload} = action;
         switch (type) {
             case MapActionType.PLAN_SELECT:
-                return setStoreMap(createMapState(payload.planType, prev, prev, prev, prev, prev));
+                return setStoreMap(createMapState(payload.planType, prev, prev, prev, prev, prev, prev, prev));
             case MapActionType.SUB_PLAN_SELECT:
-                return setStoreMap(createMapState(prev, payload.subPlanType, prev, prev, prev, prev))
+                return setStoreMap(createMapState(prev, payload.subPlanType, prev, prev, prev, prev, prev, prev))
             case MapActionType.STATE_SELECT:
-                return setStoreMap(createMapState(prev, prev, payload.stateType, prev, prev, prev))
+                return setStoreMap(createMapState(prev, prev, payload.stateType, prev, -1, 0, prev, prev))
             case MapActionType.STATE_UNSELECT:
-                return setStoreMap(createMapState(prev, prev, StateType.NONE, [], prev, prev))
+                return setStoreMap(createMapState(prev, prev, StateType.NONE, [], prev, prev, prev, prev))
             case MapActionType.UPDATE_FILTER:
-                return setStoreMap(createMapState(prev, prev, prev, payload.filters, prev, prev))
+                return setStoreMap(createMapState(prev, prev, prev, payload.filters, prev, prev, prev, prev))
             case MapActionType.DISTRICT_HIGHLIGHT:
-                return setStoreMap(createMapState(prev, prev, prev, prev, payload.districtId, prev))
+                return setStoreMap(createMapState(prev, prev, prev, prev, payload.districtId, prev, prev, prev))
             case MapActionType.MIXING_VALUE_CHANGE:
-                return setStoreMap(createMapState(prev, prev, prev, prev, prev, payload.value))
+                return setStoreMap(createMapState(prev, prev, prev, prev, prev, payload.value, prev, prev))
+            case MapActionType.RESET_STATE:
+                return setStoreMap(createMapState(prev, null, prev, [], -1, 0, storeMap.resetState + 1, prev))
+            case MapActionType.RESET_PAGE:
+                return setStoreMap(createMapState())
             default:
                 return storeMap;
         }
@@ -232,10 +246,21 @@ function StoreContextProvider(props) {
         })
     }
 
-// --- ENUM MODIFYING FUNCTIONS -----------------------------
-    storeMap.addPlanTypeToEnum = function(keyValuePair)
+    storeMap.resetPage = function()
     {
-        PlanType[keyValuePair.key] = keyValuePair.value;
+        storeMapReducer({
+            type: MapActionType.RESET_PAGE,
+            payload: null,
+        })
+    }
+
+    storeMap.resetState = function()
+    {
+        storeMapReducer({
+            type: MapActionType.RESET_STATE,
+            payload: null,
+        })
+        callbacks.invokeAll(callbacks.resetState);
     }
 
 // --- STORE DATA FUNCTIONS -----------------------------
@@ -277,6 +302,16 @@ function StoreContextProvider(props) {
         })
     }
 
+// --- CALLBACK FUNCTIONS -----------------------------
+    callbacks.addOnResetState = function(callback)
+    {
+        setCallbacks((prev) => ({...prev, resetState: [...prev.resetState, callback]}))
+    }
+
+    callbacks.invokeAll = function(callbacks)
+    {
+        callbacks.forEach((func) => func());
+    }
 // --- HELPER FUNCTIONS -----------------------------
     // STORE MAP
     storeMap.getMapPlan = () => { return storeMap.plan; }
@@ -332,7 +367,7 @@ function StoreContextProvider(props) {
     }
 
     return (
-        <StoreContext.Provider value={{storeMap, storeData, storePage}}>
+        <StoreContext.Provider value={{storeMap, storeData, storePage, callbacks}}>
             {props.children}
         </StoreContext.Provider>
     )

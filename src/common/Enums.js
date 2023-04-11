@@ -12,6 +12,10 @@ export const TabType = {
     ANALYZE: "analyze",
 }
 
+export const RefType = {
+    MAPCONTROLLER: "mapController",
+}
+
 // New plan type can be added in the runtime. Y = Year, S = Simulation.
 export let PlanType = {
     Y2022: "2022",
