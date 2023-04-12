@@ -1,72 +1,125 @@
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { pink } from '@mui/material/colors';
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import StoreContext from "../../common/Store";
+import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 
-const numToPlace = (n) => {
-    const last = n % 10;
-    switch (last){
-        case 1:
-            return `${n}st`;
-        case 2:
-            return `${n}nd`;
-        case 3:
-            return `${n}rd`;
-        default:
-            return `${n}th`;
-    }
-}
 
-function applyColor(num)
-{
-    if (num < 0)
-        return <div> <ArrowDropDownIcon  color="primary" /> {Math.abs(num).toLocaleString()} </div>
-    else
-        return <div> <ArrowDropUpIcon  sx={{ color: pink[500] }}/> {Math.abs(num).toLocaleString()}</div>
-}
-export default function MapSideCompareItem(props)
-{
-    const { storeMap } = useContext(StoreContext)
-
-    let model = props.model;
-    let model2020 = props.model2020;
-
-    let demVotesDiff = model.votes.democrats - model2020.votes.democrats;
-    let repVotesDiff = model.votes.republicans - model2020.votes.republicans;
-    let populationDiff = model.populations.total - model2020.populations.total;
-
-    let bgColor = (storeMap.getHighlightDistrictId() !== model.id)? 'white' : "#ffe8a4";
-
-    function onItemClick()
+const columns = [
+    { id: 'district', label: 'Name', minWidth: 170 },
+    { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
     {
-        storeMap.highlightDistrict(model.id);
-    }
+        id: 'population',
+        label: 'Population',
+        minWidth: 170,
+        align: 'right',
+        format: (value) => value.toLocaleString('en-US'),
+    },
+    {
+        id: 'size',
+        label: 'Size\u00a0(km\u00b2)',
+        minWidth: 170,
+        align: 'right',
+        format: (value) => value.toLocaleString('en-US'),
+    },
+    {
+        id: 'density',
+        label: 'Density',
+        minWidth: 170,
+        align: 'right',
+        format: (value) => value.toFixed(2),
+    },
+];
+
+function createData(district, code, population, size) {
+    const density = population / size;
+    return { district, code, population, size, density };
+}
+
+    const rows = [
+        createData('India', 'IN', 1324171354, 3287263),
+        createData('China', 'CN', 1403500365, 9596961),
+        createData('Italy', 'IT', 60483973, 301340),
+        createData('United States', 'US', 327167434, 9833520),
+        createData('Canada', 'CA', 37602103, 9984670),
+        createData('Australia', 'AU', 25475400, 7692024),
+        createData('Germany', 'DE', 83019200, 357578),
+        createData('Ireland', 'IE', 4857000, 70273),
+        createData('Mexico', 'MX', 126577691, 1972550),
+        createData('Japan', 'JP', 126317000, 377973),
+        createData('France', 'FR', 67022000, 640679),
+        createData('United Kingdom', 'GB', 67545757, 242495),
+        createData('Russia', 'RU', 146793744, 17098246),
+        createData('Nigeria', 'NG', 200962417, 923768),
+        createData('Brazil', 'BR', 210147125, 8515767),
+        createData('India', 'IN', 1324171354, 3287263),
+        createData('China', 'CN', 1403500365, 9596961),
+        createData('Italy', 'IT', 60483973, 301340),
+        createData('United States', 'US', 327167434, 9833520),
+        createData('Canada', 'CA', 37602103, 9984670),
+        createData('Australia', 'AU', 25475400, 7692024),
+        createData('Germany', 'DE', 83019200, 357578),
+        createData('Ireland', 'IE', 4857000, 70273),
+        createData('Mexico', 'MX', 126577691, 1972550),
+        createData('Japan', 'JP', 126317000, 377973),
+        createData('France', 'FR', 67022000, 640679),
+        createData('United Kingdom', 'GB', 67545757, 242495),
+        createData('Russia', 'RU', 146793744, 17098246),
+        createData('Nigeria', 'NG', 200962417, 923768),
+        createData('Brazil', 'BR', 210147125, 8515767),
+    ];
+
+export default function MapSideCompareItem(props) {
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] =   useState(10);
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(+event.target.value);
+        setPage(0);
+    };
 
     return (
-        <div className="map-side-item" style={{display:'flex', flex: '0 0 30px', margin: '0px 5px 5px 5px', backgroundColor: bgColor, padding:"5px", borderRadius: '10px'}} onClick={onItemClick} >
-            <div style={{display:'flex', flexFlow: 'column', flex: 1}}>
-                <div style={{display:'flex', flex: '3', alignItems:'center', justifyContent: 'center', fontSize: '16px', fontWeight: '900'}}>
-                    {numToPlace(model.id)}
-                </div>
-            </div>
-            <div style={{flex: '0 0 1px', backgroundColor:'darkgray'}}/>
-            <div style={{flex: '0 0 10px'}}/>
-            <div style={{display:'flex', flexFlow:'column', flex: 4, fontSize:'12px', fontWeight: 500}}>
-                <div style={{display:'flex', flex:1}}>
-                    <div style={{display:'flex', alignItems: 'center', justifyContent:'left', marginLeft:'0', flex: 1}}>
-                        {applyColor(demVotesDiff)}
-                    </div>
-                    <div style={{display:'flex', alignItems: 'center', justifyContent:'left', marginLeft:'0', flex: 1}}>
-                        {applyColor(repVotesDiff)}
-                    </div>
-                    <div style={{display:'flex', alignItems: 'center', justifyContent:'left', marginLeft:'0', flex: 1}}>
-                        {applyColor(populationDiff)}
-                    </div>
-                    <div style={{flex:'0.1'}}/>
-                </div>
-                <div style={{flex:'0 0 1px', backgroundColor:'darkgray'}}></div>
-            </div>
-        </div>
-    )
+        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+            <TableContainer sx={{ maxHeight: 440 }}>
+                <Table stickyHeader aria-label="sticky table">
+                    <TableHead>
+                        <TableRow>
+                            {columns.map((column) => (
+                                <TableCell
+                                    key={column.id}
+                                    align={column.align}
+                                    style={{ minWidth: column.minWidth }}
+                                >
+                                    {column.label}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {rows.map((row) => {
+                            return (
+                                <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                                    {columns.map((column) => {
+                                        const value = row[column.id];
+                                        return (
+                                            <TableCell key={column.id} align={column.align}>
+                                                {column.format && typeof value === 'number'
+                                                    ? column.format(value)
+                                                    : value}
+                                            </TableCell>
+                                        );
+                                    })}
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Paper>
+    );
 }

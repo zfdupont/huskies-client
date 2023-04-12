@@ -6,8 +6,8 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import {useContext, useEffect, useRef, useState} from "react";
 import StoreContext from "../../common/Store";
 import MapSideCompareItem from "./MapSideCompareItem";
+import MapSideCompareInfo from './MapSideCompareInfo';
 import {PlanType} from "../../common/Enums";
-import store from "../../common/Store";
 
 const ButtonToggle = {
     true: "outlined",
@@ -33,7 +33,6 @@ export default function MapSideInfo()
     let titles = getTitles();
     let districtInfo = getDistrictInfo();
     let compareInfo = getCompareInfo();
-    let currentInfo = (state.selectedTableMenu === TableButtonType.COMPARE)? compareInfo : districtInfo;
     selectedDistrictIdSetup();
 
     useEffect(() => {
@@ -150,17 +149,23 @@ export default function MapSideInfo()
         }
     }
 
+
     return (
         <Paper style={{display: 'flex', flexFlow: "column", position:'relative', width:'100%', height:'100%'}}>
-            <div style={{display:'flex', flex: "0", justifyContent: 'center'}}>
+            <div style={{display: 'flex', flex: "0", justifyContent: 'center'}}>
                 {tableMenu}
             </div>
             <div style={{flex: "0", justifyContent: 'left'}}>
                 {titles}
             </div>
             <div ref={infoTableRef} style={{position:'relative', display:'flex', flexFlow: 'column', flex: '1 1 auto', backgroundColor:'white', overflowY: 'scroll'}}>
-                {currentInfo}
+                {districtInfo}
             </div>
+
+            {/*{(state.selectedTableMenu === TableButtonType.COMPARE) &&*/}
+            {/*<div style={{position:'relative', flex: '1 1 auto', backgroundColor:'white'}}>*/}
+            {/*    <MapSideCompareInfo/>*/}
+            {/*</div>}*/}
         </Paper>
     );
 }
