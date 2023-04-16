@@ -32,7 +32,7 @@ export default function MapSideInfo()
     let tableMenu = getTableMenu();
     let titles = getTitles();
     let districtInfo = getDistrictInfo();
-    let compareInfo = getCompareInfo();
+    let simulatedInfo = getSimulatedInfo();
     selectedDistrictIdSetup();
 
     useEffect(() => {
@@ -64,7 +64,7 @@ export default function MapSideInfo()
         }
         return districts;
     }
-    function getCompareInfo()
+    function getSimulatedInfo()
     {
         const compares = [];
         if (!storeData.isReadyToDisplayCurrentMap()) return compares;
@@ -88,7 +88,7 @@ export default function MapSideInfo()
             <div style={{display:'flex', flex: "0 1 50px", marginBottom:'10px'}}>
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 1.2,  fontSize:'12px', color:'grey'}}>Districts</div>
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'left', flex: 1.5,  fontSize:'12px', color:'grey'}}>Candidates</div>
-                <div style={{display:'flex', alignItems: 'end', justifyContent:'left', flex: 0,  fontSize:'12px', color:'grey'}}>Inc.</div>
+                <div style={{display:'flex', alignItems: 'end', justifyContent:'left', flex: 0,  fontSize:'12px', color:'grey'}}>Incumbent</div>
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 1.2,  fontSize:'12px', color:'grey'}}>Votes</div>
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 0.8,  fontSize:'12px', color:'grey'}}>Percent</div>
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 0.15,  fontSize:'12px', color:'grey'}}></div>
@@ -115,7 +115,7 @@ export default function MapSideInfo()
                     onClick={() => onTableMenuClicked(TableButtonType.MAIN)}>{storeMap.getMapPlan()}
             </Button>,
             storeMap.getMapPlan() !== storeData.getPlanType().Y2020 && <Button key="2" variant={ButtonToggle[state.selectedTableMenu === TableButtonType.COMPARE]}
-                     onClick={() => onTableMenuClicked(TableButtonType.COMPARE)}>Compare to 2020
+                     onClick={() => onTableMenuClicked(TableButtonType.COMPARE)}>Simulation
             </Button>,
         ];
 
@@ -149,7 +149,6 @@ export default function MapSideInfo()
         }
     }
 
-
     return (
         <Paper style={{display: 'flex', flexFlow: "column", position:'relative', width:'100%', height:'100%'}}>
             <div style={{display: 'flex', flex: "0", justifyContent: 'center'}}>
@@ -161,11 +160,6 @@ export default function MapSideInfo()
             <div ref={infoTableRef} style={{position:'relative', display:'flex', flexFlow: 'column', flex: '1 1 auto', backgroundColor:'white', overflowY: 'scroll'}}>
                 {districtInfo}
             </div>
-
-            {/*{(state.selectedTableMenu === TableButtonType.COMPARE) &&*/}
-            {/*<div style={{position:'relative', flex: '1 1 auto', backgroundColor:'white'}}>*/}
-            {/*    <MapSideCompareInfo/>*/}
-            {/*</div>}*/}
         </Paper>
     );
 }

@@ -15,7 +15,7 @@ import {ListItem, Switch} from "@mui/material";
 import StoreContext from "./Store";
 import {FilterType, StateType} from './Enums';
 
-export default function NestedList() {
+export default function MapFilterList() {
     const { storeMap, callbacks }= useContext(StoreContext);
     const [open, setOpen] = useState(true);
     const [switches, setSwitches] = useState({
@@ -32,6 +32,9 @@ export default function NestedList() {
     }, [])
 
     const label = {inputProps: { 'aria-label': 'Switch demo' }};
+
+    const menuTitle = "Map Filter";
+
     const onListClick = () => {
         setOpen(!open);
     };
@@ -63,11 +66,15 @@ export default function NestedList() {
                 <ListItemIcon>
                     <Star />
                 </ListItemIcon>
-                <ListItemText style={{position:"absolute", left:'48px'}} primary="Filter" primaryTypographyProps={{fontSize: '14px'}} />
+                <ListItemText style={{position:"absolute", left:'48px'}} primary={menuTitle} primaryTypographyProps={{fontSize: '14px'}} />
                 {open ? <ExpandLess style={{position:"absolute", left:'160px'}} /> : <ExpandMore style={{position:"absolute", left:'160px'}} />}
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
+                    <ListItem sx={{ pl:6 }}>
+                        <ListItemText primary="Incumbent" primaryTypographyProps={{fontSize: '12px'}} />
+                        <Switch {...label} checked={switches[FilterType.INCUMBENT]} size="small" onClick={(e) => {onToggle(e, FilterType.INCUMBENT)}} />
+                    </ListItem>
                     <ListItem sx={{ pl: 6 }}>
                         <ListItemText primary="Democrat" primaryTypographyProps={{fontSize: '12px'}} />
                         <Switch {...label} checked={switches[FilterType.DEMOCRAT]} size="small" color="warning" onClick={(e) => {onToggle(e, FilterType.DEMOCRAT)}} />
@@ -76,9 +83,9 @@ export default function NestedList() {
                         <ListItemText primary="Republican" primaryTypographyProps={{fontSize: '12px'}} />
                         <Switch {...label} checked={switches[FilterType.REPUBLICAN]} size="small" onClick={(e) => {onToggle(e, FilterType.REPUBLICAN)}} />
                     </ListItem>
-                    <ListItem sx={{ pl:6 }}>
-                        <ListItemText primary="Incumbent" primaryTypographyProps={{fontSize: '12px'}} />
-                        <Switch {...label} checked={switches[FilterType.INCUMBENT]} size="small" onClick={(e) => {onToggle(e, FilterType.INCUMBENT)}} />
+                    <ListItem sx={{ pl: 6 }}>
+                        <ListItemText primary="Republican" primaryTypographyProps={{fontSize: '12px'}} />
+                        <Switch {...label} checked={switches[FilterType.REPUBLICAN]} size="small" onClick={(e) => {onToggle(e, FilterType.REPUBLICAN)}} />
                     </ListItem>
                 </List>
             </Collapse>

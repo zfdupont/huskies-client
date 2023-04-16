@@ -29,7 +29,7 @@ export default function MapPanel()
           </Paper>
         }
       </div>
-      <Paper style={{flex:1.5, backgroundColor:'white'}}>
+      <Paper style={{flex:1.7, backgroundColor:'white'}}>
         {(!storeMap.isStateNone()) && <MapSideInfo/>}
       </Paper>
     </div>
