@@ -58,23 +58,15 @@ export default function MapSideInfo()
         const districts = [];
         if (!storeData.isReadyToDisplayCurrentMap()) return districts;
         let stateModelData = storeData.getStateModelData(storeMap.getMapPlan(), storeMap.getState());
-        for (let id in stateModelData.districts)
+        for (let id in stateModelData.electionDataDict)
         {
-            districts.push(<MapSideItem key={id} districtModelData={stateModelData.districts[id]}/>);
+            districts.push(<MapSideItem key={id} electionData={stateModelData.electionDataDict[id]}/>);
         }
         return districts;
     }
     function getSimulatedInfo()
     {
-        const compares = [];
-        if (!storeData.isReadyToDisplayCurrentMap()) return compares;
-        let modelData = storeData.getStateModelData(storeMap.getMapPlan(), storeMap.getState());
-        let modelData2020 = storeData.getStateModelData(PlanType.Y2020, storeMap.getState());
-        for (let id in modelData.districts)
-        {
-            compares.push(<MapSideCompareItem key={id} model={modelData.districts[id]} model2020={modelData2020.districts[id]}/>);
-        }
-        return compares;
+        return []
     }
     function getTitles()
     {
