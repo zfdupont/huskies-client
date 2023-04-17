@@ -195,7 +195,6 @@ function StoreContextProvider(props) {
         await storeData.addStateData(storeMap.plan, stateType);
     }
 
-
     // Move to country view
     // Reset added filter layers.
     storeMap.unselectState = function()

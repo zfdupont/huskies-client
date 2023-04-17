@@ -21,13 +21,12 @@ const TableButtonType = {
 
 export default function MapSideInfo()
 {
-
     const infoTableRef = useRef();
     const { storeMap, storeData } = useContext(StoreContext);
     const [ state, setState ] = useState({
         selectedTableMenu: TableButtonType.MAIN,
         selectedDistrictId: -1,
-        incumbentFilter: false,
+        incumbentFilter: true,
     });
 
     let tableMenu = getTableMenu();
@@ -44,15 +43,9 @@ export default function MapSideInfo()
     {
         if (state.selectedDistrictId !== storeMap.getHighlightDistrictId())
         {
-            setState(() => {
-                return {
-                    selectedTableMenu: state.selectedTableMenu,
-                    selectedDistrictId: storeMap.getHighlightDistrictId(),
-                }
-            })
+            setState((prev) => ({...prev, selectedDistrictId: storeMap.getHighlightDistrictId()}))
         }
     }
-
 
     function getDistrictInfo()
     {
