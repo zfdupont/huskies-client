@@ -5,9 +5,6 @@ import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import {useContext, useEffect, useRef, useState} from "react";
 import StoreContext from "../../common/Store";
-import MapSideCompareItem from "./MapSideCompareItem";
-import MapSideCompareInfo from './MapSideCompareInfo';
-import {PlanType} from "../../common/Enums";
 
 const ButtonToggle = {
     true: "outlined",

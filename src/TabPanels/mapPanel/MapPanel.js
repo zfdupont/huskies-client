@@ -8,7 +8,7 @@ import MapSideInfo from "./MapSideInfo";
 import MapTopInfo from "./MapTopInfo";
 import StoreReducer from '../../common/Store';
 import MapBottomSlider from "./MapBottomSlider";
-import MapSideCompareInfo from './MapSideCompareInfo';
+import MapCompareInfo from './MapCompareInfo';
 
 
 export default function MapPanel()
@@ -25,7 +25,7 @@ export default function MapPanel()
         {
           (!storeMap.isStateNone()) &&
           <Paper style={{display:'flex', flexDirection:"column", alignItems:'center', justifyContents:'center', flex: "0 0 300px"}}>
-            <MapSideCompareInfo/>
+            <MapCompareInfo key="test"/>
           </Paper>
         }
       </div>

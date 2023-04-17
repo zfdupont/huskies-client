@@ -1,3 +1,5 @@
+import { useContext } from 'react';
+import StoreContext from '../../common/Store';
 import {IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Tooltip from '@mui/material/Tooltip';
@@ -19,35 +21,6 @@ function createData(district, area, population, democrats, republicans, white, b
   return { district, area, population, democrats, republicans, white, black, asian };
 }
 
-const rows = [
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(2, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-  createData(1, 234, 234, 234, 234, 234, 234, 234),
-];
-
-function StyledBox(props: { children: ReactNode }) {
-  return null;
-}
-
-function StyledImg(props: { src: string, alt: string }) {
-  return null;
-}
 
 const CustomTooltip = () => {
   return (
@@ -87,8 +60,23 @@ function EnhancedTableToolbar() {
   );
 }
 
-export default function MapSideCompareItem(props) {
+export default function MapCompareInfo(props) {
+  const { storeMap, storeData } = useContext(StoreContext);
+  let dataList = createElectionDataList();
 
+  function createElectionDataList()
+  {
+    let result = [];
+    if (!storeData.isReadyToDisplayCurrentMap()) return result;
+
+    let modelData = storeData.getStateModelData(storeMap.getMapPlan(), storeMap.getState());
+    for (let key in modelData.compareDataDict)
+    {
+      let data = modelData.compareDataDict[key];
+      result.push( createData(data.districtId, data.area, data.population, data.democrats, data.republicans, data.white, data.black, data.asian));
+    }
+    return result;
+  }
   return (
       <Paper sx={{ width: '100%', height: '100%', overflow: 'hidden'}}>
         <TableContainer sx={{ maxHeight: "300px" }}>
@@ -108,9 +96,9 @@ export default function MapSideCompareItem(props) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => {
+              {dataList.map((row) => {
                 return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.district}>
                       {columns.map((column) => {
                         const value = row[column.id];
                         return (

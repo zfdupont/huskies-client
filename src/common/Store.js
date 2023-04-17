@@ -315,7 +315,7 @@ function StoreContextProvider(props) {
             modelData[key]["VAPREPUBLICAN_added"] = 1234;
             modelData[key]["VAPREPUBLICAN_lost"] = 2345;
             modelData[key]["VAPDEMOCRATS_common"] = 1234567;
-            modelData[key]["VAPDEMOCRATS_added"] = 2345;
+            modelData[key]["VAPDEMOCRATS_added"] = 23451;
             modelData[key]["VAPDEMOCRATS_lost"] = 12345;
         }
     }
