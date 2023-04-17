@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import StoreContext from "../../common/Store";
 import '../../App.css';
+import {PartyType} from "../../common/Enums";
 const numToPlace = (n) => {
     const last = n % 10;
     switch (last){
@@ -16,40 +17,39 @@ const numToPlace = (n) => {
 }
 
 const partyColor = {
-    democrats: "#d63031",
-    republican: "#0984e3",
+    [PartyType.DEMOCRATIC]: "#d63031",
+    [PartyType.REPUBLICAN]: "#0984e3",
 }
 
-const partyId = {
-    democrats: 0,
-    republican: 1,
+const partyInitial = {
+    [PartyType.DEMOCRATIC]: "(D)",
+    [PartyType.REPUBLICAN]: "(R)",
 }
 export default function MapSideItem(props)
 {
 
     const { storeMap } = useContext(StoreContext);
 
-    let model = props.districtModelData;
+    let data = props.electionData;
 
-    let winId = (model.votes.democrats > model.votes.republicans)? partyId.democrats : partyId.republican;
-    let loseId = (model.votes.democrats > model.votes.republicans)? partyId.republican : partyId.democrats;
-    let candidates = [model.democratsCandidate, model.republicanCandidate];
-    let voteResults = [model.votes.democrats, model.votes.republicans];
-    let colors = [partyColor.democrats, partyColor.republican];
-    let partyInitials = ["(D)", "(R)"];
-    let winVotePercent = Math.ceil((voteResults[winId]  / model.votes.total) * 100 );
+    let winVotePercent = Math.ceil((data.winnerVotes  / (data.winnerVotes + data.loserVotes)) * 100 );
     let loseVotePercent = 100 - winVotePercent;
-    let bgColor = (storeMap.getHighlightDistrictId() !== model.id)? 'white' : "#ffe8a4";
+    let bgColor = (storeMap.getHighlightDistrictId() !== data.districtId)? 'white' : "#ffe8a4";
     function onItemClick()
     {
-        storeMap.highlightDistrict(model.id);
+        storeMap.highlightDistrict(data.districtId);
+    }
+
+    function getLastName(name)
+    {
+        return name.split(' ')[1]
     }
 
     return (
-        <div className="map-side-item" style={{display:'flex', flex: '0 0 50px', margin: '0px 5px 5px 5px', backgroundColor: bgColor, padding:"5px", borderRadius: '10px'}} onClick={onItemClick}>
+        <div value={data.districtId} className="map-side-item" style={{display:'flex', flex: '0 0 50px', margin: '0px 5px 5px 5px', backgroundColor: bgColor, padding:"5px", borderRadius: '10px'}} onClick={onItemClick}>
             <div style={{display:'flex', flexFlow: 'column', flex: 1}}>
                 <div style={{display:'flex', flex: '3', alignItems:'center', justifyContent: 'center', fontSize: '16px', fontWeight: '900'}}>
-                    {numToPlace(model.id)}
+                    {numToPlace(data.districtId)}
                 </div>
                 <div style={{display:'flex', alignItems:'center', justifyContent:'center', flex: 1.5}}>
                     <div style={{position: 'relative', display:'flex', alignItems:'center', justifyContent:'center', width:'15px', height:'15px', marginRight: 5, color: 'black', fontSize:'10px', borderRadius: '5px', border: 'solid 1px black'}}>
@@ -67,14 +67,14 @@ export default function MapSideItem(props)
             <div style={{flex: '0 0 10px'}}/>
             <div style={{display:'flex', flexFlow:'column', flex: 4, fontSize:'10px'}}>
                 <div style={{display: 'flex', flex:1}}>
-                    <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1.5, fontWeight:'600', color:'white', backgroundColor: colors[winId]}}>
-                        {candidates[winId]} {partyInitials[winId]}
+                    <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1.5, fontWeight:'600', color:'white', backgroundColor: partyColor[data.winnerParty]}}>
+                        {getLastName(data.winnerCandidate)} {partyInitial[data.winnerParty]}
                     </div>
                     <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 10px'}}>
-                        {(candidates[winId] === model.incumbent) && "v"}
+                        {(data.winnerCandidate === data.incumbent) && "v"}
                     </div>
                     <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 1, color:'gray'}}>
-                        {voteResults[winId].toLocaleString()}
+                        {data.winnerVotes.toLocaleString()}
                     </div>
                     <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 1, fontWeight:'800', color:'black'}}>
                         {winVotePercent}%
@@ -84,13 +84,13 @@ export default function MapSideItem(props)
                 <div style={{flex:'0 0 1px', backgroundColor:'darkgray'}}></div>
                 <div style={{display:'flex', flex:1}}>
                     <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1.5, fontWeight:'400', color:'black'}}>
-                        {candidates[loseId]} {partyInitials[loseId]}
+                        {getLastName(data.loserCandidate)} {partyInitial[data.loserParty]}
                     </div>
                     <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 10px'}}>
-                        {(candidates[loseId] === model.incumbent) && "v"}
+                        {(data.loserCandidate === data.incumbent) && "v"}
                     </div>
                     <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 1, color:'gray'}}>
-                        {voteResults[loseId].toLocaleString()}
+                        {data.loserVotes.toLocaleString()}
                     </div>
                     <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 1, fontWeight:'800', color:'black'}}>
                         {loseVotePercent}%

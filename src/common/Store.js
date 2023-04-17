@@ -2,7 +2,7 @@ import {createContext, useState} from 'react';
 import {StateType, TabType, PlanType, GeoData, GeoDataType, RefType} from './Enums';
 import MockData from './MockData';
 import api, {getStateGeoJson} from './api.js';
-import {createStateModel} from "./ConversionHelper";
+import StateModel from "../models/StateModel";
 export const StoreContext = createContext({});
 
 export const MapActionType = {
@@ -192,10 +192,8 @@ function StoreContextProvider(props) {
         })
 
         if (!storeMap.isPlanSelected()) return; // None of Plan selected -> ERROR: Should not be called.
-        await storeData.addStateData(PlanType.Y2020, stateType);
         await storeData.addStateData(storeMap.plan, stateType);
     }
-
 
     // Move to country view
     // Reset added filter layers.
@@ -274,11 +272,59 @@ function StoreContextProvider(props) {
         })
     }
 
+    storeData.createModelDataByGeojson = function(planType, stateType, geojson)
+    {
+        console.log(geojson);
+        let modelData = {};
+        geojson.features.forEach((district, index) => {
+            modelData[index] = district.properties;
+        })
+
+        // TO DO: remove if data all ready.
+        storeData.addMockData(modelData);
+        console.log(modelData)
+
+        return new StateModel(planType, stateType, modelData);
+    }
+
+    storeData.addMockData = function(modelData)
+    {
+        for (let key in modelData)
+        {
+            modelData[key]["DemocraticCandidate"] = "NameName NameName1" + key;
+            modelData[key]["RepublicanCandidate"] = "NameName NameName2" + key;
+            modelData[key]["Incumbent"] = (parseInt(key) % 2 === 0)? "NameName NameName1" + key : "None";
+            modelData[key]["IncumbentParty"] = "Democratic";
+            modelData[key]["VAPTOTAL_common"] = 12345;
+            modelData[key]["VAPTOTAL_added"] = 2341;
+            modelData[key]["VAPTOTAL_lost"] = 1243;
+            modelData[key]["ALAND20_common"] = 123456;
+            modelData[key]["ALAND20_added"] = 2345;
+            modelData[key]["ALAND20_lost"] = 1234;
+            modelData[key]["VAPBLACK_common"] = 12345;
+            modelData[key]["VAPBLACK_added"] = 2345;
+            modelData[key]["VAPBLACK_lost"] = 1234;
+            modelData[key]["VAPWHITE_common"] = 34567;
+            modelData[key]["VAPWHITE_added"] = 1234;
+            modelData[key]["VAPWHITE_lost"] = 5432;
+            modelData[key]["VAPASIAN_common"] = 76543;
+            modelData[key]["VAPASIAN_added"] = 1234;
+            modelData[key]["VAPASIAN_lost"] = 2453;
+            modelData[key]["VAPREPUBLICAN_common"] = 76543;
+            modelData[key]["VAPREPUBLICAN_added"] = 1234;
+            modelData[key]["VAPREPUBLICAN_lost"] = 2345;
+            modelData[key]["VAPDEMOCRATS_common"] = 1234567;
+            modelData[key]["VAPDEMOCRATS_added"] = 23451;
+            modelData[key]["VAPDEMOCRATS_lost"] = 12345;
+        }
+    }
+
     storeData.addStateData = async (planType, stateType) => {
         if (storeData.isStateDataReady(planType, stateType)) return;
 
         let geojson =  await apiGetStateGeojson(planType, stateType);
-        let modelData =  await apiGetStateData(planType, stateType);
+        let modelData = storeData.createModelDataByGeojson(planType, stateType, geojson);
+        console.log(modelData);
 
         storeDataReducer({
             type: DataActionType.ADD_STATE_DATA,
@@ -352,19 +398,10 @@ function StoreContextProvider(props) {
     let apiGetStateGeojson = async (planType, stateType) =>
     {
         // TODO : return saved data if the data already in the storeMap.
-        // TODO : remove if server api ready;
-        if (planType === PlanType.Y2020)
-            return GeoData[stateType][GeoDataType.DISTRICT];
 
         return await api.getStateGeoJson(planType, stateType);
     }
 
-    let apiGetStateData = async (planType, stateType) =>
-    {
-        // TODO : return saved data if the data already in the storeMap.
-        // TODO : Change into api if server api ready.
-        return createStateModel(MockData(planType).data[stateType]);
-    }
 
     return (
         <StoreContext.Provider value={{storeMap, storeData, storePage, callbacks}}>
