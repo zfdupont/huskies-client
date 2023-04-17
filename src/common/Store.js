@@ -294,7 +294,7 @@ function StoreContextProvider(props) {
         {
             modelData[key]["DemocraticCandidate"] = "NameName NameName1" + key;
             modelData[key]["RepublicanCandidate"] = "NameName NameName2" + key;
-            modelData[key]["Incumbent"] = "NameName Incumbent" + key;
+            modelData[key]["Incumbent"] = (parseInt(key) % 2 === 0)? "NameName NameName1" + key : "None";
             modelData[key]["IncumbentParty"] = "Democratic";
             modelData[key]["VAPTOTAL_common"] = 12345;
             modelData[key]["VAPTOTAL_added"] = 2341;

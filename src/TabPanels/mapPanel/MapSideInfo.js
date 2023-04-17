@@ -1,10 +1,12 @@
 import MapSideItem from "./MapSideItem";
-import {Paper} from "@mui/material";
+import {Paper, Switch} from "@mui/material";
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import {useContext, useEffect, useRef, useState} from "react";
 import StoreContext from "../../common/Store";
+import {FilterType} from "../../common/Enums";
+import * as React from "react";
 
 const ButtonToggle = {
     true: "outlined",
@@ -19,11 +21,13 @@ const TableButtonType = {
 
 export default function MapSideInfo()
 {
+
     const infoTableRef = useRef();
     const { storeMap, storeData } = useContext(StoreContext);
     const [ state, setState ] = useState({
         selectedTableMenu: TableButtonType.MAIN,
         selectedDistrictId: -1,
+        incumbentFilter: false,
     });
 
     let tableMenu = getTableMenu();
@@ -57,10 +61,13 @@ export default function MapSideInfo()
         let stateModelData = storeData.getStateModelData(storeMap.getMapPlan(), storeMap.getState());
         for (let id in stateModelData.electionDataDict)
         {
+            if (state.incumbentFilter && !stateModelData.electionDataDict[id].hasIncumbent) continue;
+
             districts.push(<MapSideItem key={id} electionData={stateModelData.electionDataDict[id]}/>);
         }
         return districts;
     }
+
     function getSimulatedInfo()
     {
         return []
@@ -112,8 +119,7 @@ export default function MapSideInfo()
             <Box
                 sx={{
                     display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
+                    alignItems: 'right',
                     '& > *': {
                         m: 1,
                     },
@@ -138,14 +144,26 @@ export default function MapSideInfo()
         }
     }
 
+    function onIncumbentFilterClick(event)
+    {
+        setState((prevState) => ({...prevState, incumbentFilter: event.target.checked}));
+    }
+
     return (
         <Paper style={{display: 'flex', flexFlow: "column", position:'relative', width:'100%', height:'100%'}}>
-            <div style={{display: 'flex', flex: "0", justifyContent: 'center'}}>
-                {tableMenu}
+            <div style={{display: 'flex', flex: "0 0 70px", justifyContent: 'center', margineLeft: '20px'}}>
+                <div style={{display: 'flex', alignItems:'center', justifyContent: 'left', flex: "1",}}>
+                    {tableMenu}
+                </div>
+                <div style={{display:'flex', alignItems:'center', justifyContent: 'right', flex:'1', fontSize:'12px'}}>
+                    Only Incumbents
+                    <Switch aria-label='Switch demo' size="small" sx={{margin: 1}} checked={state.incumbentFilter} onClick={onIncumbentFilterClick} />
+                </div>
             </div>
             <div style={{flex: "0", justifyContent: 'left'}}>
                 {titles}
             </div>
+            <div style={{flex:'0 0 1px', backgroundColor:'#cbcbcb'}}/>
             <div ref={infoTableRef} style={{position:'relative', display:'flex', flexFlow: 'column', flex: '1 1 auto', backgroundColor:'white', overflowY: 'scroll'}}>
                 {districtInfo}
             </div>

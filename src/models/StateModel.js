@@ -21,7 +21,7 @@ export default class StateModel
                 republicanCandidate : data["RepublicanCandidate"],
                 winnerCandidate : (data["2020VBIDEN"] > data["2020VTRUMP"])? data["DemocraticCandidate"] : data["RepublicanCandidate"],
                 loserCandidate : (data["2020VBIDEN"] < data["2020VTRUMP"])? data["DemocraticCandidate"] : data["RepublicanCandidate"],
-                hasIncumbent : (data["Incumbent"] !== "NONE"),
+                hasIncumbent : (data["Incumbent"] !== "None"),
                 incumbent : data["Incumbent"],
                 winnerParty : (data["2020VBIDEN"] > data["2020VTRUMP"])? PartyType.DEMOCRATIC : PartyType.REPUBLICAN,
                 loserParty : (data["2020VBIDEN"] < data["2020VTRUMP"])? PartyType.DEMOCRATIC : PartyType.REPUBLICAN,
