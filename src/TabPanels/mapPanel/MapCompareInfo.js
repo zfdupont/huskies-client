@@ -1,10 +1,21 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import StoreContext from '../../common/Store';
-import {IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import {
+  IconButton,
+  Paper,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
+} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Tooltip from '@mui/material/Tooltip';
 import Toolbar from "@mui/material/Toolbar";
 import HelpIcon from '@mui/icons-material/Help';
+import * as React from "react";
 
 const columns = [
   { id: 'district', maxWidth: '30px', label: 'District', align:'center'},
@@ -35,35 +46,47 @@ const CustomTooltip = () => {
   );
 };
 
-function EnhancedTableToolbar() {
-  return (
-      <Toolbar
-          sx={{
-            pl: { sm: 2 },
-            pr: { xs: 1, sm: 1 },
-          }}
-      >
-        <Typography
-            sx={{ flex: '1 1 100%' }}
-            variant="h6"
-            id="tableTitle"
-            component="div"
-        >
-          Compare to 2020 district plan
-        </Typography>
-        <Tooltip title={<CustomTooltip/>}>
-          <IconButton sx={{fontSize: "12px"}}>
-            How to Calculate<HelpIcon color="primary" />
-          </IconButton>
-        </Tooltip>
-      </Toolbar>
-  );
-}
+
 
 export default function MapCompareInfo(props) {
   const { storeMap, storeData } = useContext(StoreContext);
+  const [incumbentFilter, setIncumbentFilter] = useState(true);
+
   let dataList = createElectionDataList();
 
+  function onIncumbentFilterClick(event)
+  {
+    setIncumbentFilter(() => (event.target.checked));
+  }
+
+  function EnhancedTableToolbar() {
+    return (
+        <Toolbar
+            sx={{
+              pl: { sm: 2 },
+              pr: { xs: 1, sm: 1 },
+            }}
+        >
+          <Typography
+              sx={{ flex: '1 1 100%' }}
+              variant="h6"
+              id="tableTitle"
+              component="div"
+          >
+            Compare to 2020 district plan
+          </Typography>
+          <div style={{display:'flex', alignItems:'center', justifyContent: 'right', flex:'1', fontSize:'12px', marginRight:'50px'}}>
+            Only Incumbents
+            <Switch aria-label='Switch demo' size="small" sx={{margin: 1}} checked={incumbentFilter} onClick={onIncumbentFilterClick} />
+          </div>
+          <Tooltip title={<CustomTooltip/>}>
+            <IconButton sx={{fontSize: "12px"}}>
+              How to Calculate<HelpIcon color="primary" />
+            </IconButton>
+          </Tooltip>
+        </Toolbar>
+    );
+  }
   function createElectionDataList()
   {
     let result = [];
@@ -72,6 +95,8 @@ export default function MapCompareInfo(props) {
     let modelData = storeData.getStateModelData(storeMap.getMapPlan(), storeMap.getState());
     for (let key in modelData.compareDataDict)
     {
+      if (incumbentFilter && !modelData.electionDataDict[key].hasIncumbent) continue;
+
       let data = modelData.compareDataDict[key];
       result.push( createData(data.districtId, data.area, data.population, data.democrats, data.republicans, data.white, data.black, data.asian));
     }
