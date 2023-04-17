@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import {useContext, useEffect, useRef, useState} from "react";
 import StoreContext from "../../common/Store";
-import {FilterType} from "../../common/Enums";
+import {FilterType, PlanType} from "../../common/Enums";
 import * as React from "react";
 
 const ButtonToggle = {
@@ -30,9 +30,9 @@ export default function MapSideInfo()
     });
 
     let tableMenu = getTableMenu();
+    let title = (storeMap.getMapPlan() === PlanType.Y2022)? "2022 District Detail" : "Simulation Detail";
     let titles = getTitles();
     let districtInfo = getDistrictInfo();
-    let simulatedInfo = getSimulatedInfo();
     selectedDistrictIdSetup();
 
     useEffect(() => {
@@ -130,7 +130,10 @@ export default function MapSideInfo()
     function infoScrollSetup()
     {
         if (storeMap.getHighlightDistrictId() === -1) return;
-        const infoItem = infoTableRef?.current?.children[storeMap.getHighlightDistrictId()-1];
+        // const infoItem = infoTableRef?.current?.children[storeMap.getHighlightDistrictId()-1];
+        const infoItem = Array.from(infoTableRef?.current?.children).find((item) => {
+            return item.getAttribute('value').toString() === storeMap.getHighlightDistrictId().toString()
+        });
         if (infoItem)
         {
             infoItem.scrollIntoView({behavior: "smooth"});
@@ -145,8 +148,9 @@ export default function MapSideInfo()
     return (
         <Paper style={{display: 'flex', flexFlow: "column", position:'relative', width:'100%', height:'100%'}}>
             <div style={{display: 'flex', flex: "0 0 70px", justifyContent: 'center', margineLeft: '20px'}}>
-                <div style={{display: 'flex', alignItems:'center', justifyContent: 'left', flex: "1",}}>
-                    {tableMenu}
+                <div style={{display: 'flex', alignItems:'center', justifyContent: 'left', flex: "1", marginLeft:'20px', fontSize:'18px', fontWeight:'500'}}>
+                    {/*{tableMenu}*/}
+                    {title}
                 </div>
                 <div style={{display:'flex', alignItems:'center', justifyContent: 'right', flex:'1', fontSize:'12px'}}>
                     Only Incumbents
