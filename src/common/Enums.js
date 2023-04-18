@@ -39,10 +39,12 @@ export const CandidateType = {
 }
 
 export const FilterType = {
-    DEMOCRAT: "democrat",
-    REPUBLICAN: "republican",
+    NONE: 'none',
     INCUMBENT: "incumbent",
-    DIFFERENCE: "difference",
+    PARTY: "party",
+    WHITE: "white",
+    BLACK: "black",
+    ASIAN: "asian",
 }
 
 // LayerType string must match the layer name in MapProperty.json.
@@ -54,10 +56,11 @@ export const TileLayerType = {
 export const LayerGroupType = {
     STATE_DEFAULT: "stateDefault",
     COUNTRY_DEFAULT: "countryDefault",
-    DEMOCRAT: "democrat",
-    REPUBLICAN: "republican",
     INCUMBENT: "incumbent",
-    DIFFERENCE: "difference",
+    PARTY: "party",
+    WHITE: "white",
+    BLACK: "black",
+    ASIAN: "asian",
     HIGHLIGHT: "highlight",
 }
 
