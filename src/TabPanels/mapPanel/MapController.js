@@ -10,7 +10,7 @@ import {
     GeoDataType,
     StateTypeList,
     StateType,
-    RefType
+    RefType, FilterType, PartyType
 } from '../../common/Enums';
 import geoJsonHelper from '../../common/GeoJsonHelper';
 import {filterToLayerGroup, filterToStyle} from "../../common/ConversionHelper";
@@ -69,21 +69,92 @@ export default function MapController()
     }
     function FilterSetup()
     {
-        if (storeMap.isStateNone()) return;
+        if (storeMap.isStateNone() || storeMap.colorFilter === FilterType.NONE || !storeData.isReadyToDisplayCurrentMap()) return;
 
-        storeMap.filters.forEach((filterType) => {
-            let data = GetFilteredDistrictJson(storeMap.plan, filterType);
-            let layerGroupType = filterToLayerGroup(filterType);
-            let option = {style: ApplyMixingValueToStyle(storeMap.plan, MapProperty.state[filterToStyle(filterType)], true)};
-            AddGeoJsonLayer(data, layerGroupType, option)
+        let geojson = GetProcessedGeoJson();
+        let stateModel = storeData.getStateModelData(storeMap.plan, storeMap.state);
+        let colorFilter = storeMap.colorFilter;
+        let layerGroupType = filterToLayerGroup(colorFilter);
+        let style = MapProperty.state[filterToStyle(colorFilter)];
+        const dynamicHeatMapStyle = (feature) => {
+            return {...style, color: GetColorByFilter(stateModel, feature.properties.district_id, colorFilter)}
+        }
+        AddGeoJsonLayer(geojson, layerGroupType, {style: dynamicHeatMapStyle})
+    }
 
-            if (!storeMap.isSubPlanSelected()) return;
+    function GetColorByFilter(stateModel, districtId, colorFilter)
+    {
+        return (colorFilter === FilterType.PARTY)? GetColorByParty(stateModel, districtId, colorFilter) : GetColorPopulation(stateModel, districtId, colorFilter);
 
-            data = GetFilteredDistrictJson(storeMap.subPlan, filterType);
-            layerGroupType = filterToLayerGroup(filterType);
-            option = {style: ApplyMixingValueToStyle(storeMap.subPlan, MapProperty.state[filterToStyle(filterType)], true)};
-            AddGeoJsonLayer(data, layerGroupType, option)
+    }
+
+    function GetColorByParty(stateModel, districtId)
+    {
+        let data = stateModel.summaryData;
+        let party = stateModel.electionDataDict[districtId]?.winnerParty;
+        let votes = stateModel.electionDataDict[districtId]?.winnerVotes;
+        let min;
+        let max;
+        let variation;
+
+        if (!ValidCheck([data,party,votes])) return "#ffffff";
+
+        if (party === PartyType.DEMOCRATIC)
+        {
+            min = RoundDown(data.minDemocrats);
+            max = RoundUp(data.maxDemocrats);
+            variation = RoundUp((max - min) / 5);
+        }
+        else
+        {
+            min = RoundDown(data.minRepublicans);
+            max = RoundUp(data.maxRepublicans);
+            variation = RoundUp((max - min) / 5);
+        }
+
+        if (votes >= max)               return (party === PartyType.DEMOCRATIC)? "#000077" : "#6b0000";
+        if (votes >= min + 4*variation) return (party === PartyType.DEMOCRATIC)? "#0000ff" : "#ff0000";
+        if (votes >= min + 3*variation) return (party === PartyType.DEMOCRATIC)? "#2828ff" : "#ff2b2b";
+        if (votes >= min + 2*variation) return (party === PartyType.DEMOCRATIC)? "#6767ff" : "#ff6363";
+        if (votes >= min + 1*variation) return (party === PartyType.DEMOCRATIC)? "#7e7eff" : "#ff7f7f";
+        if (votes >= 0)                 return (party === PartyType.DEMOCRATIC)? "#ababff" : "#fdb4b4";
+    }
+
+    function ValidCheck(list)
+    {
+        list.forEach((v) => {
+            if (!v) return false;
         })
+        return true;
+    }
+
+    function RoundUp(number)
+    {
+        if (number <= 0) return 0;
+        return Math.ceil(number / 10 ** (Math.floor(Math.log10(number)) - 1)) * 10 ** (Math.floor(Math.log10(number)) - 1)
+    }
+    function RoundDown(number)
+    {
+        if (number <= 0) return 0;
+        return Math.floor(number / 10 ** (Math.floor(Math.log10(number)) - 1)) * 10 ** (Math.floor(Math.log10(number)) - 1)
+    }
+
+    function GetColorPopulation(stateModel, districtId, colorFilter)
+    {
+        let data = stateModel.summaryData;
+        let votes = stateModel.electionDataDict[districtId].getVotesByFilter(colorFilter);
+        let min = RoundDown(data.getMinByFilter(colorFilter));
+        let max = RoundUp(data.getMaxByFilter(colorFilter));
+        let variation = RoundUp((max - min) / 5);
+
+        if (!ValidCheck([data, votes, min, max, variation])) return "#ffffff";
+
+        if (votes >= max)               return "#00ad00";
+        if (votes >= min + 4*variation) return "#00ed01";
+        if (votes >= min + 3*variation) return "#3af901";
+        if (votes >= min + 2*variation) return "#87fa00";
+        if (votes >= min + 1*variation) return "#cefb02";
+        if (votes >= 0)                 return "#fefb01";
     }
 
     function HighlightSetup()
@@ -108,16 +179,20 @@ export default function MapController()
             ZoomToLayer(innerLayers[key])
         }
     }
-    function GetFilteredDistrictJson(planType, filterType)
-    {
-        if (!storeData.isGeojsonReady(planType, storeMap.getState())) return;
 
-        let districtJson = storeData.getStateGeoJson(planType, storeMap.getState());
-        let districtJsonCopy = JSON.parse(JSON.stringify(districtJson)); // deep copy.
+    function GetProcessedGeoJson()
+    {
+        if (!storeData.isGeojsonReady(storeMap.plan, storeMap.state)) return null;
+
+        let geojson = storeData.getStateGeoJson(storeMap.plan, storeMap.state);
+
+        if (!storeMap.incumbentFilter) return geojson;
+
         let stateModelData = storeData.getStateModelData(storeMap.plan, storeMap.state);
-        let ids = stateModelData.getFilteredDistrictsID(filterType);
-        return geoJsonHelper.getDistrictJsonByIDs(districtJsonCopy, ids);
+        let ids = stateModelData.getIncumbentDistrictIDs();
+        return geoJsonHelper.getDistrictJsonByIDs(...geojson, ids);
     }
+
     // --- EVENT HANDLER -------------------------
     function OnStateClick(stateType)
     {

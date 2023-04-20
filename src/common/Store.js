@@ -1,7 +1,6 @@
 import {createContext, useState} from 'react';
-import {StateType, TabType, PlanType, GeoData, GeoDataType, RefType} from './Enums';
-import MockData from './MockData';
-import api, {getStateGeoJson} from './api.js';
+import {StateType, TabType, PlanType, FilterType} from './Enums';
+import api, {getStateGeojson} from './api.js';
 import StateModel from "../models/StateModel";
 export const StoreContext = createContext({});
 
@@ -11,7 +10,8 @@ export const MapActionType = {
     SUB_PLAN_SELECT: "sub_plan_select",
     STATE_SELECT: "state_select",
     STATE_UNSELECT: "state_unselect",
-    UPDATE_FILTER: "update_filter",
+    UPDATE_COLOR_FILTER: "update_color_filter",
+    UPDATE_INCUMBENT_FILTER: "update_incumbent_filter",
     DISTRICT_HIGHLIGHT: "district_hover",
     MIXING_VALUE_CHANGE: "mixing_value_change",
     RESET_PAGE: "reset_page",
@@ -37,7 +37,8 @@ function StoreContextProvider(props) {
         state: StateType.NONE,
         districtId: -1,
         prevState: null,
-        filters: [],
+        colorFilter: FilterType.NONE,
+        incumbentFilter: false,
         mixingValue: -1,
         resetState: 0,
         resetPage: 0,
@@ -57,7 +58,7 @@ function StoreContextProvider(props) {
     })
 // --- STATE HELPER ---------------------------------
 
-    function createMapState(plan, subPlan, stateType, filters, districtId, mixingValue, resetState, resetPage)
+    function createMapState(plan, subPlan, stateType, colorFilter, districtId, mixingValue, resetState, resetPage, incumbentFilter)
     {
         if (plan === storeMap.subPlan)
         {
@@ -68,11 +69,12 @@ function StoreContextProvider(props) {
             subPlan: (subPlan !== undefined)? subPlan : storeMap.subPlan,
             state: (stateType !== undefined)? stateType : storeMap.state,
             prevState: storeMap.state,
-            filters: (filters !== undefined)? filters : storeMap.filters,
+            colorFilter: (colorFilter !== undefined)? colorFilter : storeMap.colorFilter,
             districtId: (districtId !== undefined)? districtId : storeMap.districtId,
             mixingValue: (mixingValue !== undefined)? mixingValue : storeMap.mixingValue,
             resetState: (resetState !== undefined)? resetState : storeMap.resetState,
             resetPage: (resetPage !== undefined)? resetPage : storeMap.resetPage,
+            incumbentFilter: (incumbentFilter !== undefined)? incumbentFilter : storeMap.incumbentFilter,
         }
     }
 
@@ -113,21 +115,23 @@ function StoreContextProvider(props) {
         const {type, payload} = action;
         switch (type) {
             case MapActionType.PLAN_SELECT:
-                return setStoreMap(createMapState(payload.planType, prev, prev, prev, prev, prev, prev, prev));
+                return setStoreMap(createMapState(payload.planType, prev, prev, prev, prev, prev, prev, prev, prev));
             case MapActionType.SUB_PLAN_SELECT:
-                return setStoreMap(createMapState(prev, payload.subPlanType, prev, prev, prev, prev, prev, prev))
+                return setStoreMap(createMapState(prev, payload.subPlanType, prev, prev, prev, prev, prev, prev, prev))
             case MapActionType.STATE_SELECT:
-                return setStoreMap(createMapState(prev, prev, payload.stateType, prev, -1, 0, prev, prev))
+                return setStoreMap(createMapState(prev, prev, payload.stateType, prev, -1, 0, prev, prev, prev))
             case MapActionType.STATE_UNSELECT:
-                return setStoreMap(createMapState(prev, prev, StateType.NONE, [], prev, prev, prev, prev))
-            case MapActionType.UPDATE_FILTER:
-                return setStoreMap(createMapState(prev, prev, prev, payload.filters, prev, prev, prev, prev))
+                return setStoreMap(createMapState(prev, prev, StateType.NONE, [], prev, prev, prev, prev, prev))
+            case MapActionType.UPDATE_COLOR_FILTER:
+                return setStoreMap(createMapState(prev, prev, prev, payload.colorFilter, prev, prev, prev, prev, prev))
+            case MapActionType.UPDATE_INCUMBENT_FILTER:
+                return setStoreMap(createMapState(prev, prev, prev, prev, prev, prev, prev, prev, payload.state))
             case MapActionType.DISTRICT_HIGHLIGHT:
-                return setStoreMap(createMapState(prev, prev, prev, prev, payload.districtId, prev, prev, prev))
+                return setStoreMap(createMapState(prev, prev, prev, prev, payload.districtId, prev, prev, prev, prev))
             case MapActionType.MIXING_VALUE_CHANGE:
-                return setStoreMap(createMapState(prev, prev, prev, prev, prev, payload.value, prev, prev))
+                return setStoreMap(createMapState(prev, prev, prev, prev, prev, payload.value, prev, prev, prev))
             case MapActionType.RESET_STATE:
-                return setStoreMap(createMapState(prev, null, prev, [], -1, 0, storeMap.resetState + 1, prev))
+                return setStoreMap(createMapState(prev, null, prev, [], -1, 0, storeMap.resetState + 1, prev, prev))
             case MapActionType.RESET_PAGE:
                 return setStoreMap(createMapState())
             default:
@@ -173,6 +177,7 @@ function StoreContextProvider(props) {
 
     storeMap.selectSubPlan = async function(planType)
     {
+        console.log("select sub plan");
         if (storeMap.subPlan === planType || storeMap.plan === planType) return;
 
         storeMapReducer({
@@ -184,6 +189,7 @@ function StoreContextProvider(props) {
 
     storeMap.selectState = async function(stateType)
     {
+        console.log("select state");
         storeMapReducer({
             type: MapActionType.STATE_SELECT,
             payload: {
@@ -205,22 +211,19 @@ function StoreContextProvider(props) {
         })
     }
 
-    storeMap.addFilter = function(filterType)
+    storeMap.setColorFilter = function(colorFilter)
     {
-        let filters = storeMap.filters;
-        filters.push(filterType);
         storeMapReducer({
-            type: MapActionType.UPDATE_FILTER,
-            payload: {filters: filters}
+            type: MapActionType.UPDATE_COLOR_FILTER,
+            payload: {colorFilter: colorFilter}
         })
     }
 
-    storeMap.removeFilter = function(filterType)
+    storeMap.setIncumbentFilter = function(state)
     {
-        let filters = storeMap.filters.filter((filter) => filter !== filterType)
         storeMapReducer({
-            type: MapActionType.UPDATE_FILTER,
-            payload: {filters: filters}
+            type: MapActionType.UPDATE_INCUMBENT_FILTER,
+            payload: {state: state},
         })
     }
 
@@ -272,12 +275,19 @@ function StoreContextProvider(props) {
         })
     }
 
+    storeData.setDistrictIdOfGeojson = function(geojson)
+    {
+        geojson.features.forEach((district, index) => {
+            district.properties.district_id = index + 1;
+        })
+    }
+
     storeData.createModelDataByGeojson = function(planType, stateType, geojson)
     {
         console.log(geojson);
         let modelData = {};
         geojson.features.forEach((district, index) => {
-            modelData[index] = district.properties;
+            modelData[index + 1] = district.properties;
         })
 
         // TO DO: remove if data all ready.
@@ -322,9 +332,11 @@ function StoreContextProvider(props) {
     storeData.addStateData = async (planType, stateType) => {
         if (storeData.isStateDataReady(planType, stateType)) return;
 
-        let geojson =  await apiGetStateGeojson(planType, stateType);
+        let geojson = await api.getStateGeojson(planType, stateType);
+        // let summaryJson =  await api.getStateSummaryJson(stateType);
+
+        storeData.setDistrictIdOfGeojson(geojson);
         let modelData = storeData.createModelDataByGeojson(planType, stateType, geojson);
-        console.log(modelData);
 
         storeDataReducer({
             type: DataActionType.ADD_STATE_DATA,
