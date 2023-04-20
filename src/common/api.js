@@ -10,17 +10,31 @@ function parseJSON(response) {
         .then((data) => ({ status: response.status, body: data }));
 }
 
-export const getStateGeoJson = async (planType, stateType) => {
-    // TO DO: Add plan Type to the query when server api ready.
-    return api.get(`/states/${stateType}`)
+export const getStateSummaryJson = async (stateType) => {
+    return api.get(`/state/${stateType}`)
         .then(response => response.data)
         .catch(err => {
             return null;
         });
 }
 
+export const getStateGeojson = async (planType, stateType) => {
+    return api.get(`/plan/plan`,
+        {
+          params: {
+            state: stateType,
+            plan: planType,
+          }
+        })
+      .then(response => response.data)
+      .catch(err => {
+          return null;
+      });
+}
+
 const apis = {
-    getStateGeoJson,
+    getStateSummaryJson,
+    getStateGeojson,
 }
 
 export default apis

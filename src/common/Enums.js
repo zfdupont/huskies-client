@@ -18,7 +18,7 @@ export const RefType = {
 
 // Y = Year, S = Simulation.
 export let PlanType = {
-    Y2022: "2022",
+    Y2022: "Enacted",
 }
 
 export const StateType = {

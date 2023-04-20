@@ -20,7 +20,7 @@ export default function MapPanel()
         <Paper className="map" style={{flex: 1, marginBottom: '10px'}}>
           <MainMap/>
           {(!storeMap.isStateNone()) && <MapTopInfo/>}
-          {(!storeMap.isStateNone()) && <MapBottomSlider/>}
+          {/*{(!storeMap.isStateNone()) && <MapBottomSlider/>}*/}
         </Paper>
         {
           (!storeMap.isStateNone()) &&

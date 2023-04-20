@@ -1,7 +1,6 @@
 import {createContext, useState} from 'react';
-import {StateType, TabType, PlanType, GeoData, GeoDataType, RefType, FilterType} from './Enums';
-import MockData from './MockData';
-import api, {getStateGeoJson} from './api.js';
+import {StateType, TabType, PlanType, FilterType} from './Enums';
+import api, {getStateGeojson} from './api.js';
 import StateModel from "../models/StateModel";
 export const StoreContext = createContext({});
 
@@ -178,6 +177,7 @@ function StoreContextProvider(props) {
 
     storeMap.selectSubPlan = async function(planType)
     {
+        console.log("select sub plan");
         if (storeMap.subPlan === planType || storeMap.plan === planType) return;
 
         storeMapReducer({
@@ -189,6 +189,7 @@ function StoreContextProvider(props) {
 
     storeMap.selectState = async function(stateType)
     {
+        console.log("select state");
         storeMapReducer({
             type: MapActionType.STATE_SELECT,
             payload: {
@@ -331,10 +332,11 @@ function StoreContextProvider(props) {
     storeData.addStateData = async (planType, stateType) => {
         if (storeData.isStateDataReady(planType, stateType)) return;
 
-        let geojson =  await apiGetStateGeojson(planType, stateType);
+        let geojson = await api.getStateGeojson(planType, stateType);
+        // let summaryJson =  await api.getStateSummaryJson(stateType);
+
         storeData.setDistrictIdOfGeojson(geojson);
         let modelData = storeData.createModelDataByGeojson(planType, stateType, geojson);
-        console.log(modelData);
 
         storeDataReducer({
             type: DataActionType.ADD_STATE_DATA,
