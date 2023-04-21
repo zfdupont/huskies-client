@@ -7,7 +7,6 @@ import MainMap from "./MainMap";
 import MapSideInfo from "./MapSideInfo";
 import MapTopInfo from "./MapTopInfo";
 import StoreReducer from '../../common/Store';
-import MapBottomSlider from "./MapBottomSlider";
 import MapCompareInfo from './MapCompareInfo';
 
 
@@ -22,12 +21,9 @@ export default function MapPanel()
           {(!storeMap.isStateNone()) && <MapTopInfo/>}
           {/*{(!storeMap.isStateNone()) && <MapBottomSlider/>}*/}
         </Paper>
-        {
-          (!storeMap.isStateNone()) &&
-          <Paper style={{display:'flex', flexDirection:"column", alignItems:'center', justifyContents:'center', flex: "0 0 300px"}}>
-            <MapCompareInfo key="test"/>
-          </Paper>
-        }
+        <Paper style={{display:'flex', flexDirection:"column", alignItems:'center', justifyContents:'center', flex: "0 0 300px"}}>
+          {(!storeMap.isStateNone()) && <MapCompareInfo/>}
+        </Paper>
       </div>
       <Paper style={{flex:1.7, backgroundColor:'white'}}>
         {(!storeMap.isStateNone()) && <MapSideInfo/>}
