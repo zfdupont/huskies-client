@@ -58,10 +58,8 @@ function StoreContextProvider(props) {
     })
 // --- STATE HELPER ---------------------------------
 
-    function createMapState(plan, subPlan, stateType, colorFilter, districtId, mixingValue, resetState, resetPage, incumbentFilter)
-    {
-        if (plan === storeMap.subPlan)
-        {
+    function createMapState(plan, subPlan, stateType, colorFilter, districtId, mixingValue, resetState, resetPage, incumbentFilter) {
+        if (plan === storeMap.subPlan) {
             subPlan = null;
         }
         return {
@@ -78,8 +76,7 @@ function StoreContextProvider(props) {
         }
     }
 
-    function createDataState(planType, stateType, modelData, geojson, districtBoundData, planKey, planValue)
-    {
+    function createDataState(planType, stateType, modelData, geojson, districtBoundData, planKey, planValue) {
         let newData = storeData;
         newData.modelData[planType] = newData.modelData[planType] ?? {}; // set {} if null.
         newData.geojson[planType] = newData.geojson[planType] ?? {};
