@@ -9,8 +9,7 @@ import MapFilterList from './MapFilterList'
 import StoreContext from './Store'
 import {TabType} from "./Enums";
 
-export default function DrawerLists()
-{
+export default function DrawerLists() {
   const { storeMap, storePage } = useContext(StoreContext);
   return (
     <div>
