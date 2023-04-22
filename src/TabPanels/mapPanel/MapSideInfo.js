@@ -1,5 +1,5 @@
 import MapSideItem from "./MapSideItem";
-import {Paper, Switch, Table, TableBody} from "@mui/material";
+import {Paper, Switch} from "@mui/material";
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -7,7 +7,6 @@ import {useContext, useEffect, useRef, useState} from "react";
 import StoreContext from "../../common/Store";
 import {FilterType, PlanType} from "../../common/Enums";
 import * as React from "react";
-import MapTopInfo from "./MapTopInfo";
 
 const ButtonToggle = {
     true: "outlined",
@@ -30,6 +29,7 @@ export default function MapSideInfo()
         incumbentFilter: true,
     });
 
+    let tableMenu = getTableMenu();
     let title = (storeMap.getMapPlan() === PlanType.Y2022)? "2022 District Detail" : "Simulation Detail";
     let titles = getTitles();
     let districtInfo = getDistrictInfo();
@@ -97,6 +97,32 @@ export default function MapSideInfo()
         )
     }
 
+    function getTableMenu()
+    {
+        const buttons = [
+            <Button key="1" variant={ButtonToggle[state.selectedTableMenu === TableButtonType.MAIN]}
+                    onClick={() => onTableMenuClicked(TableButtonType.MAIN)}>{storeMap.getMapPlan()}
+            </Button>,
+            storeMap.getMapPlan() !== storeData.getPlanType().Y2020 && <Button key="2" variant={ButtonToggle[state.selectedTableMenu === TableButtonType.COMPARE]}
+                     onClick={() => onTableMenuClicked(TableButtonType.COMPARE)}>Simulation
+            </Button>,
+        ];
+
+        return(
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'right',
+                    '& > *': {
+                        m: 1,
+                    },
+                }}
+            >
+                <ButtonGroup size="small" aria-label="small button group">
+                    {buttons}
+                </ButtonGroup>
+            </Box>)
+    }
     let onTableMenuClicked = (tableButtonType) => {
         setState({selectedTableMenu: tableButtonType});
     }
@@ -120,25 +146,24 @@ export default function MapSideInfo()
     }
 
     return (
-        <div style={{display: 'flex', flex: '1', flexDirection: "column", height: '100%'}}>
-            <div style={{display: 'flex', flexDirection:'column', flex: "0 0 70px", justifyContent: 'center', margineLeft: '20px'}}>
-                <div style={{display: 'flex'}}>
-                    <div style={{display: 'flex', alignItems:'center', justifyContent: 'left', flex: "1", marginLeft:'20px', fontSize:'18px', fontWeight:'500'}}>
-                        {title}
-                    </div>
-                    <div style={{display:'flex', alignItems:'center', justifyContent: 'right', flex:'1', fontSize:'12px'}}>
-                        Only Incumbents
-                        <Switch aria-label='Switch demo' size="small" sx={{margin: 1}} checked={state.incumbentFilter} onClick={onIncumbentFilterClick} />
-                    </div>
+        <Paper style={{display: 'flex', flexFlow: "column", position:'relative', width:'100%', height:'100%'}}>
+            <div style={{display: 'flex', flex: "0 0 70px", justifyContent: 'center', margineLeft: '20px'}}>
+                <div style={{display: 'flex', alignItems:'center', justifyContent: 'left', flex: "1", marginLeft:'20px', fontSize:'18px', fontWeight:'500'}}>
+                    {/*{tableMenu}*/}
+                    {title}
+                </div>
+                <div style={{display:'flex', alignItems:'center', justifyContent: 'right', flex:'1', fontSize:'12px'}}>
+                    Only Incumbents
+                    <Switch aria-label='Switch demo' size="small" sx={{margin: 1}} checked={state.incumbentFilter} onClick={onIncumbentFilterClick} />
                 </div>
             </div>
-            <div style={{justifyContent: 'left'}}>
+            <div style={{flex: "0", justifyContent: 'left'}}>
                 {titles}
             </div>
             <div style={{flex:'0 0 1px', backgroundColor:'#cbcbcb'}}/>
-            <div ref={infoTableRef} style={{display:'flex', flexDirection:'column', flex:'1', overflow: 'auto', minHeight: 0}}>
+            <div ref={infoTableRef} style={{position:'relative', display:'flex', flexFlow: 'column', flex: '1 1 auto', backgroundColor:'white', overflowY: 'scroll'}}>
                 {districtInfo}
             </div>
-        </div>
+        </Paper>
     );
 }

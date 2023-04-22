@@ -7,6 +7,7 @@ import MainMap from "./MainMap";
 import MapSideInfo from "./MapSideInfo";
 import MapTopInfo from "./MapTopInfo";
 import StoreReducer from '../../common/Store';
+import MapBottomSlider from "./MapBottomSlider";
 import MapCompareInfo from './MapCompareInfo';
 
 
@@ -18,19 +19,19 @@ export default function MapPanel()
       <div style={{display: "flex", flexDirection: "column", flex:3.5, marginRight: '10px'}}>
         <Paper className="map" style={{flex: 1, marginBottom: '10px'}}>
           <MainMap/>
+          {(!storeMap.isStateNone()) && <MapTopInfo/>}
+          {/*{(!storeMap.isStateNone()) && <MapBottomSlider/>}*/}
         </Paper>
-        <Paper style={{display:'flex', flexDirection:"column", alignItems:'center', justifyContents:'center', flex: "0 0 300px"}}>
-          {(!storeMap.isStateNone()) && <MapCompareInfo/>}
-        </Paper>
+        {
+          (!storeMap.isStateNone()) &&
+          <Paper style={{display:'flex', flexDirection:"column", alignItems:'center', justifyContents:'center', flex: "0 0 300px"}}>
+            <MapCompareInfo key="test"/>
+          </Paper>
+        }
       </div>
-      <div style={{display:'flex', flexDirection:'column', flex:1.7}}>
-        <div style={{flex: '0', marginBottom:'10px', height:'100%'}}>
-          <MapTopInfo/>
-        </div>
-        <Paper style={{display:'flex', flex: '1', height: '90%'}}>
-          {(!storeMap.isStateNone()) && <MapSideInfo/>}
-        </Paper>
-      </div>
+      <Paper style={{flex:1.7, backgroundColor:'white'}}>
+        {(!storeMap.isStateNone()) && <MapSideInfo/>}
+      </Paper>
     </div>
   );
 }
