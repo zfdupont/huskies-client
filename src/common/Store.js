@@ -210,7 +210,6 @@ function StoreContextProvider(props) {
 
     storeMap.setColorFilter = function(colorFilter)
     {
-        console.log(colorFilter);
         storeMapReducer({
             type: MapActionType.UPDATE_COLOR_FILTER,
             payload: {colorFilter: colorFilter}
@@ -332,6 +331,7 @@ function StoreContextProvider(props) {
         let geojson = await api.getStateGeojson(planType, stateType);
         let summaryJson =  await api.getStateSummaryJson(stateType);
         console.log(summaryJson);
+        
         storeData.setDistrictIdOfGeojson(geojson);
         let modelData = storeData.createModelDataByGeojson(planType, stateType, geojson);
 
