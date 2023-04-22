@@ -1,5 +1,5 @@
 import MapSideItem from "./MapSideItem";
-import {Paper, Switch, TableBody} from "@mui/material";
+import {Paper, Switch, Table, TableBody} from "@mui/material";
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -137,9 +137,7 @@ export default function MapSideInfo()
             </div>
             <div style={{flex:'0 0 1px', backgroundColor:'#cbcbcb'}}/>
             <div ref={infoTableRef} style={{display:'flex', flexDirection:'column', flex:'1', overflow: 'auto', minHeight: 0}}>
-                <TableBody>
-                    {districtInfo}
-                </TableBody>
+                {districtInfo}
             </div>
         </div>
     );
