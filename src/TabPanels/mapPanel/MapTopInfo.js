@@ -4,7 +4,7 @@ import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow}
 export default function MapTopInfo()
 {
     return (
-        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', position:'relative',left:'30%', top:'-98%', width:'40%', height:'50px', fontWeight:'500', fontSize:'12px', color:'white', zIndex: 701}}>
+        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight:'500', fontSize:'12px', color:'white'}}>
             <TableContainer component={Paper}>
                 <Table size="small" sx={{ minWidth: 200}} aria-label="simple table">
                     <TableHead>
