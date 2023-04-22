@@ -58,8 +58,10 @@ function StoreContextProvider(props) {
     })
 // --- STATE HELPER ---------------------------------
 
-    function createMapState(plan, subPlan, stateType, colorFilter, districtId, mixingValue, resetState, resetPage, incumbentFilter) {
-        if (plan === storeMap.subPlan) {
+    function createMapState(plan, subPlan, stateType, colorFilter, districtId, mixingValue, resetState, resetPage, incumbentFilter)
+    {
+        if (plan === storeMap.subPlan)
+        {
             subPlan = null;
         }
         return {
@@ -76,7 +78,8 @@ function StoreContextProvider(props) {
         }
     }
 
-    function createDataState(planType, stateType, modelData, geojson, districtBoundData, planKey, planValue) {
+    function createDataState(planType, stateType, modelData, geojson, districtBoundData, planKey, planValue)
+    {
         let newData = storeData;
         newData.modelData[planType] = newData.modelData[planType] ?? {}; // set {} if null.
         newData.geojson[planType] = newData.geojson[planType] ?? {};
@@ -118,7 +121,7 @@ function StoreContextProvider(props) {
             case MapActionType.STATE_SELECT:
                 return setStoreMap(createMapState(prev, prev, payload.stateType, prev, -1, 0, prev, prev, prev))
             case MapActionType.STATE_UNSELECT:
-                return setStoreMap(createMapState(prev, prev, StateType.NONE, prev, prev, prev, prev, prev, prev))
+                return setStoreMap(createMapState(prev, prev, StateType.NONE, [], prev, prev, prev, prev, prev))
             case MapActionType.UPDATE_COLOR_FILTER:
                 return setStoreMap(createMapState(prev, prev, prev, payload.colorFilter, prev, prev, prev, prev, prev))
             case MapActionType.UPDATE_INCUMBENT_FILTER:
@@ -128,7 +131,7 @@ function StoreContextProvider(props) {
             case MapActionType.MIXING_VALUE_CHANGE:
                 return setStoreMap(createMapState(prev, prev, prev, prev, prev, payload.value, prev, prev, prev))
             case MapActionType.RESET_STATE:
-                return setStoreMap(createMapState(prev, null, prev, prev, -1, 0, storeMap.resetState + 1, prev, prev))
+                return setStoreMap(createMapState(prev, null, prev, [], -1, 0, storeMap.resetState + 1, prev, prev))
             case MapActionType.RESET_PAGE:
                 return setStoreMap(createMapState())
             default:
@@ -179,7 +182,7 @@ function StoreContextProvider(props) {
 
         storeMapReducer({
             type: MapActionType.SUB_PLAN_SELECT,
-            payload: {subPlanType: planType},
+            payload: {subPlanType: planType}
         })
         await storeData.addStateData(planType, storeMap.state);
     }
@@ -275,22 +278,23 @@ function StoreContextProvider(props) {
     storeData.setDistrictIdOfGeojson = function(geojson)
     {
         geojson.features.forEach((district, index) => {
-            district.properties.district_id = (index + 1).toString();
+            district.properties.district_id = index + 1;
         })
     }
 
     storeData.createModelDataByGeojson = function(planType, stateType, geojson)
     {
         console.log(geojson);
-        let stateProperties = {};
+        let modelData = {};
         geojson.features.forEach((district, index) => {
-            stateProperties[index + 1] = district.properties;
+            modelData[index + 1] = district.properties;
         })
 
         // TO DO: remove if data all ready.
-        storeData.addMockData(stateProperties);
+        storeData.addMockData(modelData);
+        console.log(modelData)
 
-        return new StateModel(planType, stateType, stateProperties);
+        return new StateModel(planType, stateType, modelData);
     }
 
     storeData.addMockData = function(modelData)
@@ -329,9 +333,8 @@ function StoreContextProvider(props) {
         if (storeData.isStateDataReady(planType, stateType)) return;
 
         let geojson = await api.getStateGeojson(planType, stateType);
-        let summaryJson =  await api.getStateSummaryJson(stateType);
-        console.log(summaryJson);
-        
+        // let summaryJson =  await api.getStateSummaryJson(stateType);
+
         storeData.setDistrictIdOfGeojson(geojson);
         let modelData = storeData.createModelDataByGeojson(planType, stateType, geojson);
 
@@ -348,7 +351,6 @@ function StoreContextProvider(props) {
             payload: districtBoundData,
         })
     }
-
 // --- STORE PAGE FUNCTIONS -----------------------------
     storePage.selectTab = function(tabType)
     {
@@ -381,7 +383,7 @@ function StoreContextProvider(props) {
     storeMap.isStateMatch = (stateType) => { return stateType === storeMap.state; }
     // STORE DATA
     storeData.getPlanType = () => { return storeData.planType; }
-    storeData.getStateGeoJson = (planType, stateType) => JSON.parse(JSON.stringify(storeData.geojson[planType][stateType]));
+    storeData.getStateGeoJson = (planType, stateType) => { return storeData.geojson[planType][stateType]};
     storeData.getStateModelData = (planType, stateType) => { return storeData.modelData[planType][stateType]};
     storeData.getCurrentStateGeojson = (planType) => { return storeData.geojson[planType][storeMap.state]};
     storeData.isReadyToDisplayCurrentMap = () => {
