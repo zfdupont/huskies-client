@@ -1,4 +1,4 @@
-import {useCallback, useContext, useEffect, useImperativeHandle, useRef, useState} from "react";
+import {useCallback, useContext, useEffect, useRef, useState} from "react";
 import L from "leaflet";
 import {useMap} from "react-leaflet";
 import StoreContext from '../../common/Store';
@@ -8,223 +8,58 @@ import {
     LayerGroupType,
     GeoData,
     GeoDataType,
-    StateTypeList,
+    availableStateTypes,
     StateType,
-    RefType, FilterType, PartyType
-} from '../../common/Enums';
+    MapFilterType,
+    PartyType,
+    colorDict,
+    boundSizeDict,
+    democraticColors,
+    republicanColors,
+    StyleType,
+    populationColors,
+    PopulationType
+} from '../../common/GlobalVariables';
 import geoJsonHelper from '../../common/GeoJsonHelper';
-import {filterToLayerGroup, filterToStyle} from "../../common/ConversionHelper";
+import {
+    convertBoundSizeToZoomLevel,
+    convertMapFilterTypeToLayerType,
+    convertMapFilterTypeToPopulationType,
+    convertMapFilterTypeToStyleType
+} from "../../common/ConversionHelper";
+import {
+    calculateHeatMapFeatureValues,
+    roundDownToFirstDecimal,
+    roundUpToFirstDecimal
+} from "../../common/CalculationHelper";
+
 let currLayerGroups = {};
 
-export default function MapController()
-{
+export default function MapController() {
     const { storeMap, storeData, callbacks } = useContext(StoreContext);
-    const [ viewState, setViewState ] = useState(StateType.NONE);
-    const [ highlightDistrictId, setHighlightDistrictId ] = useState(-1);
+    const [ viewType, setViewType ] = useState(StateType.NONE);
+    const [ highlightedDistrictId, setHighlightedDistrictId ] = useState(-1);
     const mapControllerRef = useRef(null);
-    const map = useMap(); // This is Hooks, not re-rendered.
+    const map = useMap();
     const resetStateMap = useCallback(() => {
-        setViewState(StateType.NONE);
+        setViewType(StateType.NONE);
     }, [])
 
     useEffect(() => {
-        DefaultSetup();
+        setupDefault();
         callbacks.addOnResetState(resetStateMap);
-        return setViewState(StateType.NONE);
+        return setViewType(StateType.NONE);
     }, [])
 
-
-    Main();
-    function Main()
-    {
-        // ResetCheck();
-        RemoveAllLayer();
-        FilterSetup();
-        HighlightSetup();
-        ViewSetup();
+    main();
+    function main() {
+        removeAllLayer();
+        setupMapFilter();
+        setupHighlightDistrict();
+        setupView();
     }
 
-
-    // --- SETUP ---------------------------
-    function DefaultSetup()
-    {
-        AddPanes();
-        AddTileLayer(TileLayerType.DEFAULT_WHITE, false);
-        AddTileLayer(TileLayerType.PLACE_LABEL, false, {pane: TileLayerType.PLACE_LABEL});
-        map.setMaxBounds(MapProperty.country.default.maxBounds);
-        map.setMaxZoom(MapProperty.country.default.maxZoom);
-        map.setMinZoom(MapProperty.country.default.minZoom);
-    }
-    function AddPanes()
-    {
-        map.createPane(TileLayerType.PLACE_LABEL);
-        map.getPane(TileLayerType.PLACE_LABEL).style.zIndex = 650; // topmost layer under popup.
-    }
-    function ViewSetup()
-    {
-        if (storeMap.isStateNone())
-            SetCountryView();
-        else
-            SetStateView(storeMap.state);
-    }
-    function FilterSetup()
-    {
-        if (storeMap.isStateNone() || storeMap.colorFilter === FilterType.NONE || !storeData.isReadyToDisplayCurrentMap()) return;
-
-        let geojson = GetProcessedGeoJson();
-        let stateModel = storeData.getStateModelData(storeMap.plan, storeMap.state);
-        let colorFilter = storeMap.colorFilter;
-        let layerGroupType = filterToLayerGroup(colorFilter);
-        let style = MapProperty.state[filterToStyle(colorFilter)];
-        const dynamicHeatMapStyle = (feature) => {
-            return {...style, color: GetColorByFilter(stateModel, feature.properties.district_id, colorFilter)}
-        }
-        AddGeoJsonLayer(geojson, layerGroupType, {style: dynamicHeatMapStyle})
-    }
-
-    function GetColorByFilter(stateModel, districtId, colorFilter)
-    {
-        return (colorFilter === FilterType.PARTY)? GetColorByParty(stateModel, districtId, colorFilter) : GetColorPopulation(stateModel, districtId, colorFilter);
-
-    }
-
-    function GetColorByParty(stateModel, districtId)
-    {
-        let data = stateModel.summaryData;
-        let party = stateModel.electionDataDict[districtId]?.winnerParty;
-        let votes = stateModel.electionDataDict[districtId]?.winnerVotes;
-        let min;
-        let max;
-        let variation;
-
-        if (!ValidCheck([data,party,votes])) return "#ffffff";
-
-        if (party === PartyType.DEMOCRATIC)
-        {
-            min = RoundDown(data.minDemocrats);
-            max = RoundUp(data.maxDemocrats);
-            variation = RoundUp((max - min) / 5);
-        }
-        else
-        {
-            min = RoundDown(data.minRepublicans);
-            max = RoundUp(data.maxRepublicans);
-            variation = RoundUp((max - min) / 5);
-        }
-
-        if (votes >= max)               return (party === PartyType.DEMOCRATIC)? "#000077" : "#6b0000";
-        if (votes >= min + 4*variation) return (party === PartyType.DEMOCRATIC)? "#0000ff" : "#ff0000";
-        if (votes >= min + 3*variation) return (party === PartyType.DEMOCRATIC)? "#2828ff" : "#ff2b2b";
-        if (votes >= min + 2*variation) return (party === PartyType.DEMOCRATIC)? "#6767ff" : "#ff6363";
-        if (votes >= min + 1*variation) return (party === PartyType.DEMOCRATIC)? "#7e7eff" : "#ff7f7f";
-        if (votes >= 0)                 return (party === PartyType.DEMOCRATIC)? "#ababff" : "#fdb4b4";
-    }
-
-    function ValidCheck(list)
-    {
-        list.forEach((v) => {
-            if (!v) return false;
-        })
-        return true;
-    }
-
-    function RoundUp(number)
-    {
-        if (number <= 0) return 0;
-        return Math.ceil(number / 10 ** (Math.floor(Math.log10(number)) - 1)) * 10 ** (Math.floor(Math.log10(number)) - 1)
-    }
-    function RoundDown(number)
-    {
-        if (number <= 0) return 0;
-        return Math.floor(number / 10 ** (Math.floor(Math.log10(number)) - 1)) * 10 ** (Math.floor(Math.log10(number)) - 1)
-    }
-
-    function GetColorPopulation(stateModel, districtId, colorFilter)
-    {
-        let data = stateModel.summaryData;
-        let votes = stateModel.electionDataDict[districtId].getVotesByFilter(colorFilter);
-        let min = RoundDown(data.getMinByFilter(colorFilter));
-        let max = RoundUp(data.getMaxByFilter(colorFilter));
-        let variation = RoundUp((max - min) / 5);
-
-        if (!ValidCheck([data, votes, min, max, variation])) return "#ffffff";
-
-        if (votes >= max)               return "#00ad00";
-        if (votes >= min + 4*variation) return "#00ed01";
-        if (votes >= min + 3*variation) return "#3af901";
-        if (votes >= min + 2*variation) return "#87fa00";
-        if (votes >= min + 1*variation) return "#cefb02";
-        if (votes >= 0)                 return "#fefb01";
-    }
-
-    function HighlightSetup()
-    {
-        if (
-            !storeData.isReadyToDisplayCurrentMap() ||
-            storeMap.isStateNone() ||
-            storeMap.getHighlightDistrictId() === -1
-        ) return;
-
-        let geojson = storeData.getStateGeoJson(storeMap.getMapPlan(), storeMap.getState())
-        let geojsonCopy = JSON.parse(JSON.stringify(geojson))
-        let selectedDistrictJson = geoJsonHelper.getDistrictJsonByIDs(geojsonCopy, [storeMap.getHighlightDistrictId()])
-        let option = {style: MapProperty.state["highlight"]}
-        let layerGroup = AddGeoJsonLayer(selectedDistrictJson, LayerGroupType.HIGHLIGHT, option);
-        let innerLayers = layerGroup.getLayers()[0]._layers
-        let key = Object.keys(innerLayers)[0];
-
-        if (storeMap.getHighlightDistrictId() !== highlightDistrictId)
-        {
-            setHighlightDistrictId(storeMap.getHighlightDistrictId());
-            ZoomToLayer(innerLayers[key])
-        }
-    }
-
-    function GetProcessedGeoJson()
-    {
-        if (!storeData.isGeojsonReady(storeMap.plan, storeMap.state)) return null;
-
-        let geojson = storeData.getStateGeoJson(storeMap.plan, storeMap.state);
-
-        if (!storeMap.incumbentFilter) return geojson;
-
-        let stateModelData = storeData.getStateModelData(storeMap.plan, storeMap.state);
-        let ids = stateModelData.getIncumbentDistrictIDs();
-        return geoJsonHelper.getDistrictJsonByIDs(...geojson, ids);
-    }
-
-    // --- EVENT HANDLER -------------------------
-    function OnStateClick(stateType)
-    {
-        storeMap.selectState(stateType);
-        storeData.addStateData(storeMap.plan, stateType);
-    }
-    function OnDistrictClick(feature, layer)
-    {
-        ZoomToLayer(layer);
-        storeMap.highlightDistrict(feature.properties.district_id);
-    }
-    function ZoomToLayer(layer)
-    {
-        if (!layer) return 7;
-        let size = GetBoundsSize(layer.getBounds());
-        if (size > 250000) { return map.flyTo(layer.getBounds().getCenter(), 7);}
-        if (size > 100000) { return map.flyTo(layer.getBounds().getCenter(), 8);}
-        if (size > 50000) { return map.flyTo(layer.getBounds().getCenter(), 9);}
-        if (size > 30000) { return map.flyTo(layer.getBounds().getCenter(), 10);}
-        if (size > 25000) { return map.flyTo(layer.getBounds().getCenter(), 11);}
-        if (size > 5000) { return map.flyTo(layer.getBounds().getCenter(), 12);}
-        else return 13;
-    }
-    function GetBoundsSize(bounds) {
-        if (!bounds) return 999999;
-        return bounds.getNorthEast().distanceTo(bounds.getNorthWest());
-    }
-
-    // --- HELPER FUNCTIONS ----------------------
-
-    function RemoveAllLayer()
-    {
+    function removeAllLayer() {
         const layerGroupProperties = Object.keys(currLayerGroups);
         layerGroupProperties.forEach((prop) => {
             let layerGroup = currLayerGroups[prop];
@@ -233,74 +68,176 @@ export default function MapController()
         })
     }
 
-    function ApplyMixingValueToStyle(planType, style, applyFillOpacity = false)
-    {
-        let styleCopy = JSON.parse(JSON.stringify(style));
-        let mValue = storeMap.mixingValue;
-        let opacity = (storeMap.getMapPlan() === planType)? (100 - mValue) / 100 : mValue / 100;
-        styleCopy.opacity = opacity;
-        if (applyFillOpacity) styleCopy.fillOpacity = opacity;
-        return styleCopy;
+// --- SETUP FUNCTIONS ---------------------------
+    function setupDefault() {
+        map.createPane(TileLayerType.PLACE_LABEL);
+        map.getPane(TileLayerType.PLACE_LABEL).style.zIndex = 650; // topmost layer under popup.
+        addTileLayer(TileLayerType.white);
+        addTileLayer(TileLayerType.PLACE_LABEL, {pane: TileLayerType.PLACE_LABEL});
+        map.setMaxBounds(MapProperty.country.default.maxBounds);
+        map.setMaxZoom(MapProperty.country.default.maxZoom);
+        map.setMinZoom(MapProperty.country.default.minZoom);
     }
 
-    // --- MAP VIEW CONTROLLER. --------------------
-    function SetCountryView()
-    {
-        AddCountryDefaultLayer();
-        SetFocus(StateType.NONE);
+    function setupView() {
+        if (storeMap.isStateNone())
+            setCountryView();
+        else
+            setStateView(storeMap.state);
     }
-    function SetStateView(stateType)
-    {
+
+    function setupMapFilter() {
+        if (storeMap.isStateNone() || storeMap.mapMapFilterType === MapFilterType.NONE || !storeData.isReadyToDisplayCurrentMap()) return;
+
+        let geojson = getProcessedGeoJson();
+        let stateModelData = storeData.getStateModelData(storeMap.plan, storeMap.state);
+        let mapFilterType = storeMap.mapMapFilterType;
+        let layerGroupType = convertMapFilterTypeToLayerType(mapFilterType);
+        let style = MapProperty.state[convertMapFilterTypeToStyleType(mapFilterType)];
+        if (!validCheck([geojson, stateModelData, mapFilterType, layerGroupType])) return;
+        const getStyleByDistrictInfo = (feature) => ({...style, color: getColorByFilter(stateModelData, feature.properties.district_id, mapFilterType)});
+        addNewLayerToLayerGroup(geojson, layerGroupType, {style: getStyleByDistrictInfo})
+    }
+
+    function getColorByFilter(stateModel, districtId, mapFilterType) {
+        return (mapFilterType === MapFilterType.PARTY)? getColorByParty(stateModel, districtId) : getColorByPopulation(stateModel, districtId, mapFilterType);
+    }
+
+    function getColorByParty(stateModel, districtId) {
+        let data = stateModel.summaryData;
+        let party = stateModel.electionDataDict[districtId]?.winnerParty;
+        let demVoteMargin = stateModel.electionDataDict[districtId]?.demVoteMargin;
+        if (!validCheck([data, demVoteMargin])) return colorDict.white;
+
+        let isDemocratic = party === PartyType.DEMOCRATIC;
+        let maxVoteMargin = isDemocratic? data.maxDemVoteMargin : -data.maxDemVoteMargin;
+
+        let featureValues = calculateHeatMapFeatureValues(0, maxVoteMargin);
+
+        let partyColorArray = isDemocratic? democraticColors : republicanColors;
+
+        for (let i = 0; i < featureValues.length; i++) {
+            if (demVoteMargin < featureValues[i]) {
+                return partyColorArray[i];
+            }
+        }
+    }
+
+    function getColorByPopulation(stateModel, districtId, mapFilterType) {
+        let stateSummaryData = stateModel.summaryData;
+        let populationType = convertMapFilterTypeToPopulationType(mapFilterType);
+        if (populationType === PopulationType.NONE) return colorDict.white;
+        let population = stateModel.electionDataDict[districtId].getPopulationByType(populationType);
+        let min = stateSummaryData.getMinPopulationByType(populationType);
+        let max = stateSummaryData.getMaxPopulationByType(populationType);
+
+        if (!validCheck([stateSummaryData, population, min, max])) return colorDict.white;
+
+        let featureValues = calculateHeatMapFeatureValues(min, max);
+        for (let i = 0; i < featureValues.length; i++) {
+            if (population < featureValues[i]) {
+                return populationColors[i];
+            }
+        }
+    }
+
+    function setupHighlightDistrict() {
+        if (
+            !storeData.isReadyToDisplayCurrentMap() ||
+            storeMap.isStateNone() ||
+            storeMap.getHighlightDistrictId() === -1
+        ) return;
+
+        let geojson = storeData.getStateGeoJson(storeMap.getMapPlan(), storeMap.getState())
+        let selectedDistrictJson = geoJsonHelper.getFilteredGeoJsonByIDs(geojson, [storeMap.getHighlightDistrictId()])
+        let option = {style: MapProperty.state[StyleType.HIGHLIGHT]}
+        let layerGroup = addNewLayerToLayerGroup(selectedDistrictJson, LayerGroupType.HIGHLIGHT, option);
+        let innerLayers = layerGroup.getLayers()[0]._layers
+        let key = Object.keys(innerLayers)[0];
+
+        if (storeMap.getHighlightDistrictId() !== highlightedDistrictId) {
+            setHighlightedDistrictId(storeMap.getHighlightDistrictId());
+            flyToLayer(innerLayers[key])
+        }
+    }
+
+    function getProcessedGeoJson() {
+        if (!storeData.isGeojsonReady(storeMap.plan, storeMap.state)) return null;
+
+        let geojson = storeData.getStateGeoJson(storeMap.plan, storeMap.state);
+
+        if (!storeMap.incumbentFilter) return geojson;
+
+        let stateModelData = storeData.getStateModelData(storeMap.plan, storeMap.state);
+        let ids = stateModelData.getIncumbentDistrictIDs();
+        return geoJsonHelper.getFilteredGeoJsonByIDs(geojson, ids);
+    }
+
+// --- EVENT HANDLER -------------------------
+    function onStateClick(stateType) {
+        storeMap.selectState(stateType);
+        storeData.addStateData(storeMap.plan, stateType);
+    }
+
+    function onDistrictClick(feature, layer) {
+        storeMap.highlightDistrict(feature.properties.district_id);
+        flyToLayer(layer);
+    }
+
+    function flyToLayer(layer) {
+        let boundsSize = getBoundsSize(layer.getBounds());
+        let layerCenter = layer.getBounds().getCenter();
+        let zoomLevel = convertBoundSizeToZoomLevel(boundsSize);
+
+        if (map.getZoom() !== zoomLevel || !map.getBounds().contains(layerCenter))
+            map.flyTo(layerCenter, zoomLevel);
+    }
+
+    function getBoundsSize(bounds) {
+        return (bounds)? bounds.getNorthEast().distanceTo(bounds.getNorthWest()) : boundSizeDict.level6;
+    }
+
+// --- MAP VIEW CONTROLLERS --------------------
+    function setCountryView() {
+        addCountryDefaultLayer();
+        setMapFocus(StateType.NONE);
+    }
+    function setStateView(stateType) {
         if (!storeData.isReadyToDisplayCurrentMap()) return;
 
-        if (storeMap.isPlanSelected())
-        {
-            AddStateDistrictLayer(storeMap.getMapPlan(), MapProperty.state.style);
-        }
-        if (storeMap.isSubPlanSelected())
-        {
-            AddStateDistrictLayer(storeMap.getSubPlan(), MapProperty.state.subStyle);
-        }
-        SetFocus(stateType);
+        addStateDistrictLayer(storeMap.plan, MapProperty.state.style);
+        setMapFocus(stateType);
     }
 
-    // --- MAP COLOR CONTROLLER ---------------------------
-    function AddCountryDefaultLayer()
-    {
-        StateTypeList.forEach((stateType) => {
+// --- MAP COLOR / DRAWING CONTROLLERS ---------------------------
+    function addCountryDefaultLayer() {
+        availableStateTypes.forEach((stateType) => {
             let option = {
                 style: MapProperty.country.style,
-                onEachFeature: (feature, layer) => { layer.on('click', () => OnStateClick(stateType)) }
+                onEachFeature: (feature, layer) => layer.on('click', () => onStateClick(stateType)),
             }
             let geoData = GeoData[stateType][GeoDataType.STATE];
-            AddGeoJsonLayer(geoData, stateType, option);
+            addNewLayerToLayerGroup(geoData, stateType, option);
         })
-        // AddTileLayer(TileLayerType.PLACE_LABEL, true);
     }
 
-    function AddStateDistrictLayer(planType, style)
-    {
+    function addStateDistrictLayer(planType, style) {
         let option = {
-            style: ApplyMixingValueToStyle(planType, style, false),
-            onEachFeature: null,
+            style: style,
+            onEachFeature: (feature, layer) => layer.on('click', () => onDistrictClick(feature, layer)),
         };
 
-        option.onEachFeature = (feature, layer) => { layer.on('click', () => {
-        OnDistrictClick(feature, layer);
-        })}
+        let geojson = getProcessedGeoJson();
+        if (!geojson) return;
 
-        AddGeoJsonLayer(storeData.getCurrentStateGeojson(planType), LayerGroupType.STATE_DEFAULT, option);
+        addNewLayerToLayerGroup(geojson, LayerGroupType.STATE_DEFAULT, option);
     }
 
-    function AddTileLayer(layerType, isLayerGroup, option = {}){
-        // only layerGroup is added into LayerGroupList.
-        let target = (isLayerGroup)? L.layerGroup().addTo(map) : map;
-        if (isLayerGroup) currLayerGroups[layerType] = target;
-        L.tileLayer(MapProperty.urls[layerType], option).addTo(target);
+    function addTileLayer(layerType, option = {}){
+        L.tileLayer(MapProperty.urls[layerType], option).addTo(map);
     }
 
-    function AddGeoJsonLayer(geoData, layerGroupType, option = {})
-    {
+    function addNewLayerToLayerGroup(geoData, layerGroupType, option = {}) {
         // If target layerGroup is already in map, add new layer in the group. otherwise, create new.
         let layerGroup = (currLayerGroups[layerGroupType])? currLayerGroups[layerGroupType] : L.layerGroup().addTo(map);
         if (!currLayerGroups[layerGroupType]) {
@@ -310,16 +247,19 @@ export default function MapController()
         return layerGroup;
     }
 
-    // --- MAP ZOOM/PIVOT CONTROLLER. --------------------
-    function SetFocus(stateType)
-    {
-        if (viewState === stateType) return;
-        let flyTo = (stateType === StateType.NONE)? MapProperty.country.flyTo : MapProperty.state[stateType]["flyTo"];
-        map.flyTo(flyTo.pos, flyTo.zoom);
-        setViewState(stateType)
+    function validCheck(list) {
+        list.forEach((v) => {
+            if (!v) return false;
+        })
+        return true;
     }
-    return (
-        <div ref={mapControllerRef}>
-        </div>
-    )
+
+    function setMapFocus(stateType) {
+        if (viewType === stateType) return;
+        let flyToInfo = (stateType === StateType.NONE)? MapProperty.country.flyTo : MapProperty.state[stateType]["flyTo"];
+        map.flyTo(flyToInfo.pos, flyToInfo.zoom);
+        setViewType(stateType)
+    }
+
+    return ( <div ref={mapControllerRef}/> )
 }

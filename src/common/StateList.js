@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -10,7 +10,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import Star from '@mui/icons-material/Star';
 
 import StoreContext from './Store';
-import {StateType} from './Enums';
+import {StateType} from './GlobalVariables';
 
 export default function NestedList() {
     const { storeMap } = useContext(StoreContext);
@@ -19,11 +19,11 @@ export default function NestedList() {
     const handleClick = () => {
         setOpen(!open);
     };
-    //Test
-    function onStateClick(stateType)
-    {
+
+    function onStateClick(stateType) {
         (storeMap.isStateMatch(stateType))? storeMap.unselectState() : storeMap.selectState(stateType);
     }
+
     return (
         <List
             sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
