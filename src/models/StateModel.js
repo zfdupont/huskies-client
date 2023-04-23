@@ -1,4 +1,4 @@
-import {FilterType, PartyType} from "../common/Enums";
+import {MapFilterType, PartyType} from "../common/GlobalVariables";
 
 export default class StateModel
 {
@@ -29,6 +29,7 @@ export default class StateModel
                 incumbentParty : data["IncumbentParty"],
                 democraticVotes : data["2020VBIDEN"],
                 republicanVotes : data["2020VTRUMP"],
+                demVoteMargin : data["2020VBIDEN"] - data["2020VTRUMP"],
                 whiteVotes : data["VAPWHITE"],
                 blackVotes : data["VAPBLACK"],
                 asianVotes : data["VAPASIAN"],
@@ -38,10 +39,10 @@ export default class StateModel
                 totalVotes : data["VAPTOTAL"],
             }
 
-            dict[key].getVotesByFilter = (filter) => {
-                if (filter === FilterType.WHITE) return dict[key].whiteVotes;
-                if (filter === FilterType.BLACK) return dict[key].blackVotes;
-                if (filter === FilterType.ASIAN) return dict[key].asianVotes;
+            dict[key].getPopulationByType = (filter) => {
+                if (filter === MapFilterType.WHITE) return dict[key].whiteVotes;
+                if (filter === MapFilterType.BLACK) return dict[key].blackVotes;
+                if (filter === MapFilterType.ASIAN) return dict[key].asianVotes;
                 return 0;
             }
         }
@@ -69,14 +70,12 @@ export default class StateModel
 
     getSummaryData(modelData)
     {
-        let minDemocrats = Number.MAX_SAFE_INTEGER;
-        let minRepublicans = Number.MAX_SAFE_INTEGER;
+        let minDemVoteMargin = Number.MAX_SAFE_INTEGER;
         let minWhite = Number.MAX_SAFE_INTEGER;
         let minBlack = Number.MAX_SAFE_INTEGER;
         let minAsian = Number.MAX_SAFE_INTEGER;
 
-        let maxDemocrats = Number.MIN_SAFE_INTEGER;
-        let maxRepublicans = Number.MIN_SAFE_INTEGER;
+        let maxDemVoteMargin = Number.MIN_SAFE_INTEGER;
         let maxWhite = Number.MIN_SAFE_INTEGER;
         let maxBlack = Number.MIN_SAFE_INTEGER;
         let maxAsian = Number.MIN_SAFE_INTEGER;
@@ -84,41 +83,37 @@ export default class StateModel
         for (let key in modelData)
         {
             if (key === "10") continue;
-            minDemocrats = Math.min(modelData[key]["2020VBIDEN"], minDemocrats);
-            minRepublicans = Math.min(modelData[key]["2020VTRUMP"], minRepublicans);
+            minDemVoteMargin = Math.min(modelData[key]["2020VBIDEN"] - modelData[key]["2020VTRUMP"], minDemVoteMargin);
             minWhite = Math.min(modelData[key]["VAPWHITE"], minWhite);
             minBlack = Math.min(modelData[key]["VAPBLACK"], minBlack);
             minAsian = Math.min(modelData[key]["VAPASIAN"], minAsian);
-            maxDemocrats = Math.max(modelData[key]["2020VBIDEN"], maxDemocrats);
-            maxRepublicans = Math.max(modelData[key]["2020VTRUMP"], maxRepublicans);
+            maxDemVoteMargin = Math.max(modelData[key]["2020VBIDEN"] - modelData[key]["2020VTRUMP"], maxDemVoteMargin);
             maxWhite = Math.max(modelData[key]["VAPWHITE"], maxWhite);
             maxBlack = Math.max(modelData[key]["VAPBLACK"], maxBlack);
             maxAsian = Math.max(modelData[key]["VAPASIAN"], maxAsian);
         }
         let result =  {
-            minDemocrats: minDemocrats,
-            minRepublicans: minRepublicans,
+            minDemVoteMargin: minDemVoteMargin,
             minWhite: minWhite,
             minBlack: minBlack,
             minAsian: minAsian,
-            maxDemocrats: maxDemocrats,
-            maxRepublicans: maxRepublicans,
+            maxDemVoteMargin: maxDemVoteMargin,
             maxWhite: maxWhite,
             maxBlack: maxBlack,
             maxAsian: maxAsian,
         }
 
-        result.getMinByFilter = (filter) => {
-            if (filter === FilterType.WHITE) return minWhite;
-            if (filter === FilterType.BLACK) return minBlack;
-            if (filter === FilterType.ASIAN) return minAsian;
+        result.getMinPopulationByType = (filter) => {
+            if (filter === MapFilterType.WHITE) return minWhite;
+            if (filter === MapFilterType.BLACK) return minBlack;
+            if (filter === MapFilterType.ASIAN) return minAsian;
             return 0;
         }
 
-        result.getMaxByFilter = (filter) => {
-            if (filter === FilterType.WHITE) return maxWhite;
-            if (filter === FilterType.BLACK) return maxBlack;
-            if (filter === FilterType.ASIAN) return maxAsian;
+        result.getMaxPopulationByType = (filter) => {
+            if (filter === MapFilterType.WHITE) return maxWhite;
+            if (filter === MapFilterType.BLACK) return maxBlack;
+            if (filter === MapFilterType.ASIAN) return maxAsian;
             return 0;
         }
         return result;

@@ -1,13 +1,12 @@
-import * as React from "react";
 import {useContext} from "react";
 import {Paper} from "@mui/material";
 import 'leaflet/dist/leaflet.css'
 
 import MainMap from "./MainMap";
-import MapSideInfo from "./MapSideInfo";
-import MapTopInfo from "./MapTopInfo";
+import DistrictSummaryTable from "./DistrictSummaryTable";
+import StateInfoTable from "./StateInfoTable";
 import StoreReducer from '../../common/Store';
-import MapCompareInfo from './MapCompareInfo';
+import DistrictCompareTable from './DistrictCompareTable';
 
 
 export default function MapPanel() {
@@ -19,15 +18,15 @@ export default function MapPanel() {
                     <MainMap/>
                 </Paper>
                 <Paper style={{display:'flex', flexDirection:"column", alignItems:'center', justifyContents:'center', flex: "0 0 300px"}}>
-                    {(!storeMap.isStateNone()) && <MapCompareInfo/>}
+                    {(!storeMap.isStateNone()) && <DistrictCompareTable/>}
                 </Paper>
             </div>
             <div style={{display:'flex', flexDirection:'column', flex:1.7}}>
                 <div style={{flex: '0', marginBottom:'10px', height:'100%'}}>
-                    <MapTopInfo/>
+                    <StateInfoTable/>
                 </div>
                 <Paper style={{display:'flex', flex: '1', height: '90%'}}>
-                    {(!storeMap.isStateNone()) && <MapSideInfo/>}
+                    {(!storeMap.isStateNone()) && <DistrictSummaryTable/>}
                 </Paper>
             </div>
         </div>

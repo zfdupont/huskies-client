@@ -5,7 +5,7 @@ import PlanList from './PlanList'
 import MultiPlanList from './MultiPlanList.js'
 import MapFilterList from './MapFilterList'
 import StoreContext from './Store'
-import {TabType} from "./Enums";
+import {TabType} from "./GlobalVariables";
 
 export default function DrawerLists() {
     const { storeMap, storePage } = useContext(StoreContext);

@@ -13,17 +13,17 @@ import Star from '@mui/icons-material/Star';
 import {ListItem, Switch} from "@mui/material";
 // source
 import StoreContext from "./Store";
-import {FilterType, StateType} from './Enums';
+import {MapFilterType, StateType} from './GlobalVariables';
 
 export default function MapFilterList() {
     const { storeMap, callbacks }= useContext(StoreContext);
     const [open, setOpen] = useState(true);
     const [switches, setSwitches] = useState({
-        [FilterType.INCUMBENT]: false,
-        [FilterType.PARTY]: false,
-        [FilterType.WHITE]: false,
-        [FilterType.BLACK]: false,
-        [FilterType.ASIAN]: false,
+        [MapFilterType.INCUMBENT]: false,
+        [MapFilterType.PARTY]: false,
+        [MapFilterType.WHITE]: false,
+        [MapFilterType.BLACK]: false,
+        [MapFilterType.ASIAN]: false,
     })
     const resetStateFilter = useCallback(() => {
         resetFilters();
@@ -44,22 +44,22 @@ export default function MapFilterList() {
     const onToggle = (e, filterType) => {
 
         let state;
-        if (filterType === FilterType.INCUMBENT)
+        if (filterType === MapFilterType.INCUMBENT)
         {
-            state = {...switches, [FilterType.INCUMBENT]: e.target.checked};
+            state = {...switches, [MapFilterType.INCUMBENT]: e.target.checked};
             storeMap.setIncumbentFilter(e.target.checked);
         }
         else
         {
             state = {
-                [FilterType.INCUMBENT]: switches[FilterType.INCUMBENT],
-                [FilterType.PARTY]: false,
-                [FilterType.WHITE]: false,
-                [FilterType.BLACK]: false,
-                [FilterType.ASIAN]: false,
+                [MapFilterType.INCUMBENT]: switches[MapFilterType.INCUMBENT],
+                [MapFilterType.PARTY]: false,
+                [MapFilterType.WHITE]: false,
+                [MapFilterType.BLACK]: false,
+                [MapFilterType.ASIAN]: false,
             }
             state[filterType] = e.target.checked;
-            filterType = (e.target.checked)? filterType : FilterType.NONE;
+            filterType = (e.target.checked)? filterType : MapFilterType.NONE;
             storeMap.setColorFilter(filterType);
         }
 
@@ -69,11 +69,11 @@ export default function MapFilterList() {
     function resetFilters()
     {
         setSwitches({
-            [FilterType.INCUMBENT]: false,
-            [FilterType.PARTY]: false,
-            [FilterType.WHITE]: false,
-            [FilterType.BLACK]: false,
-            [FilterType.ASIAN]: false,
+            [MapFilterType.INCUMBENT]: false,
+            [MapFilterType.PARTY]: false,
+            [MapFilterType.WHITE]: false,
+            [MapFilterType.BLACK]: false,
+            [MapFilterType.ASIAN]: false,
         })
     }
 
@@ -94,23 +94,23 @@ export default function MapFilterList() {
                 <List component="div" disablePadding>
                     <ListItem sx={{ pl:6 }}>
                         <ListItemText primary="Incumbent" primaryTypographyProps={{fontSize: '12px'}} />
-                        <Switch {...label} checked={switches[FilterType.INCUMBENT]} size="small" onClick={(e) => {onToggle(e, FilterType.INCUMBENT)}} />
+                        <Switch {...label} checked={switches[MapFilterType.INCUMBENT]} size="small" onClick={(e) => {onToggle(e, MapFilterType.INCUMBENT)}} />
                     </ListItem>
                     <ListItem sx={{ pl: 6 }}>
                         <ListItemText primary="Party" primaryTypographyProps={{fontSize: '12px'}} />
-                        <Switch {...label} checked={switches[FilterType.PARTY]} size="small" color="warning" onClick={(e) => {onToggle(e, FilterType.PARTY)}} />
+                        <Switch {...label} checked={switches[MapFilterType.PARTY]} size="small" color="warning" onClick={(e) => {onToggle(e, MapFilterType.PARTY)}} />
                     </ListItem>
                     <ListItem sx={{ pl: 6 }}>
                         <ListItemText primary="White" primaryTypographyProps={{fontSize: '12px'}} />
-                        <Switch {...label} checked={switches[FilterType.WHITE]} size="small" onClick={(e) => {onToggle(e, FilterType.WHITE)}} />
+                        <Switch {...label} checked={switches[MapFilterType.WHITE]} size="small" onClick={(e) => {onToggle(e, MapFilterType.WHITE)}} />
                     </ListItem>
                     <ListItem sx={{ pl: 6 }}>
                         <ListItemText primary="Black" primaryTypographyProps={{fontSize: '12px'}} />
-                        <Switch {...label} checked={switches[FilterType.BLACK]} size="small" onClick={(e) => {onToggle(e, FilterType.BLACK)}} />
+                        <Switch {...label} checked={switches[MapFilterType.BLACK]} size="small" onClick={(e) => {onToggle(e, MapFilterType.BLACK)}} />
                     </ListItem>
                     <ListItem sx={{ pl: 6 }}>
                         <ListItemText primary="Asian" primaryTypographyProps={{fontSize: '12px'}} />
-                        <Switch {...label} checked={switches[FilterType.ASIAN]} size="small" onClick={(e) => {onToggle(e, FilterType.ASIAN)}} />
+                        <Switch {...label} checked={switches[MapFilterType.ASIAN]} size="small" onClick={(e) => {onToggle(e, MapFilterType.ASIAN)}} />
                     </ListItem>
                 </List>
             </Collapse>

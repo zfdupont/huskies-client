@@ -1,20 +1,9 @@
 import { useContext } from 'react';
 import StoreContext from "../../common/Store";
+import {colorDict, PartyType} from "../../common/GlobalVariables";
 import '../../App.css';
-import {PartyType} from "../../common/Enums";
-const numToPlace = (n) => {
-    const last = n % 10;
-    switch (last){
-        case 1:
-            return `${n}st`;
-        case 2:
-            return `${n}nd`;
-        case 3:
-            return `${n}rd`;
-        default:
-            return `${n}th`;
-    }
-}
+import {convertNumToPlace} from "../../common/ConversionHelper";
+
 
 const partyColor = {
     [PartyType.DEMOCRATIC]: "#d63031",
@@ -25,22 +14,19 @@ const partyInitial = {
     [PartyType.DEMOCRATIC]: "(D)",
     [PartyType.REPUBLICAN]: "(R)",
 }
-export default function MapSideItem(props)
-{
+export default function DistrictSummaryItem(props) {
     const { storeMap } = useContext(StoreContext);
 
     let data = props.electionData;
     let winVotePercent = Math.ceil((data.winnerVotes  / (data.winnerVotes + data.loserVotes)) * 100 );
     let loseVotePercent = 100 - winVotePercent;
-    let bgColor = (storeMap.getHighlightDistrictId() !== data.districtId)? 'white' : "#ffe8a4";
+    let bgColor = (storeMap.getHighlightDistrictId() !== data.districtId)? colorDict.white: colorDict.highlight;
 
-    function onItemClick()
-    {
+    function onItemClick() {
         storeMap.highlightDistrict(data.districtId);
     }
 
-    function getLastName(name)
-    {
+    function getLastName(name) {
         return name.split(' ')[1]
     }
 
@@ -48,7 +34,7 @@ export default function MapSideItem(props)
         <div value={data.districtId} className="map-side-item" style={{display:'flex', flex: '0 0 50px', margin: '0px 5px 5px 5px', backgroundColor: bgColor, padding:"5px", borderRadius: '10px'}} onClick={onItemClick}>
             <div style={{display:'flex', flexFlow: 'column', flex: 1}}>
                 <div style={{display:'flex', flex: '3', alignItems:'center', justifyContent: 'center', fontSize: '16px', fontWeight: '900'}}>
-                    {numToPlace(data.districtId)}
+                    {convertNumToPlace(data.districtId)}
                 </div>
                 <div style={{display:'flex', alignItems:'center', justifyContent:'center', flex: 1.5}}>
                     <div style={{position: 'relative', display:'flex', alignItems:'center', justifyContent:'center', width:'15px', height:'15px', marginRight: 5, color: 'black', fontSize:'10px', borderRadius: '5px', border: 'solid 1px black'}}>

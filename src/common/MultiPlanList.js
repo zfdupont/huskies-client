@@ -9,7 +9,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Star from '@mui/icons-material/Star';
 import StoreContext from './Store';
-import {PlanType} from "./Enums";
+import {PlanType} from "./GlobalVariables";
 
 export default function NestedList() {
     const { storeMap, storeData } = useContext(StoreContext);

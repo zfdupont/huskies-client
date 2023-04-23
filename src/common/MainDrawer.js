@@ -8,9 +8,9 @@ import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 // Custom
 import DrawerLists from "./DrawerLists";
-import Reset from "../TabPanels/mapPanel/Reset";
+import ResetButtonGroup from "../TabPanels/mapPanel/ResetButtonGroup";
 import StoreContext from './Store';
-import {TabType} from "./Enums";
+import {TabType} from "./GlobalVariables";
 
 const drawerWidth = 200;
 
@@ -23,7 +23,7 @@ function ResponsiveDrawer(props) {
             <Divider />
             <DrawerLists/>
             <Divider />
-            {storePage.isTabMatch(TabType.MAP) && <Reset/>}
+            {storePage.isTabMatch(TabType.MAP) && <ResetButtonGroup/>}
         </div>
     );
 

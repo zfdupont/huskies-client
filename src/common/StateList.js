@@ -10,7 +10,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import Star from '@mui/icons-material/Star';
 
 import StoreContext from './Store';
-import {StateType} from './Enums';
+import {StateType} from './GlobalVariables';
 
 export default function NestedList() {
     const { storeMap } = useContext(StoreContext);

@@ -7,7 +7,7 @@ import MapPanel from "../TabPanels/mapPanel/MapPanel";
 import AnalyzePanel from "../TabPanels/analyzePanel/AnalyzePanel";
 import StoreContext from './Store';
 import {useContext} from "react";
-import {TabType} from "./Enums";
+import {TabType} from "./GlobalVariables";
 
 function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;

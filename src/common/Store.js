@@ -1,5 +1,5 @@
 import {createContext, useState} from 'react';
-import {StateType, TabType, PlanType, FilterType} from './Enums';
+import {StateType, TabType, PlanType, MapFilterType} from './GlobalVariables';
 import api from './api.js';
 import StateModel from "../models/StateModel";
 export const StoreContext = createContext({});
@@ -37,7 +37,7 @@ function StoreContextProvider(props) {
         state: StateType.NONE,
         districtId: -1,
         prevState: null,
-        colorFilter: FilterType.NONE,
+        mapMapFilterType: MapFilterType.NONE,
         incumbentFilter: false,
         mixingValue: -1,
         resetState: 0,
@@ -57,7 +57,7 @@ function StoreContextProvider(props) {
         resetState: [],
     })
 // --- STATE HELPER ---------------------------------
-    function createMapState(plan, subPlan, stateType, colorFilter, districtId, mixingValue, resetState, resetPage, incumbentFilter) {
+    function createMapState(plan, subPlan, stateType, mapMapFilterType, districtId, mixingValue, resetState, resetPage, incumbentFilter) {
         if (plan === storeMap.subPlan) {
             subPlan = null;
         }
@@ -66,7 +66,7 @@ function StoreContextProvider(props) {
             subPlan: (subPlan !== undefined)? subPlan : storeMap.subPlan,
             state: (stateType !== undefined)? stateType : storeMap.state,
             prevState: storeMap.state,
-            colorFilter: (colorFilter !== undefined)? colorFilter : storeMap.colorFilter,
+            mapMapFilterType: (mapMapFilterType !== undefined)? mapMapFilterType : storeMap.mapMapFilterType,
             districtId: (districtId !== undefined)? districtId : storeMap.districtId,
             mixingValue: (mixingValue !== undefined)? mixingValue : storeMap.mixingValue,
             resetState: (resetState !== undefined)? resetState : storeMap.resetState,
@@ -118,7 +118,7 @@ function StoreContextProvider(props) {
             case MapActionType.STATE_UNSELECT:
                 return setStoreMap(createMapState(prev, prev, StateType.NONE, prev, prev, prev, prev, prev, prev))
             case MapActionType.UPDATE_COLOR_FILTER:
-                return setStoreMap(createMapState(prev, prev, prev, payload.colorFilter, prev, prev, prev, prev, prev))
+                return setStoreMap(createMapState(prev, prev, prev, payload.mapMapFilterType, prev, prev, prev, prev, prev))
             case MapActionType.UPDATE_INCUMBENT_FILTER:
                 return setStoreMap(createMapState(prev, prev, prev, prev, prev, prev, prev, prev, payload.state))
             case MapActionType.DISTRICT_HIGHLIGHT:
@@ -199,10 +199,10 @@ function StoreContextProvider(props) {
         })
     }
 
-    storeMap.setColorFilter = function(colorFilter) {
+    storeMap.setColorFilter = function(mapMapFilterType) {
         storeMapReducer({
             type: MapActionType.UPDATE_COLOR_FILTER,
-            payload: {colorFilter: colorFilter}
+            payload: {mapMapFilterType: mapMapFilterType}
         })
     }
 

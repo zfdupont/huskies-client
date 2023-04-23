@@ -1,18 +1,10 @@
-import MapSideItem from "./MapSideItem";
-import {Paper, Switch, Table, TableBody} from "@mui/material";
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import ButtonGroup from '@mui/material/ButtonGroup';
+import DistrictSummaryItem from "./DistrictSummaryItem";
+import {Switch} from "@mui/material";
 import {useContext, useEffect, useRef, useState} from "react";
 import StoreContext from "../../common/Store";
-import {FilterType, PlanType} from "../../common/Enums";
+import {PlanType} from "../../common/GlobalVariables";
 import * as React from "react";
-import MapTopInfo from "./MapTopInfo";
 
-const ButtonToggle = {
-    true: "outlined",
-    false: "contained",
-};
 
 const TableButtonType = {
     NONE: "none",
@@ -20,8 +12,7 @@ const TableButtonType = {
     COMPARE: "compare",
 }
 
-export default function MapSideInfo()
-{
+export default function DistrictSummaryTable() {
     const infoTableRef = useRef();
     const { storeMap, storeData } = useContext(StoreContext);
     const [ state, setState ] = useState({
@@ -39,16 +30,14 @@ export default function MapSideInfo()
         infoScrollSetup();
     });
 
-    function selectedDistrictIdSetup()
-    {
+    function selectedDistrictIdSetup() {
         if (state.selectedDistrictId !== storeMap.getHighlightDistrictId())
         {
             setState((prev) => ({...prev, selectedDistrictId: storeMap.getHighlightDistrictId()}))
         }
     }
 
-    function getDistrictInfo()
-    {
+    function getDistrictInfo() {
         const districts = [];
         if (!storeData.isReadyToDisplayCurrentMap()) return districts;
         let stateModelData = storeData.getStateModelData(storeMap.getMapPlan(), storeMap.getState());
@@ -56,23 +45,21 @@ export default function MapSideInfo()
         {
             if (state.incumbentFilter && !stateModelData.electionDataDict[id].hasIncumbent) continue;
 
-            districts.push(<MapSideItem key={id} electionData={stateModelData.electionDataDict[id]}/>);
+            districts.push(<DistrictSummaryItem key={id} electionData={stateModelData.electionDataDict[id]}/>);
         }
         return districts;
     }
 
-    function getSimulatedInfo()
-    {
+    function getSimulatedInfo() {
         return []
     }
-    function getTitles()
-    {
+
+    function getTitles() {
         if (state.selectedTableMenu !== TableButtonType.COMPARE) return getDistrictInfoTitle();
         else return getCompareInfoTitle();
     }
 
-    function getDistrictInfoTitle()
-    {
+    function getDistrictInfoTitle() {
         return (
             <div style={{display:'flex', flex: "0 1 50px", marginBottom:'10px'}}>
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 1.2,  fontSize:'12px', color:'grey'}}>Districts</div>
@@ -85,8 +72,7 @@ export default function MapSideInfo()
         )
     }
 
-    function getCompareInfoTitle()
-    {
+    function getCompareInfoTitle() {
         return (
             <div style={{display:'flex', flex: "0 1 50px", marginBottom:'10px'}}>
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 1.2,  fontSize:'12px', color:'grey'}}>Districts</div>
@@ -97,12 +83,7 @@ export default function MapSideInfo()
         )
     }
 
-    let onTableMenuClicked = (tableButtonType) => {
-        setState({selectedTableMenu: tableButtonType});
-    }
-
-    function infoScrollSetup()
-    {
+    function infoScrollSetup() {
         if (storeMap.getHighlightDistrictId() === -1) return;
         // const infoItem = infoTableRef?.current?.children[storeMap.getHighlightDistrictId()-1];
         const infoItem = Array.from(infoTableRef?.current?.children).find((item) => {
@@ -114,8 +95,7 @@ export default function MapSideInfo()
         }
     }
 
-    function onIncumbentFilterClick(event)
-    {
+    function onIncumbentFilterClick(event) {
         setState((prevState) => ({...prevState, incumbentFilter: event.target.checked}));
     }
 
