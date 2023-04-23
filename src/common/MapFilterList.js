@@ -59,6 +59,7 @@ export default function MapFilterList() {
                 [FilterType.ASIAN]: false,
             }
             state[filterType] = e.target.checked;
+            filterType = (e.target.checked)? filterType : FilterType.NONE;
             storeMap.setColorFilter(filterType);
         }
 

@@ -1,6 +1,6 @@
 import {createContext, useState} from 'react';
 import {StateType, TabType, PlanType, FilterType} from './Enums';
-import api, {getStateGeojson} from './api.js';
+import api from './api.js';
 import StateModel from "../models/StateModel";
 export const StoreContext = createContext({});
 
@@ -57,11 +57,8 @@ function StoreContextProvider(props) {
         resetState: [],
     })
 // --- STATE HELPER ---------------------------------
-
-    function createMapState(plan, subPlan, stateType, colorFilter, districtId, mixingValue, resetState, resetPage, incumbentFilter)
-    {
-        if (plan === storeMap.subPlan)
-        {
+    function createMapState(plan, subPlan, stateType, colorFilter, districtId, mixingValue, resetState, resetPage, incumbentFilter) {
+        if (plan === storeMap.subPlan) {
             subPlan = null;
         }
         return {
@@ -78,8 +75,7 @@ function StoreContextProvider(props) {
         }
     }
 
-    function createDataState(planType, stateType, modelData, geojson, districtBoundData, planKey, planValue)
-    {
+    function createDataState(planType, stateType, modelData, geojson, districtBoundData, planKey, planValue) {
         let newData = storeData;
         newData.modelData[planType] = newData.modelData[planType] ?? {}; // set {} if null.
         newData.geojson[planType] = newData.geojson[planType] ?? {};
@@ -100,8 +96,7 @@ function StoreContextProvider(props) {
         };
     }
 
-    function createPageState(tabType)
-    {
+    function createPageState(tabType) {
         return {
             tab: (tabType !== undefined)? tabType : storePage.tab
         }
@@ -111,7 +106,7 @@ function StoreContextProvider(props) {
 // --- REDUCER ---------------------------------------
     // Create State Guide: 1) value -> set value, 2) null -> set null, 3) undefined -> remain previous value.
     const storeMapReducer = (action) => {
-        let prev; // Intended to be undefined. -> undefined parameter will keep prev state.
+        let prev; // Intended to be undefined.
         const {type, payload} = action;
         switch (type) {
             case MapActionType.PLAN_SELECT:
@@ -121,7 +116,7 @@ function StoreContextProvider(props) {
             case MapActionType.STATE_SELECT:
                 return setStoreMap(createMapState(prev, prev, payload.stateType, prev, -1, 0, prev, prev, prev))
             case MapActionType.STATE_UNSELECT:
-                return setStoreMap(createMapState(prev, prev, StateType.NONE, [], prev, prev, prev, prev, prev))
+                return setStoreMap(createMapState(prev, prev, StateType.NONE, prev, prev, prev, prev, prev, prev))
             case MapActionType.UPDATE_COLOR_FILTER:
                 return setStoreMap(createMapState(prev, prev, prev, payload.colorFilter, prev, prev, prev, prev, prev))
             case MapActionType.UPDATE_INCUMBENT_FILTER:
@@ -131,7 +126,7 @@ function StoreContextProvider(props) {
             case MapActionType.MIXING_VALUE_CHANGE:
                 return setStoreMap(createMapState(prev, prev, prev, prev, prev, payload.value, prev, prev, prev))
             case MapActionType.RESET_STATE:
-                return setStoreMap(createMapState(prev, null, prev, [], -1, 0, storeMap.resetState + 1, prev, prev))
+                return setStoreMap(createMapState(prev, null, prev, prev, -1, 0, storeMap.resetState + 1, prev, prev))
             case MapActionType.RESET_PAGE:
                 return setStoreMap(createMapState())
             default:
@@ -139,7 +134,7 @@ function StoreContextProvider(props) {
         }
     }
     const storeDataReducer = (action) => {
-        let prev; // Intended to be undefined. -> undefined parameter will keep prev state.
+        let prev; // Intended to be undefined.
         const {type, payload} = action;
         switch (type) {
             case DataActionType.ADD_PLAN_TYPE:
@@ -153,7 +148,7 @@ function StoreContextProvider(props) {
         }
     }
     const storePageReducer = (action) => {
-        let prev; // Intended to be undefined. -> undefined parameter will keep prev state.
+        let prev; // Intended to be undefined.
         const {type, payload} = action;
         switch (type) {
             case PageActionType.UPDATE_TAB:
@@ -164,9 +159,7 @@ function StoreContextProvider(props) {
     }
 
 // --- STORE MAP FUNCTIONS -----------------------------
-
-    storeMap.selectPlan = function(planType)
-    {
+    storeMap.selectPlan = function(planType) {
         if (planType === storeMap.plan) return;
 
         storeMapReducer({
@@ -182,14 +175,12 @@ function StoreContextProvider(props) {
 
         storeMapReducer({
             type: MapActionType.SUB_PLAN_SELECT,
-            payload: {subPlanType: planType}
+            payload: {subPlanType: planType},
         })
         await storeData.addStateData(planType, storeMap.state);
     }
 
-    storeMap.selectState = async function(stateType)
-    {
-        console.log("select state");
+    storeMap.selectState = async function(stateType) {
         storeMapReducer({
             type: MapActionType.STATE_SELECT,
             payload: {
@@ -201,34 +192,28 @@ function StoreContextProvider(props) {
         await storeData.addStateData(storeMap.plan, stateType);
     }
 
-    // Move to country view
-    // Reset added filter layers.
-    storeMap.unselectState = function()
-    {
+    storeMap.unselectState = function() {
         storeMapReducer({
             type: MapActionType.STATE_UNSELECT,
             payload: null,
         })
     }
 
-    storeMap.setColorFilter = function(colorFilter)
-    {
+    storeMap.setColorFilter = function(colorFilter) {
         storeMapReducer({
             type: MapActionType.UPDATE_COLOR_FILTER,
             payload: {colorFilter: colorFilter}
         })
     }
 
-    storeMap.setIncumbentFilter = function(state)
-    {
+    storeMap.setIncumbentFilter = function(state) {
         storeMapReducer({
             type: MapActionType.UPDATE_INCUMBENT_FILTER,
             payload: {state: state},
         })
     }
 
-    storeMap.highlightDistrict = function(districtId)
-    {
+    storeMap.highlightDistrict = function(districtId) {
         if (storeMap.districtId === districtId)
         {
             districtId = -1; // remove highlight
@@ -239,24 +224,21 @@ function StoreContextProvider(props) {
         })
     }
 
-    storeMap.mixingValueChange = function(value)
-    {
+    storeMap.mixingValueChange = function(value) {
         storeMapReducer({
             type: MapActionType.MIXING_VALUE_CHANGE,
             payload: {value: value},
         })
     }
 
-    storeMap.resetPage = function()
-    {
+    storeMap.resetPage = function() {
         storeMapReducer({
             type: MapActionType.RESET_PAGE,
             payload: null,
         })
     }
 
-    storeMap.resetState = function()
-    {
+    storeMap.resetState = function() {
         storeMapReducer({
             type: MapActionType.RESET_STATE,
             payload: null,
@@ -265,8 +247,7 @@ function StoreContextProvider(props) {
     }
 
 // --- STORE DATA FUNCTIONS -----------------------------
-    storeData.addPlanType = function(planKey, planValue)
-    {
+    storeData.addPlanType = function(planKey, planValue) {
         if (planKey in storeData.planType) return;
 
         storeDataReducer({
@@ -275,30 +256,26 @@ function StoreContextProvider(props) {
         })
     }
 
-    storeData.setDistrictIdOfGeojson = function(geojson)
-    {
+    storeData.setDistrictIdOfGeojson = function(geojson) {
         geojson.features.forEach((district, index) => {
-            district.properties.district_id = index + 1;
+            district.properties.district_id = (index + 1).toString();
         })
     }
 
-    storeData.createModelDataByGeojson = function(planType, stateType, geojson)
-    {
+    storeData.createModelDataByGeojson = function(planType, stateType, geojson) {
         console.log(geojson);
-        let modelData = {};
+        let stateProperties = {};
         geojson.features.forEach((district, index) => {
-            modelData[index + 1] = district.properties;
+            stateProperties[(index + 1).toString()] = district.properties;
         })
 
         // TO DO: remove if data all ready.
-        storeData.addMockData(modelData);
-        console.log(modelData)
+        storeData.addMockData(stateProperties);
 
-        return new StateModel(planType, stateType, modelData);
+        return new StateModel(planType, stateType, stateProperties);
     }
 
-    storeData.addMockData = function(modelData)
-    {
+    storeData.addMockData = function(modelData) {
         for (let key in modelData)
         {
             modelData[key]["DemocraticCandidate"] = "NameName NameName1" + key;
@@ -333,8 +310,8 @@ function StoreContextProvider(props) {
         if (storeData.isStateDataReady(planType, stateType)) return;
 
         let geojson = await api.getStateGeojson(planType, stateType);
-        // let summaryJson =  await api.getStateSummaryJson(stateType);
-
+        let summaryJson =  await api.getStateSummaryJson(stateType);
+        console.log(summaryJson);
         storeData.setDistrictIdOfGeojson(geojson);
         let modelData = storeData.createModelDataByGeojson(planType, stateType, geojson);
 
@@ -344,16 +321,15 @@ function StoreContextProvider(props) {
         })
     }
 
-    storeData.setDistrictBoundData = function(districtBoundData)
-    {
+    storeData.setDistrictBoundData = function(districtBoundData) {
         storeDataReducer({
             type: DataActionType.SET_DISTRICT_BOUND_DATA,
             payload: districtBoundData,
         })
     }
+
 // --- STORE PAGE FUNCTIONS -----------------------------
-    storePage.selectTab = function(tabType)
-    {
+    storePage.selectTab = function(tabType) {
         storePageReducer({
             type: PageActionType.UPDATE_TAB,
             payload: { tabType: tabType }
@@ -361,13 +337,11 @@ function StoreContextProvider(props) {
     }
 
 // --- CALLBACK FUNCTIONS -----------------------------
-    callbacks.addOnResetState = function(callback)
-    {
+    callbacks.addOnResetState = function(callback) {
         setCallbacks((prev) => ({...prev, resetState: [...prev.resetState, callback]}))
     }
 
-    callbacks.invokeAll = function(callbacks)
-    {
+    callbacks.invokeAll = function(callbacks) {
         callbacks.forEach((func) => func());
     }
 // --- HELPER FUNCTIONS -----------------------------
@@ -383,7 +357,7 @@ function StoreContextProvider(props) {
     storeMap.isStateMatch = (stateType) => { return stateType === storeMap.state; }
     // STORE DATA
     storeData.getPlanType = () => { return storeData.planType; }
-    storeData.getStateGeoJson = (planType, stateType) => { return storeData.geojson[planType][stateType]};
+    storeData.getStateGeoJson = (planType, stateType) => JSON.parse(JSON.stringify(storeData.geojson[planType][stateType]));
     storeData.getStateModelData = (planType, stateType) => { return storeData.modelData[planType][stateType]};
     storeData.getCurrentStateGeojson = (planType) => { return storeData.geojson[planType][storeMap.state]};
     storeData.isReadyToDisplayCurrentMap = () => {
@@ -404,16 +378,6 @@ function StoreContextProvider(props) {
     }
     // STORE PAGE
     storePage.isTabMatch = (tabType) => { return tabType === storePage.tab; }
-
-
-// --- API FUNCTIONS -----------------------------
-    let apiGetStateGeojson = async (planType, stateType) =>
-    {
-        // TODO : return saved data if the data already in the storeMap.
-
-        return await api.getStateGeoJson(planType, stateType);
-    }
-
 
     return (
         <StoreContext.Provider value={{storeMap, storeData, storePage, callbacks}}>

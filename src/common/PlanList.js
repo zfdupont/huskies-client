@@ -8,10 +8,7 @@ import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Star from '@mui/icons-material/Star';
-import LooksOneOutlinedIcon from '@mui/icons-material/LooksOneOutlined';
-import LooksTwoOutlinedIcon from '@mui/icons-material/LooksTwoOutlined';
 import StoreContext from './Store';
-import {PlanType} from "./Enums";
 
 export default function NestedList() {
     const { storeMap, storeData } = useContext(StoreContext);
@@ -29,26 +26,20 @@ export default function NestedList() {
     let listTitle = (open)? "Plan" : getListTitle();
     let planButtons = [];
     let PlanType = storeData.getPlanType();
-    for (const planKey in PlanType)
-    {
+    for (const planKey in PlanType) {
         let planType = PlanType[planKey];
         planButtons.push(
-            <ListItemButton key={planType} selected={isPlanSelected(planType)} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
+            <ListItemButton key={planType} selected={storeMap.getMapPlan() === planType} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
                 <ListItemText primary={planType} primaryTypographyProps={{fontSize: "12px"}}  />
             </ListItemButton>
         )
     }
 
-    function getListTitle()
-    {
+    function getListTitle() {
         return storeMap.getMapPlan();
     }
 
-    function isPlanSelected(planType){
-        return (storeMap.getMapPlan() === planType)
-    }
-
-    function onPlanButtonClick(planType){
+    function onPlanButtonClick(planType) {
         storeMap.selectPlan(planType);
     }
 

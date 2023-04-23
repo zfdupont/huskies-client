@@ -27,14 +27,13 @@ const partyInitial = {
 }
 export default function MapSideItem(props)
 {
-
     const { storeMap } = useContext(StoreContext);
 
     let data = props.electionData;
-
     let winVotePercent = Math.ceil((data.winnerVotes  / (data.winnerVotes + data.loserVotes)) * 100 );
     let loseVotePercent = 100 - winVotePercent;
     let bgColor = (storeMap.getHighlightDistrictId() !== data.districtId)? 'white' : "#ffe8a4";
+
     function onItemClick()
     {
         storeMap.highlightDistrict(data.districtId);

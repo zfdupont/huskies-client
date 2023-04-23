@@ -1,4 +1,3 @@
-import StateGeoJson from "../0.data/states.json";
 import NY from "../0.data/NY.json";
 import NYD from "../0.data/NYD.json";
 import GA from "../0.data/GA.json";
@@ -47,6 +46,12 @@ export const FilterType = {
     ASIAN: "asian",
 }
 
+export const StyleType = {
+    PARTY: 'partyStyle',
+    INCUMBENT: 'partyStyle',
+    DEMOGRAPHIC: 'demographicStyle',
+}
+
 // LayerType string must match the layer name in MapProperty.json.
 export const TileLayerType = {
     PLACE_LABEL: "placeLabel",
@@ -64,13 +69,52 @@ export const LayerGroupType = {
     HIGHLIGHT: "highlight",
 }
 
+export const BoundSizeMap = {
+    Level1: 0,
+    Level2: 25000,
+    Level3: 30000,
+    Level4: 50000,
+    Level5: 100000,
+    Level6: 250000,
+}
+
+export const ZoomLevelMap = {
+    Level1: 11,
+    Level2: 10,
+    Level3: 9,
+    Level4: 8,
+    Level5: 7,
+    Level6: 6,
+}
+
+export const ColorMap = {
+    DEFAULT_WHITE: "#ffffff",
+    DEMOCRATIC_LV1: "#fdb4b4",
+    DEMOCRATIC_LV2: "#ff7f7f",
+    DEMOCRATIC_LV3: "#ff6363",
+    DEMOCRATIC_LV4: "#ff2b2b",
+    DEMOCRATIC_LV5: "#ff0000",
+    DEMOCRATIC_LV6: "#6b0000",
+    REPUBLICAN_LV1: "#ababff",
+    REPUBLICAN_LV2: "#7e7eff",
+    REPUBLICAN_LV3: "#6767ff",
+    REPUBLICAN_LV4: "#2828ff",
+    REPUBLICAN_LV5: "#0000ff",
+    REPUBLICAN_LV6: "#000077",
+    POPULATION_LV1: "#b8ffb8",
+    POPULATION_LV2: "#7eff7e",
+    POPULATION_LV3: "#33e533",
+    POPULATION_LV4: "#22b422",
+    POPULATION_LV5: "#087e08",
+    POPULATION_LV6: "#004900",
+}
+
 export const GeoDataType = {
     STATE: "state",
     DISTRICT: "district",
     PRECINCT: "precinct",
 }
 
-// In this way, geoData will be easily get by stateType and GeoDataType.
 export const GeoData = {}
 GeoData[StateType.NEWYORK] = {}
 GeoData[StateType.NEWYORK][GeoDataType.STATE] = NY;

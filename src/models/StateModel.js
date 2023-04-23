@@ -83,12 +83,12 @@ export default class StateModel
 
         for (let key in modelData)
         {
+            if (key === "10") continue;
             minDemocrats = Math.min(modelData[key]["2020VBIDEN"], minDemocrats);
             minRepublicans = Math.min(modelData[key]["2020VTRUMP"], minRepublicans);
             minWhite = Math.min(modelData[key]["VAPWHITE"], minWhite);
             minBlack = Math.min(modelData[key]["VAPBLACK"], minBlack);
             minAsian = Math.min(modelData[key]["VAPASIAN"], minAsian);
-
             maxDemocrats = Math.max(modelData[key]["2020VBIDEN"], maxDemocrats);
             maxRepublicans = Math.max(modelData[key]["2020VTRUMP"], maxRepublicans);
             maxWhite = Math.max(modelData[key]["VAPWHITE"], maxWhite);
@@ -122,26 +122,6 @@ export default class StateModel
             return 0;
         }
         return result;
-    }
-
-    getDemocratDistrictIDs()
-    {
-        let ids = [];
-        for (let key in this.electionDataDict) {
-            if (this.electionDataDict[key].winnerParty === PartyType.DEMOCRATIC)
-                ids.push(this.electionDataDict[key].districtId);
-        }
-        return ids;
-    }
-
-    getRepublicanDistrictIDs()
-    {
-        let ids = [];
-        for (let key in this.electionDataDict) {
-            if (this.electionDataDict[key].winnerParty === PartyType.REPUBLICAN)
-                ids.push(this.electionDataDict[key].districtId);
-        }
-        return ids;
     }
 
     getIncumbentDistrictIDs()
