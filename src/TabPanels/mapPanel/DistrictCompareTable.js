@@ -48,7 +48,7 @@ const CustomTooltip = () => {
 
 
 export default function DistrictCompareTable() {
-    const { storeMap, storeData } = useContext(StoreContext);
+    const { mapStore, dataStore } = useContext(StoreContext);
     const [incumbentFilter, setIncumbentFilter] = useState(true);
 
     let dataList = createElectionDataList();
@@ -88,14 +88,14 @@ export default function DistrictCompareTable() {
 
     function createElectionDataList() {
         let result = [];
-        if (!storeData.isReadyToDisplayCurrentMap()) return result;
+        if (!dataStore.isReadyToDisplayCurrentMap()) return result;
 
-        let modelData = storeData.getStateModelData(storeMap.getMapPlan(), storeMap.getState());
-        for (let key in modelData.compareDataDict)
+        let stateData = dataStore.getStateModelData(mapStore.getMapPlan(), mapStore.getState());
+        for (let key in stateData.compareDataDict)
         {
-            if (incumbentFilter && !modelData.electionDataDict[key].hasIncumbent) continue;
+            if (incumbentFilter && !stateData.electionDataDict[key].hasIncumbent) continue;
 
-            let data = modelData.compareDataDict[key];
+            let data = stateData.compareDataDict[key];
             result.push( createData(data.districtId, data.area, data.population, data.democrats, data.republicans, data.white, data.black, data.asian));
         }
         return result;
