@@ -20,10 +20,10 @@ export const getStateGeojson = async (planType, stateType) => {
                 plan: planType,
             }
         })
-      .then(response => response.data)
-      .catch(err => {
-          return null;
-      });
+        .then(response => response.data)
+        .catch(err => {
+            return null;
+        });
 }
 
 const apis = {
