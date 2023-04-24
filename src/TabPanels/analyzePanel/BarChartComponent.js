@@ -42,6 +42,10 @@ const data = [
   }
 ];
 
+function mockBarData() {
+  
+}
+
 export default function BarChartComponent(props) {
   return (
     <BarChart
@@ -62,7 +66,7 @@ export default function BarChartComponent(props) {
         textAnchor="middle"
         dominantBaseline="central"
       >
-        <tspan fontSize="14">{props.name}</tspan>
+        {/* <tspan fontSize="14">{props.name}</tspan> */}
       </text>
 
       
@@ -76,10 +80,10 @@ export default function BarChartComponent(props) {
       ></XAxis>
       <YAxis />
       <ReferenceLine x={20.5} strokeWidth={3} stroke="#eb3464"/>
-      <ReferenceLine x={19.5} strokeWidth={3} stroke="#100859"/>
+      <ReferenceLine x={19.5} strokeWidth={3} stroke="#bce0f5"/>
       <Tooltip />
       <Legend />
-      <Bar dataKey="plan" fill="#8884d8" barSize={35}/>
+      <Bar dataKey="plan" fill="#185a87" barSize={35}/>
     </BarChart>
   );
 }
