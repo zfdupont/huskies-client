@@ -18,12 +18,11 @@ function StoreContextProvider(props) {
         plan: null,
         subPlan: null,
         state: StateType.NONE,
-        districtId: null,
         prevState: null,
+        districtId: null,
         mapFilterType: MapFilterType.NONE,
         incumbentFilter: false,
-        resetState: 0,
-        resetPage: 0,
+        heatMapFeatureValues: [],
     })
     const [dataStore, setDataStore] = useState({
         planType: PlanType,
@@ -44,20 +43,22 @@ function StoreContextProvider(props) {
     const mapStoreReducer = (action) => {
         const {type, payload} = action;
         switch (type) {
-            case MapActionType.PLAN_SELECT:
+            case MapActionType.SELECT_PLAN:
                 return setMapStore((prev) => ({...prev, plan: payload.planType}));
-            case MapActionType.SUB_PLAN_SELECT:
+            case MapActionType.SELECT_SUB_PLAN:
                 return setMapStore((prev) => ({...prev, subPlan: payload.subPlanType}));
-            case MapActionType.STATE_SELECT:
+            case MapActionType.SELECT_STATE:
                 return setMapStore((prev) => ({...prev, state: payload.stateType, districtId: null}));
-            case MapActionType.STATE_UNSELECT:
+            case MapActionType.UNSELECT_STATE:
                 return setMapStore((prev) => ({...prev, state: StateType.NONE}));
             case MapActionType.UPDATE_COLOR_FILTER:
                 return setMapStore((prev) => ({...prev, mapFilterType: payload.mapFilterType}));
             case MapActionType.UPDATE_INCUMBENT_FILTER:
                 return setMapStore((prev) => ({...prev, incumbentFilter: payload.isIncumbent}));
-            case MapActionType.DISTRICT_HIGHLIGHT:
+            case MapActionType.HIGHLIGHT_DISTRICT:
                 return setMapStore((prev) => ({...prev, districtId: payload.districtId}));
+            case MapActionType.SET_HEATMAP_FEATURE_VALUES:
+                return setMapStore((prev) => ({...prev, heatMapFeatureValues: payload.heatMapFeatureValues}))
             case MapActionType.RESET_STATE:
                 return setMapStore((prev) => ({...prev, districtId: null}))
             case MapActionType.RESET_PAGE:
@@ -99,7 +100,7 @@ function StoreContextProvider(props) {
         if (planType === mapStore.plan) return;
 
         mapStoreReducer({
-            type: MapActionType.PLAN_SELECT,
+            type: MapActionType.SELECT_PLAN,
             payload: { planType: planType }
         })
     }
@@ -109,7 +110,7 @@ function StoreContextProvider(props) {
         if (mapStore.subPlan === planType || mapStore.plan === planType) return;
 
         mapStoreReducer({
-            type: MapActionType.SUB_PLAN_SELECT,
+            type: MapActionType.SELECT_SUB_PLAN,
             payload: {subPlanType: planType},
         })
         await dataStore.addStateData(planType, mapStore.state);
@@ -117,7 +118,7 @@ function StoreContextProvider(props) {
 
     mapStore.selectState = async function(stateType) {
         mapStoreReducer({
-            type: MapActionType.STATE_SELECT,
+            type: MapActionType.SELECT_STATE,
             payload: {
                 stateType: stateType,
             }
@@ -127,7 +128,7 @@ function StoreContextProvider(props) {
 
     mapStore.unselectState = function() {
         mapStoreReducer({
-            type: MapActionType.STATE_UNSELECT,
+            type: MapActionType.UNSELECT_STATE,
             payload: null,
         })
     }
@@ -151,7 +152,7 @@ function StoreContextProvider(props) {
             districtId = null;
         }
         mapStoreReducer({
-            type: MapActionType.DISTRICT_HIGHLIGHT,
+            type: MapActionType.HIGHLIGHT_DISTRICT,
             payload: {districtId: districtId}
         })
     }
@@ -177,17 +178,17 @@ function StoreContextProvider(props) {
         })
         callbacks.invokeAll(callbacks.resetState);
     }
+    
+    mapStore.setHeatMapFeatureValues = function(heatMapFeatureValues) {
+        mapStoreReducer({
+            type: MapActionType.SET_HEATMAP_FEATURE_VALUES,
+            payload: { heatMapFeatureValues: heatMapFeatureValues }
+        })
+    }
+
 
 // --- DATA STORE FUNCTIONS -----------------------------
-//     dataStore.addPlanType = function(planKey, planValue) {
-//         if (planKey in dataStore.planType) return;
-//
-//         dataStoreReducer({
-//             type: DataActionType.ADD_PLAN_TYPE,
-//             payload: {planKey: planKey, planValue: planValue},
-//         })
-//     }
-
+    
     dataStore.setDistrictIdOfGeojson = function(geojson) {
         geojson.features.forEach((district, index) => {
             district.properties.district_id = (index + 1).toString();
@@ -197,7 +198,7 @@ function StoreContextProvider(props) {
     dataStore.createStateModelDataByGeojson = function(planType, stateType, geojson) {
         let stateProperties = {};
         geojson.features.forEach((district, index) => {
-            stateProperties[(index + 1).toString()] = district.properties;
+            stateProperties[district.properties.district_id] = district.properties;
         })
 
         dataStore.addMockData(stateProperties); // TO DO: remove this line if all data ready.

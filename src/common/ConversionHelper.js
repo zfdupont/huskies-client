@@ -5,7 +5,7 @@ export function convertMapFilterTypeToLayerType(filterType){
     // eslint-disable-next-line default-case
     switch(filterType)
     {
-        case MapFilterType.PARTY: return LayerGroupType.PARTY;
+        case MapFilterType.VICTORYMARGIN: return LayerGroupType.VICTORYMARGIN;
         case MapFilterType.WHITE: return LayerGroupType.WHITE;
         case MapFilterType.BLACK: return LayerGroupType.BLACK;
         case MapFilterType.ASIAN: return LayerGroupType.ASIAN;
@@ -16,7 +16,7 @@ export function convertMapFilterTypeToStyleType(filterType){
     // eslint-disable-next-line default-case
     switch(filterType)
     {
-        case MapFilterType.PARTY: return StyleType.PARTY;
+        case MapFilterType.VICTORYMARGIN: return StyleType.VICTORYMARGIN;
         case MapFilterType.WHITE: return StyleType.DEMOGRAPHIC;
         case MapFilterType.BLACK: return StyleType.DEMOGRAPHIC;
         case MapFilterType.ASIAN: return StyleType.DEMOGRAPHIC;

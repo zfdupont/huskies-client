@@ -20,7 +20,7 @@ export default function MapFilterList() {
     const [open, setOpen] = useState(true);
     const [switches, setSwitches] = useState({
         [MapFilterType.INCUMBENT]: false,
-        [MapFilterType.PARTY]: false,
+        [MapFilterType.VICTORYMARGIN]: false,
         [MapFilterType.WHITE]: false,
         [MapFilterType.BLACK]: false,
         [MapFilterType.ASIAN]: false,
@@ -34,7 +34,6 @@ export default function MapFilterList() {
     }, [])
 
     const label = {inputProps: { 'aria-label': 'Switch demo' }};
-
     const menuTitle = "Map Filter";
 
     const onListClick = () => {
@@ -42,18 +41,15 @@ export default function MapFilterList() {
     };
 
     const onToggle = (e, filterType) => {
-
         let state;
-        if (filterType === MapFilterType.INCUMBENT)
-        {
+        if (filterType === MapFilterType.INCUMBENT) {
             state = {...switches, [MapFilterType.INCUMBENT]: e.target.checked};
             mapStore.setIncumbentFilter(e.target.checked);
         }
-        else
-        {
+        else {
             state = {
                 [MapFilterType.INCUMBENT]: switches[MapFilterType.INCUMBENT],
-                [MapFilterType.PARTY]: false,
+                [MapFilterType.VICTORYMARGIN]: false,
                 [MapFilterType.WHITE]: false,
                 [MapFilterType.BLACK]: false,
                 [MapFilterType.ASIAN]: false,
@@ -62,15 +58,13 @@ export default function MapFilterList() {
             filterType = (e.target.checked)? filterType : MapFilterType.NONE;
             mapStore.setColorFilter(filterType);
         }
-
         setSwitches(state);
     };
 
-    function resetFilters()
-    {
+    function resetFilters() {
         setSwitches({
             [MapFilterType.INCUMBENT]: false,
-            [MapFilterType.PARTY]: false,
+            [MapFilterType.VICTORYMARGIN]: false,
             [MapFilterType.WHITE]: false,
             [MapFilterType.BLACK]: false,
             [MapFilterType.ASIAN]: false,
@@ -97,8 +91,12 @@ export default function MapFilterList() {
                         <Switch {...label} checked={switches[MapFilterType.INCUMBENT]} size="small" onClick={(e) => {onToggle(e, MapFilterType.INCUMBENT)}} />
                     </ListItem>
                     <ListItem sx={{ pl: 6 }}>
+                        <ListItemText primary="VictoryMargin" primaryTypographyProps={{fontSize: '12px'}} />
+                        <Switch {...label} checked={switches[MapFilterType.VICTORYMARGIN]} size="small"  onClick={(e) => {onToggle(e, MapFilterType.VICTORYMARGIN)}} />
+                    </ListItem>
+                    <ListItem sx={{ pl: 6 }}>
                         <ListItemText primary="Party" primaryTypographyProps={{fontSize: '12px'}} />
-                        <Switch {...label} checked={switches[MapFilterType.PARTY]} size="small" color="warning" onClick={(e) => {onToggle(e, MapFilterType.PARTY)}} />
+                        <Switch {...label} checked={switches[MapFilterType.VICTORYMARGIN]} size="small"  onClick={(e) => {onToggle(e, MapFilterType.VICTORYMARGIN)}} />
                     </ListItem>
                     <ListItem sx={{ pl: 6 }}>
                         <ListItemText primary="White" primaryTypographyProps={{fontSize: '12px'}} />

@@ -7,15 +7,17 @@ import DistrictSummaryTable from "./DistrictSummaryTable";
 import StateInfoTable from "./StateInfoTable";
 import StoreReducer from '../../common/Store';
 import DistrictCompareTable from './DistrictCompareTable';
+import HeatMap from "./HeatMap";
 
 
 export default function MapPanel() {
     let { mapStore } = useContext(StoreReducer);
     return (
         <div style={{position: 'absolute', width: 'calc(100% - 20px)', height:'calc(100% - 20px)', padding: '10px', display:'flex'}}>
-            <div style={{display: "flex", flexDirection: "column", flex:3.5, marginRight: '10px'}}>
+            <div style={{display: "flex", flexDirection: "column", justifyContent:'center', flex:3.5, marginRight: '10px'}}>
                 <Paper className="map" style={{flex: 1, marginBottom: '10px'}}>
                     <MainMap/>
+                    <HeatMap/>
                 </Paper>
                 <Paper style={{display:'flex', flexDirection:"column", alignItems:'center', justifyContents:'center', flex: "0 0 300px"}}>
                     {(!mapStore.isStateNone()) && <DistrictCompareTable/>}

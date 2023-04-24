@@ -15,10 +15,10 @@ export const getStateSummaryJson = async (stateType) => {
 export const getStateGeojson = async (planType, stateType) => {
     return api.get(`/plan/plan`,
         {
-          params: {
-            state: stateType,
-            plan: planType,
-          }
+            params: {
+                state: stateType,
+                plan: planType,
+            }
         })
       .then(response => response.data)
       .catch(err => {

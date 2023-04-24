@@ -29,8 +29,8 @@ import {
 } from "../../common/ConversionHelper";
 import {
     calculateHeatMapFeatureValues,
-    roundDownToFirstDecimal,
-    roundUpToFirstDecimal
+    roundDownToFirstDigit,
+    roundUpToFirstDigit
 } from "../../common/CalculationHelper";
 
 let currLayerGroups = {};
@@ -97,7 +97,7 @@ export default function MapController() {
     }
 
     function getColorByFilter(stateModel, districtId, mapFilterType) {
-        return (mapFilterType === MapFilterType.PARTY)? getColorByParty(stateModel, districtId) : getColorByPopulation(stateModel, districtId, mapFilterType);
+        return (mapFilterType === MapFilterType.VICTORYMARGIN)? getColorByParty(stateModel, districtId) : getColorByPopulation(stateModel, districtId, mapFilterType);
     }
 
     function getColorByParty(stateModel, districtId) {
@@ -131,6 +131,8 @@ export default function MapController() {
         if (!validCheck([stateSummaryData, population, min, max])) return colorDict.white;
 
         let featureValues = calculateHeatMapFeatureValues(min, max);
+        mapStore.setHeatMapFeatureValues(featureValues);
+
         for (let i = 0; i < featureValues.length; i++) {
             if (population < featureValues[i]) {
                 return populationColors[i];

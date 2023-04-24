@@ -7,17 +7,16 @@ import ILD from "../0.data/ILD.json";
 
 
 export const MapActionType = {
-    PLAN_SELECT: "plan_select",
-    PLAN_UNSELECT: "plan_unselect",
-    SUB_PLAN_SELECT: "sub_plan_select",
-    STATE_SELECT: "state_select",
-    STATE_UNSELECT: "state_unselect",
-    UPDATE_COLOR_FILTER: "update_color_filter",
-    UPDATE_INCUMBENT_FILTER: "update_incumbent_filter",
-    DISTRICT_HIGHLIGHT: "district_hover",
-    MIXING_VALUE_CHANGE: "mixing_value_change",
-    RESET_PAGE: "reset_page",
-    RESET_STATE: "reset_state",
+    SELECT_PLAN: "selectPlan",
+    SELECT_SUB_PLAN: "selectSubPlan",
+    SELECT_STATE: "selectState",
+    UNSELECT_STATE: "unselectState",
+    UPDATE_COLOR_FILTER: "updateColorFilter",
+    UPDATE_INCUMBENT_FILTER: "updateIncumbentFilter",
+    HIGHLIGHT_DISTRICT: "highlightDistrict",
+    SET_HEATMAP_FEATURE_VALUES: 'addHeatmapFeatureValues',
+    RESET_STATE: 'resetState',
+    RESET_PAGE: 'resetPage',
 }
 
 export const DataActionType = {
@@ -61,7 +60,8 @@ export const PartyType = {
 // @enum {string}
 export const MapFilterType = {
     NONE: 'none',
-    PARTY: "party",
+    INCUMBENT: 'incumbent',
+    VICTORYMARGIN: "party",
     WHITE: "white",
     BLACK: "black",
     ASIAN: "asian",
@@ -78,7 +78,7 @@ export const PopulationType = {
 
 // @enum {string}
 export const StyleType = {
-    PARTY: 'partyStyle',
+    VICTORYMARGIN: 'partyStyle',
     INCUMBENT: 'partyStyle',
     DEMOGRAPHIC: 'demographicStyle',
     HIGHLIGHT: 'highlightStyle',
@@ -96,7 +96,7 @@ export const LayerGroupType = {
     STATE_DEFAULT: "stateDefault",
     COUNTRY_DEFAULT: "countryDefault",
     INCUMBENT: "incumbent",
-    PARTY: "party",
+    VICTORYMARGIN: "party",
     WHITE: "white",
     BLACK: "black",
     ASIAN: "asian",
