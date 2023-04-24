@@ -8,7 +8,7 @@ export default function SummaryEnsembleTable() {
                 <Table size="small" sx={{ minWidth: 200}} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ fontSize: 12 }} align="center"># Districts Planse</TableCell>
+                            <TableCell sx={{ fontSize: 12 }} align="center"># Districts Plans</TableCell>
                             <TableCell sx={{ fontSize: 12 }} align="center"># Incumbents</TableCell>
                             <TableCell sx={{ fontSize: 12 }} align="center">Predicted # Incumbent Winners</TableCell>
                             <TableCell sx={{ fontSize: 12 }} align="center">Avg Geographic Variation</TableCell>

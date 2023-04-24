@@ -306,6 +306,10 @@ function StoreContextProvider(props) {
         }
     }
 
+    storeData.addMockEnsembleData = function(modelData) {
+        console.log("mocking ensemble data...");
+    }
+
     storeData.addStateData = async (planType, stateType) => {
         if (storeData.isStateDataReady(planType, stateType)) return;
 
