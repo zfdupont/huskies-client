@@ -9,39 +9,39 @@
 //
 // export default function MapBottomSlider()
 // {
-//     const { storeMap, storeData } = useContext(StoreContext);
+//     const { mapStore, dataStore } = useContext(StoreContext);
 //     const [sliderValue, setSliderValue] = useState(defaultMixingValue);
 //     const [anchorEl, setAnchorEl] = useState(null);
 //     const open = Boolean(anchorEl);
 //
 //     useEffect(() => {
-//         storeMap.mixingValueChange(defaultMixingValue);
+//         mapStore.mixingValueChange(defaultMixingValue);
 //         setDefaultSubPlan();
 //     }, [])
 //
 //     useEffect(() => {
 //         setDefaultSubPlan();
-//     }, [storeMap.subPlan])
+//     }, [mapStore.subPlan])
 //
-//     let subPlanText = (storeMap.getSubPlan())? storeMap.getSubPlan() : "0000";
+//     let subPlanText = (mapStore.getSubPlan())? mapStore.getSubPlan() : "0000";
 //     let subPlanListComponent = getSubPlanListComponent();
 //
 //     function setDefaultSubPlan()
 //     {
-//         if (storeMap.subPlan) return;
+//         if (mapStore.subPlan) return;
 //
-//         let PlanType = storeData.getPlanType();
-//         if (storeMap.getMapPlan() === PlanType.Y2020) {
-//             storeMap.selectSubPlan(storeData.getPlanType().Y2022);
+//         let PlanType = dataStore.getPlanType();
+//         if (mapStore.getMapPlan() === PlanType.Y2020) {
+//             mapStore.selectSubPlan(dataStore.getPlanType().Y2022);
 //         }
-//         if (storeMap.getMapPlan() === PlanType.Y2022) {
-//             storeMap.selectSubPlan(storeData.getPlanType().Y2020);
+//         if (mapStore.getMapPlan() === PlanType.Y2022) {
+//             mapStore.selectSubPlan(dataStore.getPlanType().Y2020);
 //         }
 //     }
 //     function getSubPlanListComponent()
 //     {
-//         let PlanType = storeData.getPlanType();
-//         let subPlanKeys = Object.keys(PlanType).filter((key) => PlanType[key] !== storeMap.getMapPlan());
+//         let PlanType = dataStore.getPlanType();
+//         let subPlanKeys = Object.keys(PlanType).filter((key) => PlanType[key] !== mapStore.getMapPlan());
 //
 //         return subPlanKeys.map((key) =>
 //             <MenuItem key={key} onClick={() => onSubPlanSelect(PlanType[key])}>{PlanType[key]}</MenuItem>
@@ -51,14 +51,14 @@
 //     function onValueChange(event, newValue)
 //     {
 //         setSliderValue(() => (newValue));
-//         storeMap.mixingValueChange(newValue);
+//         mapStore.mixingValueChange(newValue);
 //     }
 //
 //     function onChipClick(chipType)
 //     {
 //         let value = (chipType === 1)? 0 : 100;
 //         // setSliderValue(value);
-//         storeMap.mixingValueChange(value);
+//         mapStore.mixingValueChange(value);
 //     }
 //
 //     function onSubPlanSelectClick(event)
@@ -72,13 +72,13 @@
 //
 //     function onSubPlanSelect(planType)
 //     {
-//         storeMap.selectSubPlan(planType);
+//         mapStore.selectSubPlan(planType);
 //         onSubPlanSelectClose();
 //     }
 //
 //     return(
 //         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', position:'relative', left:'5%', top:'-100px', width:'90%', height:'50px', zIndex: 701}}>
-//             <Chip label={storeMap.getMapPlan()} size="small" color="primary" onClick={() => onChipClick(1)} sx={{marginRight: '10px'}}/>
+//             <Chip label={mapStore.getMapPlan()} size="small" color="primary" onClick={() => onChipClick(1)} sx={{marginRight: '10px'}}/>
 //             <Box sx={{ width: 300 }}>
 //                 <Slider
 //                     track={false}

@@ -8,13 +8,13 @@ import StoreContext from './Store'
 import {TabType} from "./GlobalVariables";
 
 export default function DrawerLists() {
-    const { storeMap, storePage } = useContext(StoreContext);
+    const { mapStore, pageStore } = useContext(StoreContext);
     return (
         <div>
             <StateList/>
             <PlanList/>
-            { !storeMap.isStateNone() && <MultiPlanList/>}
-            { !storeMap.isStateNone() && storePage.isTabMatch(TabType.MAP) && <MapFilterList/>}
+            { !mapStore.isStateNone() && <MultiPlanList/>}
+            { !mapStore.isStateNone() && pageStore.isTabMatch(TabType.MAP) && <MapFilterList/>}
         </div>
     );
 }

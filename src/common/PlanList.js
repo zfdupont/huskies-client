@@ -9,14 +9,14 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Star from '@mui/icons-material/Star';
 import StoreContext from './Store';
+import {PlanType} from "./GlobalVariables";
 
 export default function NestedList() {
-    const { storeMap, storeData } = useContext(StoreContext);
+    const { mapStore } = useContext(StoreContext);
     const [open, setOpen] = React.useState(true);
 
     useEffect(() => {
-        // Select 2022 plan by default.
-        onPlanButtonClick(PlanType.Y2022);
+        mapStore.selectPlan(PlanType.Y2022);
     }, [])
 
     const handleClick = () => {
@@ -25,22 +25,22 @@ export default function NestedList() {
 
     let listTitle = (open)? "Plan" : getListTitle();
     let planButtons = [];
-    let PlanType = storeData.getPlanType();
+
     for (const planKey in PlanType) {
         let planType = PlanType[planKey];
         planButtons.push(
-            <ListItemButton key={planType} selected={storeMap.getMapPlan() === planType} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
+            <ListItemButton key={planType} selected={mapStore.getMapPlan() === planType} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
                 <ListItemText primary={planType} primaryTypographyProps={{fontSize: "12px"}}  />
             </ListItemButton>
         )
     }
 
     function getListTitle() {
-        return storeMap.getMapPlan();
+        return mapStore.getMapPlan();
     }
 
     function onPlanButtonClick(planType) {
-        storeMap.selectPlan(planType);
+        mapStore.selectPlan(planType);
     }
 
     return (

@@ -36,7 +36,7 @@ import {
 let currLayerGroups = {};
 
 export default function MapController() {
-    const { storeMap, storeData, callbacks } = useContext(StoreContext);
+    const { mapStore, dataStore, callbacks } = useContext(StoreContext);
     const [ viewType, setViewType ] = useState(StateType.NONE);
     const [ highlightedDistrictId, setHighlightedDistrictId ] = useState(-1);
     const mapControllerRef = useRef(null);
@@ -51,13 +51,10 @@ export default function MapController() {
         return setViewType(StateType.NONE);
     }, [])
 
-    main();
-    function main() {
-        removeAllLayer();
-        setupMapFilter();
-        setupHighlightDistrict();
-        setupView();
-    }
+    removeAllLayer();
+    setupMapFilter();
+    setupHighlightDistrict();
+    setupView();
 
     function removeAllLayer() {
         const layerGroupProperties = Object.keys(currLayerGroups);
@@ -80,18 +77,18 @@ export default function MapController() {
     }
 
     function setupView() {
-        if (storeMap.isStateNone())
+        if (mapStore.isStateNone())
             setCountryView();
         else
-            setStateView(storeMap.state);
+            setStateView(mapStore.state);
     }
 
     function setupMapFilter() {
-        if (storeMap.isStateNone() || storeMap.mapMapFilterType === MapFilterType.NONE || !storeData.isReadyToDisplayCurrentMap()) return;
+        if (mapStore.isStateNone() || mapStore.mapFilterType === MapFilterType.NONE || !dataStore.isReadyToDisplayCurrentMap()) return;
 
         let geojson = getProcessedGeoJson();
-        let stateModelData = storeData.getStateModelData(storeMap.plan, storeMap.state);
-        let mapFilterType = storeMap.mapMapFilterType;
+        let stateModelData = dataStore.getStateModelData(mapStore.plan, mapStore.state);
+        let mapFilterType = mapStore.mapFilterType;
         let layerGroupType = convertMapFilterTypeToLayerType(mapFilterType);
         let style = MapProperty.state[convertMapFilterTypeToStyleType(mapFilterType)];
         if (!validCheck([geojson, stateModelData, mapFilterType, layerGroupType])) return;
@@ -143,44 +140,43 @@ export default function MapController() {
 
     function setupHighlightDistrict() {
         if (
-            !storeData.isReadyToDisplayCurrentMap() ||
-            storeMap.isStateNone() ||
-            storeMap.getHighlightDistrictId() === -1
+            !dataStore.isReadyToDisplayCurrentMap() ||
+            mapStore.isStateNone() ||
+            mapStore.getHighlightDistrictId() === null
         ) return;
 
-        let geojson = storeData.getStateGeoJson(storeMap.getMapPlan(), storeMap.getState())
-        let selectedDistrictJson = geoJsonHelper.getFilteredGeoJsonByIDs(geojson, [storeMap.getHighlightDistrictId()])
+        let geojson = dataStore.getStateGeoJson(mapStore.getMapPlan(), mapStore.getState())
+        let selectedDistrictJson = geoJsonHelper.getFilteredGeoJsonByIDs(geojson, [mapStore.getHighlightDistrictId()])
         let option = {style: MapProperty.state[StyleType.HIGHLIGHT]}
         let layerGroup = addNewLayerToLayerGroup(selectedDistrictJson, LayerGroupType.HIGHLIGHT, option);
         let innerLayers = layerGroup.getLayers()[0]._layers
         let key = Object.keys(innerLayers)[0];
 
-        if (storeMap.getHighlightDistrictId() !== highlightedDistrictId) {
-            setHighlightedDistrictId(storeMap.getHighlightDistrictId());
+        if (mapStore.getHighlightDistrictId() !== highlightedDistrictId) {
+            setHighlightedDistrictId(mapStore.getHighlightDistrictId());
             flyToLayer(innerLayers[key])
         }
     }
 
     function getProcessedGeoJson() {
-        if (!storeData.isGeojsonReady(storeMap.plan, storeMap.state)) return null;
+        if (!dataStore.isGeojsonReady(mapStore.plan, mapStore.state)) return null;
 
-        let geojson = storeData.getStateGeoJson(storeMap.plan, storeMap.state);
+        let geojson = dataStore.getStateGeoJson(mapStore.plan, mapStore.state);
 
-        if (!storeMap.incumbentFilter) return geojson;
+        if (!mapStore.incumbentFilter) return geojson;
 
-        let stateModelData = storeData.getStateModelData(storeMap.plan, storeMap.state);
+        let stateModelData = dataStore.getStateModelData(mapStore.plan, mapStore.state);
         let ids = stateModelData.getIncumbentDistrictIDs();
         return geoJsonHelper.getFilteredGeoJsonByIDs(geojson, ids);
     }
 
 // --- EVENT HANDLER -------------------------
     function onStateClick(stateType) {
-        storeMap.selectState(stateType);
-        storeData.addStateData(storeMap.plan, stateType);
+        mapStore.selectState(stateType);
     }
 
     function onDistrictClick(feature, layer) {
-        storeMap.highlightDistrict(feature.properties.district_id);
+        mapStore.highlightDistrict(feature.properties.district_id);
         flyToLayer(layer);
     }
 
@@ -203,9 +199,9 @@ export default function MapController() {
         setMapFocus(StateType.NONE);
     }
     function setStateView(stateType) {
-        if (!storeData.isReadyToDisplayCurrentMap()) return;
+        if (!dataStore.isReadyToDisplayCurrentMap()) return;
 
-        addStateDistrictLayer(storeMap.plan, MapProperty.state.style);
+        addStateDistrictLayer(mapStore.plan, MapProperty.state.style);
         setMapFocus(stateType);
     }
 

@@ -10,7 +10,7 @@ import DistrictCompareTable from './DistrictCompareTable';
 
 
 export default function MapPanel() {
-    let { storeMap } = useContext(StoreReducer);
+    let { mapStore } = useContext(StoreReducer);
     return (
         <div style={{position: 'absolute', width: 'calc(100% - 20px)', height:'calc(100% - 20px)', padding: '10px', display:'flex'}}>
             <div style={{display: "flex", flexDirection: "column", flex:3.5, marginRight: '10px'}}>
@@ -18,7 +18,7 @@ export default function MapPanel() {
                     <MainMap/>
                 </Paper>
                 <Paper style={{display:'flex', flexDirection:"column", alignItems:'center', justifyContents:'center', flex: "0 0 300px"}}>
-                    {(!storeMap.isStateNone()) && <DistrictCompareTable/>}
+                    {(!mapStore.isStateNone()) && <DistrictCompareTable/>}
                 </Paper>
             </div>
             <div style={{display:'flex', flexDirection:'column', flex:1.7}}>
@@ -26,7 +26,7 @@ export default function MapPanel() {
                     <StateInfoTable/>
                 </div>
                 <Paper style={{display:'flex', flex: '1', height: '90%'}}>
-                    {(!storeMap.isStateNone()) && <DistrictSummaryTable/>}
+                    {(!mapStore.isStateNone()) && <DistrictSummaryTable/>}
                 </Paper>
             </div>
         </div>

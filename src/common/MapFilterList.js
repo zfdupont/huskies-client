@@ -16,7 +16,7 @@ import StoreContext from "./Store";
 import {MapFilterType, StateType} from './GlobalVariables';
 
 export default function MapFilterList() {
-    const { storeMap, callbacks }= useContext(StoreContext);
+    const { mapStore, callbacks }= useContext(StoreContext);
     const [open, setOpen] = useState(true);
     const [switches, setSwitches] = useState({
         [MapFilterType.INCUMBENT]: false,
@@ -47,7 +47,7 @@ export default function MapFilterList() {
         if (filterType === MapFilterType.INCUMBENT)
         {
             state = {...switches, [MapFilterType.INCUMBENT]: e.target.checked};
-            storeMap.setIncumbentFilter(e.target.checked);
+            mapStore.setIncumbentFilter(e.target.checked);
         }
         else
         {
@@ -60,7 +60,7 @@ export default function MapFilterList() {
             }
             state[filterType] = e.target.checked;
             filterType = (e.target.checked)? filterType : MapFilterType.NONE;
-            storeMap.setColorFilter(filterType);
+            mapStore.setColorFilter(filterType);
         }
 
         setSwitches(state);

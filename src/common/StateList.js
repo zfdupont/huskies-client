@@ -13,7 +13,7 @@ import StoreContext from './Store';
 import {StateType} from './GlobalVariables';
 
 export default function NestedList() {
-    const { storeMap } = useContext(StoreContext);
+    const { mapStore } = useContext(StoreContext);
     const [open, setOpen] = React.useState(true);
 
     const handleClick = () => {
@@ -21,7 +21,7 @@ export default function NestedList() {
     };
 
     function onStateClick(stateType) {
-        (storeMap.isStateMatch(stateType))? storeMap.unselectState() : storeMap.selectState(stateType);
+        (mapStore.isStateMatch(stateType))? mapStore.unselectState() : mapStore.selectState(stateType);
     }
 
     return (
@@ -39,13 +39,13 @@ export default function NestedList() {
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                    <ListItemButton  selected={storeMap.isStateMatch(StateType.NEWYORK)} onClick={(e) => {onStateClick(StateType.NEWYORK)}} sx={{ pl: 6 }}>
+                    <ListItemButton  selected={mapStore.isStateMatch(StateType.NEWYORK)} onClick={(e) => {onStateClick(StateType.NEWYORK)}} sx={{ pl: 6 }}>
                         <ListItemText primary="New York" primaryTypographyProps={{fontSize: '12px'}}  />
                     </ListItemButton>
-                    <ListItemButton  selected={storeMap.isStateMatch(StateType.GEORGIA)} onClick={() => {onStateClick(StateType.GEORGIA)}} sx={{ pl: 6 }}>
+                    <ListItemButton  selected={mapStore.isStateMatch(StateType.GEORGIA)} onClick={() => {onStateClick(StateType.GEORGIA)}} sx={{ pl: 6 }}>
                         <ListItemText primary="Georgia" primaryTypographyProps={{fontSize: '12px'}} />
                     </ListItemButton>
-                    <ListItemButton  selected={storeMap.isStateMatch(StateType.ILLINOIS)} onClick={() => {onStateClick(StateType.ILLINOIS)}} sx={{ pl: 6 }}>
+                    <ListItemButton  selected={mapStore.isStateMatch(StateType.ILLINOIS)} onClick={() => {onStateClick(StateType.ILLINOIS)}} sx={{ pl: 6 }}>
                         <ListItemText primary="Illinois" primaryTypographyProps={{fontSize: '12px'}} />
                     </ListItemButton>
                 </List>

@@ -6,6 +6,28 @@ import IL from "../0.data/IL.json";
 import ILD from "../0.data/ILD.json";
 
 
+export const MapActionType = {
+    PLAN_SELECT: "plan_select",
+    PLAN_UNSELECT: "plan_unselect",
+    SUB_PLAN_SELECT: "sub_plan_select",
+    STATE_SELECT: "state_select",
+    STATE_UNSELECT: "state_unselect",
+    UPDATE_COLOR_FILTER: "update_color_filter",
+    UPDATE_INCUMBENT_FILTER: "update_incumbent_filter",
+    DISTRICT_HIGHLIGHT: "district_hover",
+    MIXING_VALUE_CHANGE: "mixing_value_change",
+    RESET_PAGE: "reset_page",
+    RESET_STATE: "reset_state",
+}
+
+export const DataActionType = {
+    ADD_STATE_DATA: "add_state_data",
+}
+
+export const PageActionType = {
+    UPDATE_TAB: "change_tab",
+}
+
 // @enum {string}
 export const TabType = {
     MAP: "map",
@@ -87,6 +109,7 @@ export const GeoDataType = {
     DISTRICT: "district",
     PRECINCT: "precinct",
 }
+
 
 export const boundSizeDict = {
     level1: 0,

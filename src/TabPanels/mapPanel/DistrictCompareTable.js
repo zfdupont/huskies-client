@@ -48,7 +48,7 @@ const CustomTooltip = () => {
 
 
 export default function DistrictCompareTable() {
-    const { storeMap, storeData } = useContext(StoreContext);
+    const { mapStore, dataStore } = useContext(StoreContext);
     const [incumbentFilter, setIncumbentFilter] = useState(true);
 
     let dataList = createElectionDataList();
@@ -88,9 +88,9 @@ export default function DistrictCompareTable() {
 
     function createElectionDataList() {
         let result = [];
-        if (!storeData.isReadyToDisplayCurrentMap()) return result;
+        if (!dataStore.isReadyToDisplayCurrentMap()) return result;
 
-        let modelData = storeData.getStateModelData(storeMap.getMapPlan(), storeMap.getState());
+        let modelData = dataStore.getStateModelData(mapStore.getMapPlan(), mapStore.getState());
         for (let key in modelData.compareDataDict)
         {
             if (incumbentFilter && !modelData.electionDataDict[key].hasIncumbent) continue;
