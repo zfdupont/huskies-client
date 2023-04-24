@@ -43,9 +43,9 @@ export default class StateModel {
             electionData.loseVotePercent =  100 - Math.ceil((electionData.winnerVotes  / (electionData.winnerVotes + electionData.loserVotes)) * 100 );
 
             electionData.getPopulationByType = (filter) => {
-                if (filter === MapFilterType.WHITE) return electionData[districtId].whiteVotes;
-                if (filter === MapFilterType.BLACK) return electionData[districtId].blackVotes;
-                if (filter === MapFilterType.ASIAN) return electionData[districtId].asianVotes;
+                if (filter === MapFilterType.WHITE) return electionData.whiteVotes;
+                if (filter === MapFilterType.BLACK) return electionData.blackVotes;
+                if (filter === MapFilterType.ASIAN) return electionData.asianVotes;
                 return 0;
             }
             electionDataDict[districtId] = electionData;
