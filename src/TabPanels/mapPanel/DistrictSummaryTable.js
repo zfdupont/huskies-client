@@ -14,14 +14,14 @@ const TableButtonType = {
 
 export default function DistrictSummaryTable() {
     const infoTableRef = useRef();
-    const { storeMap, storeData } = useContext(StoreContext);
+    const { mapStore, dataStore } = useContext(StoreContext);
     const [ state, setState ] = useState({
         selectedTableMenu: TableButtonType.MAIN,
         selectedDistrictId: -1,
         incumbentFilter: true,
     });
 
-    let title = (storeMap.getMapPlan() === PlanType.Y2022)? "2022 District Detail" : "Simulation Detail";
+    let title = (mapStore.getMapPlan() === PlanType.Y2022)? "2022 District Detail" : "Simulation Detail";
     let titles = getTitles();
     let districtInfo = getDistrictInfo();
     selectedDistrictIdSetup();
@@ -31,16 +31,16 @@ export default function DistrictSummaryTable() {
     });
 
     function selectedDistrictIdSetup() {
-        if (state.selectedDistrictId !== storeMap.getHighlightDistrictId())
+        if (state.selectedDistrictId !== mapStore.getHighlightDistrictId())
         {
-            setState((prev) => ({...prev, selectedDistrictId: storeMap.getHighlightDistrictId()}))
+            setState((prev) => ({...prev, selectedDistrictId: mapStore.getHighlightDistrictId()}))
         }
     }
 
     function getDistrictInfo() {
         const districts = [];
-        if (!storeData.isReadyToDisplayCurrentMap()) return districts;
-        let stateModelData = storeData.getStateModelData(storeMap.getMapPlan(), storeMap.getState());
+        if (!dataStore.isReadyToDisplayCurrentMap()) return districts;
+        let stateModelData = dataStore.getStateModelData(mapStore.getMapPlan(), mapStore.getState());
         for (let id in stateModelData.electionDataDict)
         {
             if (state.incumbentFilter && !stateModelData.electionDataDict[id].hasIncumbent) continue;
@@ -84,13 +84,12 @@ export default function DistrictSummaryTable() {
     }
 
     function infoScrollSetup() {
-        if (storeMap.getHighlightDistrictId() === -1) return;
-        // const infoItem = infoTableRef?.current?.children[storeMap.getHighlightDistrictId()-1];
+        if (mapStore.getHighlightDistrictId() === null) return;
+        // const infoItem = infoTableRef?.current?.children[mapStore.getHighlightDistrictId()-1];
         const infoItem = Array.from(infoTableRef?.current?.children).find((item) => {
-            return item.getAttribute('value').toString() === storeMap.getHighlightDistrictId().toString()
+            return item.getAttribute('value').toString() === mapStore.getHighlightDistrictId().toString()
         });
-        if (infoItem)
-        {
+        if (infoItem) {
             infoItem.scrollIntoView({behavior: "smooth"});
         }
     }

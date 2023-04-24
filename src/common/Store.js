@@ -1,340 +1,262 @@
 import {createContext, useState} from 'react';
-import {StateType, TabType, PlanType, MapFilterType} from './GlobalVariables';
+import {
+    StateType,
+    TabType,
+    PlanType,
+    MapFilterType,
+    MapActionType,
+    PageActionType,
+    DataActionType
+} from './GlobalVariables';
 import api from './api.js';
 import StateModel from "../models/StateModel";
 export const StoreContext = createContext({});
 
-export const MapActionType = {
-    PLAN_SELECT: "plan_select",
-    PLAN_UNSELECT: "plan_unselect",
-    SUB_PLAN_SELECT: "sub_plan_select",
-    STATE_SELECT: "state_select",
-    STATE_UNSELECT: "state_unselect",
-    UPDATE_COLOR_FILTER: "update_color_filter",
-    UPDATE_INCUMBENT_FILTER: "update_incumbent_filter",
-    DISTRICT_HIGHLIGHT: "district_hover",
-    MIXING_VALUE_CHANGE: "mixing_value_change",
-    RESET_PAGE: "reset_page",
-    RESET_STATE: "reset_state",
-}
-
-export const DataActionType = {
-    ADD_PLAN_TYPE: "add_plan_type",
-    ADD_STATE_DATA: "add_state_data",
-    SET_DISTRICT_BOUND_DATA: "add_district_bound_data",
-}
-
-export const PageActionType = {
-    UPDATE_TAB: "change_tab",
-}
-
-
 // --- CONTEXT PROVIDER---------------------------------
 function StoreContextProvider(props) {
-    const [storeMap, setStoreMap] = useState({
+    const [mapStore, setMapStore] = useState({
         plan: null,
         subPlan: null,
         state: StateType.NONE,
-        districtId: -1,
         prevState: null,
-        mapMapFilterType: MapFilterType.NONE,
+        districtId: null,
+        mapFilterType: MapFilterType.NONE,
         incumbentFilter: false,
-        mixingValue: -1,
-        resetState: 0,
-        resetPage: 0,
+        heatMapFeatureValues: [],
     })
-    const [storeData, setStoreData] = useState({
+    const [dataStore, setDataStore] = useState({
         planType: PlanType,
-        modelData: {},
+        stateData: {},
         geojson: {},
         districtBoundData: {},
     })
-    const [storePage, setStorePage] = useState({
-        tab: TabType.MAP
+    const [pageStore, setPageStore] = useState({
+        tabType: TabType.MAP
     })
 
     const [callbacks, setCallbacks] = useState({
         resetState: [],
     })
-// --- STATE HELPER ---------------------------------
-    function createMapState(plan, subPlan, stateType, mapMapFilterType, districtId, mixingValue, resetState, resetPage, incumbentFilter) {
-        if (plan === storeMap.subPlan) {
-            subPlan = null;
-        }
-        return {
-            plan: (plan !== undefined)? plan : storeMap.plan,
-            subPlan: (subPlan !== undefined)? subPlan : storeMap.subPlan,
-            state: (stateType !== undefined)? stateType : storeMap.state,
-            prevState: storeMap.state,
-            mapMapFilterType: (mapMapFilterType !== undefined)? mapMapFilterType : storeMap.mapMapFilterType,
-            districtId: (districtId !== undefined)? districtId : storeMap.districtId,
-            mixingValue: (mixingValue !== undefined)? mixingValue : storeMap.mixingValue,
-            resetState: (resetState !== undefined)? resetState : storeMap.resetState,
-            resetPage: (resetPage !== undefined)? resetPage : storeMap.resetPage,
-            incumbentFilter: (incumbentFilter !== undefined)? incumbentFilter : storeMap.incumbentFilter,
-        }
-    }
-
-    function createDataState(planType, stateType, modelData, geojson, districtBoundData, planKey, planValue) {
-        let newData = storeData;
-        newData.modelData[planType] = newData.modelData[planType] ?? {}; // set {} if null.
-        newData.geojson[planType] = newData.geojson[planType] ?? {};
-
-        newData.modelData[planType][stateType] = modelData;
-        newData.geojson[planType][stateType] = geojson;
-
-        if (planKey && planValue)
-        {
-            newData.planType[planKey] = planValue;
-        }
-
-        return {
-            planType: newData.planType,
-            modelData: newData.modelData,
-            geojson: newData.geojson,
-            districtBoundData: (districtBoundData !== undefined)? districtBoundData : storeData.districtBoundData,
-        };
-    }
-
-    function createPageState(tabType) {
-        return {
-            tab: (tabType !== undefined)? tabType : storePage.tab
-        }
-    }
 
 
-// --- REDUCER ---------------------------------------
-    // Create State Guide: 1) value -> set value, 2) null -> set null, 3) undefined -> remain previous value.
-    const storeMapReducer = (action) => {
-        let prev; // Intended to be undefined.
+// --- STORE REDUCERS---------------------------------------
+    const mapStoreReducer = (action) => {
         const {type, payload} = action;
         switch (type) {
-            case MapActionType.PLAN_SELECT:
-                return setStoreMap(createMapState(payload.planType, prev, prev, prev, prev, prev, prev, prev, prev));
-            case MapActionType.SUB_PLAN_SELECT:
-                return setStoreMap(createMapState(prev, payload.subPlanType, prev, prev, prev, prev, prev, prev, prev))
-            case MapActionType.STATE_SELECT:
-                return setStoreMap(createMapState(prev, prev, payload.stateType, prev, -1, 0, prev, prev, prev))
-            case MapActionType.STATE_UNSELECT:
-                return setStoreMap(createMapState(prev, prev, StateType.NONE, prev, prev, prev, prev, prev, prev))
+            case MapActionType.SELECT_PLAN:
+                return setMapStore((prev) => ({...prev, plan: payload.planType}));
+            case MapActionType.SELECT_SUB_PLAN:
+                return setMapStore((prev) => ({...prev, subPlan: payload.subPlanType}));
+            case MapActionType.SELECT_STATE:
+                return setMapStore((prev) => ({...prev, state: payload.stateType, districtId: null}));
+            case MapActionType.UNSELECT_STATE:
+                return setMapStore((prev) => ({...prev, state: StateType.NONE}));
             case MapActionType.UPDATE_COLOR_FILTER:
-                return setStoreMap(createMapState(prev, prev, prev, payload.mapMapFilterType, prev, prev, prev, prev, prev))
+                return setMapStore((prev) => ({...prev, mapFilterType: payload.mapFilterType}));
             case MapActionType.UPDATE_INCUMBENT_FILTER:
-                return setStoreMap(createMapState(prev, prev, prev, prev, prev, prev, prev, prev, payload.state))
-            case MapActionType.DISTRICT_HIGHLIGHT:
-                return setStoreMap(createMapState(prev, prev, prev, prev, payload.districtId, prev, prev, prev, prev))
-            case MapActionType.MIXING_VALUE_CHANGE:
-                return setStoreMap(createMapState(prev, prev, prev, prev, prev, payload.value, prev, prev, prev))
+                return setMapStore((prev) => ({...prev, incumbentFilter: payload.isIncumbent}));
+            case MapActionType.HIGHLIGHT_DISTRICT:
+                return setMapStore((prev) => ({...prev, districtId: payload.districtId}));
+            case MapActionType.SET_HEATMAP_FEATURE_VALUES:
+                return setMapStore((prev) => ({...prev, heatMapFeatureValues: []}))
             case MapActionType.RESET_STATE:
-                return setStoreMap(createMapState(prev, null, prev, prev, -1, 0, storeMap.resetState + 1, prev, prev))
+                return setMapStore((prev) => ({...prev, districtId: null}))
             case MapActionType.RESET_PAGE:
-                return setStoreMap(createMapState())
+                return setMapStore((prev) => ({...prev}));
             default:
-                return storeMap;
+                return;
         }
     }
-    const storeDataReducer = (action) => {
-        let prev; // Intended to be undefined.
+    const dataStoreReducer = (action) => {
         const {type, payload} = action;
         switch (type) {
-            case DataActionType.ADD_PLAN_TYPE:
-                return setStoreData(createDataState(prev, prev, prev, prev, prev, payload.planKey, payload.planValue))
             case DataActionType.ADD_STATE_DATA:
-                return setStoreData(createDataState(payload.planType, payload.stateType, payload.modelData, payload.geojson, prev, prev))
-            case DataActionType.SET_DISTRICT_BOUND_DATA:
-                return setStoreData(createDataState(prev, prev, prev, prev, payload.districtBoundData, prev, prev))
+                dataStore.stateData[payload.planType] = dataStore.stateData[payload.planType] ?? {};
+                dataStore.geojson[payload.planType] = dataStore.geojson[payload.planType] ?? {};
+
+                dataStore.stateData[payload.planType][payload.stateType] = payload.stateModelData;
+                dataStore.geojson[payload.planType][payload.stateType] = payload.geojson;
+
+                return setDataStore({
+                    stateData: dataStore.stateData,
+                    geojson: dataStore.geojson,
+                })
             default:
-                return storeData;
+                return;
         }
     }
-    const storePageReducer = (action) => {
-        let prev; // Intended to be undefined.
+    const pageStoreReducer = (action) => {
         const {type, payload} = action;
         switch (type) {
             case PageActionType.UPDATE_TAB:
-                return setStorePage(createPageState(payload.tabType))
+                return setPageStore((prev) => ({...prev, tabType: payload.tabType}))
             default:
-                return storePage;
+                return;
         }
     }
 
-// --- STORE MAP FUNCTIONS -----------------------------
-    storeMap.selectPlan = function(planType) {
-        if (planType === storeMap.plan) return;
+// --- MAP STORE FUNCTIONS -----------------------------
+    mapStore.selectPlan = function(planType) {
+        if (planType === mapStore.plan) return;
 
-        storeMapReducer({
-            type: MapActionType.PLAN_SELECT,
+        mapStoreReducer({
+            type: MapActionType.SELECT_PLAN,
             payload: { planType: planType }
         })
     }
 
-    storeMap.selectSubPlan = async function(planType)
+    mapStore.selectSubPlan = async function(planType)
     {
-        console.log("select sub plan");
-        if (storeMap.subPlan === planType || storeMap.plan === planType) return;
+        if (mapStore.subPlan === planType || mapStore.plan === planType) return;
 
-        storeMapReducer({
-            type: MapActionType.SUB_PLAN_SELECT,
+        mapStoreReducer({
+            type: MapActionType.SELECT_SUB_PLAN,
             payload: {subPlanType: planType},
         })
-        await storeData.addStateData(planType, storeMap.state);
+        await dataStore.addStateData(planType, mapStore.state);
     }
 
-    storeMap.selectState = async function(stateType) {
-        storeMapReducer({
-            type: MapActionType.STATE_SELECT,
+    mapStore.selectState = async function(stateType) {
+        mapStoreReducer({
+            type: MapActionType.SELECT_STATE,
             payload: {
                 stateType: stateType,
             }
         })
-
-        if (!storeMap.isPlanSelected()) return; // None of Plan selected -> ERROR: Should not be called.
-        await storeData.addStateData(storeMap.plan, stateType);
+        await dataStore.addStateData(mapStore.plan, stateType);
     }
 
-    storeMap.unselectState = function() {
-        storeMapReducer({
-            type: MapActionType.STATE_UNSELECT,
+    mapStore.unselectState = function() {
+        mapStoreReducer({
+            type: MapActionType.UNSELECT_STATE,
             payload: null,
         })
     }
 
-    storeMap.setColorFilter = function(mapMapFilterType) {
-        storeMapReducer({
+    mapStore.setColorFilter = function(mapFilterType) {
+        mapStoreReducer({
             type: MapActionType.UPDATE_COLOR_FILTER,
-            payload: {mapMapFilterType: mapMapFilterType}
+            payload: {mapFilterType: mapFilterType}
         })
     }
 
-    storeMap.setIncumbentFilter = function(state) {
-        storeMapReducer({
+    mapStore.setIncumbentFilter = function(isIncumbent) {
+        mapStoreReducer({
             type: MapActionType.UPDATE_INCUMBENT_FILTER,
-            payload: {state: state},
+            payload: {isIncumbent: isIncumbent},
         })
     }
 
-    storeMap.highlightDistrict = function(districtId) {
-        if (storeMap.districtId === districtId)
-        {
-            districtId = -1; // remove highlight
+    mapStore.highlightDistrict = function(districtId) {
+        if (mapStore.districtId === districtId) {
+            districtId = null;
         }
-        storeMapReducer({
-            type: MapActionType.DISTRICT_HIGHLIGHT,
+        mapStoreReducer({
+            type: MapActionType.HIGHLIGHT_DISTRICT,
             payload: {districtId: districtId}
         })
     }
 
-    storeMap.mixingValueChange = function(value) {
-        storeMapReducer({
+    mapStore.mixingValueChange = function(value) {
+        mapStoreReducer({
             type: MapActionType.MIXING_VALUE_CHANGE,
             payload: {value: value},
         })
     }
 
-    storeMap.resetPage = function() {
-        storeMapReducer({
+    mapStore.resetPage = function() {
+        mapStoreReducer({
             type: MapActionType.RESET_PAGE,
             payload: null,
         })
     }
 
-    storeMap.resetState = function() {
-        storeMapReducer({
+    mapStore.resetState = function() {
+        mapStoreReducer({
             type: MapActionType.RESET_STATE,
             payload: null,
         })
         callbacks.invokeAll(callbacks.resetState);
     }
-
-// --- STORE DATA FUNCTIONS -----------------------------
-    storeData.addPlanType = function(planKey, planValue) {
-        if (planKey in storeData.planType) return;
-
-        storeDataReducer({
-            type: DataActionType.ADD_PLAN_TYPE,
-            payload: {planKey: planKey, planValue: planValue},
+    
+    mapStore.setHeatMapFeatureValues = function(heatMapFeatureValues) {
+        mapStoreReducer({
+            type: MapActionType.SET_HEATMAP_FEATURE_VALUES,
+            payload: { heatMapFeatureValues: heatMapFeatureValues }
         })
     }
 
-    storeData.setDistrictIdOfGeojson = function(geojson) {
+
+// --- DATA STORE FUNCTIONS -----------------------------
+    
+    dataStore.setDistrictIdOfGeojson = function(geojson) {
         geojson.features.forEach((district, index) => {
             district.properties.district_id = (index + 1).toString();
         })
     }
 
-    storeData.createModelDataByGeojson = function(planType, stateType, geojson) {
-        console.log(geojson);
-        let stateProperties = {};
+    dataStore.createStateDataByGeojson = function(planType, stateType, geojson) {
+        let geojsonStateProperties = {};
         geojson.features.forEach((district, index) => {
-            stateProperties[(index + 1).toString()] = district.properties;
+            geojsonStateProperties[district.properties.district_id] = district.properties;
         })
 
-        // TO DO: remove if data all ready.
-        storeData.addMockData(stateProperties);
+        dataStore.addMockData(geojsonStateProperties); // TO DO: remove this line if all data ready.
 
-        return new StateModel(planType, stateType, stateProperties);
+        return new StateModel(planType, stateType, geojsonStateProperties);
     }
 
-    storeData.addMockData = function(modelData) {
-        for (let key in modelData)
+    dataStore.addMockData = function(stateData) {
+        for (let key in stateData)
         {
-            modelData[key]["DemocraticCandidate"] = "NameName NameName1" + key;
-            modelData[key]["RepublicanCandidate"] = "NameName NameName2" + key;
-            modelData[key]["Incumbent"] = (parseInt(key) % 2 === 0)? "NameName NameName1" + key : "None";
-            modelData[key]["IncumbentParty"] = "Democratic";
-            modelData[key]["VAPTOTAL_common"] = 12345;
-            modelData[key]["VAPTOTAL_added"] = 2341;
-            modelData[key]["VAPTOTAL_lost"] = 1243;
-            modelData[key]["ALAND20_common"] = 123456;
-            modelData[key]["ALAND20_added"] = 2345;
-            modelData[key]["ALAND20_lost"] = 1234;
-            modelData[key]["VAPBLACK_common"] = 12345;
-            modelData[key]["VAPBLACK_added"] = 2345;
-            modelData[key]["VAPBLACK_lost"] = 1234;
-            modelData[key]["VAPWHITE_common"] = 34567;
-            modelData[key]["VAPWHITE_added"] = 1234;
-            modelData[key]["VAPWHITE_lost"] = 5432;
-            modelData[key]["VAPASIAN_common"] = 76543;
-            modelData[key]["VAPASIAN_added"] = 1234;
-            modelData[key]["VAPASIAN_lost"] = 2453;
-            modelData[key]["VAPREPUBLICAN_common"] = 76543;
-            modelData[key]["VAPREPUBLICAN_added"] = 1234;
-            modelData[key]["VAPREPUBLICAN_lost"] = 2345;
-            modelData[key]["VAPDEMOCRATS_common"] = 1234567;
-            modelData[key]["VAPDEMOCRATS_added"] = 23451;
-            modelData[key]["VAPDEMOCRATS_lost"] = 12345;
+            stateData[key]["DemocraticCandidate"] = "NameName NameName1" + key;
+            stateData[key]["RepublicanCandidate"] = "NameName NameName2" + key;
+            stateData[key]["Incumbent"] = (parseInt(key) % 2 === 0)? "NameName NameName1" + key : "None";
+            stateData[key]["IncumbentParty"] = "Democratic";
+            stateData[key]["VAPTOTAL_common"] = 12345;
+            stateData[key]["VAPTOTAL_added"] = 2341;
+            stateData[key]["VAPTOTAL_lost"] = 1243;
+            stateData[key]["ALAND20_common"] = 123456;
+            stateData[key]["ALAND20_added"] = 2345;
+            stateData[key]["ALAND20_lost"] = 1234;
+            stateData[key]["VAPBLACK_common"] = 12345;
+            stateData[key]["VAPBLACK_added"] = 2345;
+            stateData[key]["VAPBLACK_lost"] = 1234;
+            stateData[key]["VAPWHITE_common"] = 34567;
+            stateData[key]["VAPWHITE_added"] = 1234;
+            stateData[key]["VAPWHITE_lost"] = 5432;
+            stateData[key]["VAPASIAN_common"] = 76543;
+            stateData[key]["VAPASIAN_added"] = 1234;
+            stateData[key]["VAPASIAN_lost"] = 2453;
+            stateData[key]["VAPREPUBLICAN_common"] = 76543;
+            stateData[key]["VAPREPUBLICAN_added"] = 1234;
+            stateData[key]["VAPREPUBLICAN_lost"] = 2345;
+            stateData[key]["VAPDEMOCRATS_common"] = 1234567;
+            stateData[key]["VAPDEMOCRATS_added"] = 23451;
+            stateData[key]["VAPDEMOCRATS_lost"] = 12345;
         }
     }
 
-    storeData.addMockEnsembleData = function(modelData) {
-        console.log("mocking ensemble data...");
-    }
-
-    storeData.addStateData = async (planType, stateType) => {
-        if (storeData.isStateDataReady(planType, stateType)) return;
+    dataStore.addStateData = async (planType, stateType) => {
+        if (dataStore.isStateDataReady(planType, stateType)) return;
 
         let geojson = await api.getStateGeojson(planType, stateType);
+        console.log(geojson);
         let summaryJson =  await api.getStateSummaryJson(stateType);
         console.log(summaryJson);
-        storeData.setDistrictIdOfGeojson(geojson);
-        let modelData = storeData.createModelDataByGeojson(planType, stateType, geojson);
+        dataStore.setDistrictIdOfGeojson(geojson); // TO DO : remove this line if DistrictId error removed.
 
-        storeDataReducer({
+        let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
+
+        dataStoreReducer({
             type: DataActionType.ADD_STATE_DATA,
-            payload: {planType: planType, stateType: stateType, geojson: geojson, modelData: modelData}
+            payload: {planType: planType, stateType: stateType, geojson: geojson, stateModelData: stateModelData}
         })
     }
 
-    storeData.setDistrictBoundData = function(districtBoundData) {
-        storeDataReducer({
-            type: DataActionType.SET_DISTRICT_BOUND_DATA,
-            payload: districtBoundData,
-        })
-    }
-
-// --- STORE PAGE FUNCTIONS -----------------------------
-    storePage.selectTab = function(tabType) {
-        storePageReducer({
+// --- PAGE STORE FUNCTIONS -----------------------------
+    pageStore.selectTab = function(tabType) {
+        pageStoreReducer({
             type: PageActionType.UPDATE_TAB,
             payload: { tabType: tabType }
         })
@@ -349,42 +271,39 @@ function StoreContextProvider(props) {
         callbacks.forEach((func) => func());
     }
 // --- HELPER FUNCTIONS -----------------------------
-    // STORE MAP
-    storeMap.getMapPlan = () => { return storeMap.plan; }
-    storeMap.getSubPlan = () => { return storeMap.subPlan; }
-    storeMap.getState = () => { return storeMap.state; }
-    storeMap.getHighlightDistrictId = () => { return storeMap.districtId; }
-    storeMap.isPlanSelected = () => { return storeMap.plan !== null; }
-    storeMap.isSubPlanSelected = () => { return storeMap.subPlan !== null; }
-    storeMap.isStateChanged = () => { return storeMap.state !== storeMap.prevState; }
-    storeMap.isStateNone = () => { return storeMap.state === StateType.NONE; }
-    storeMap.isStateMatch = (stateType) => { return stateType === storeMap.state; }
-    // STORE DATA
-    storeData.getPlanType = () => { return storeData.planType; }
-    storeData.getStateGeoJson = (planType, stateType) => JSON.parse(JSON.stringify(storeData.geojson[planType][stateType]));
-    storeData.getStateModelData = (planType, stateType) => { return storeData.modelData[planType][stateType]};
-    storeData.getCurrentStateGeojson = (planType) => { return storeData.geojson[planType][storeMap.state]};
-    storeData.isReadyToDisplayCurrentMap = () => {
-        return storeData.isStateDataReady(storeMap.plan, storeMap.state);
+    mapStore.getMapPlan = () => mapStore.plan;
+    mapStore.getSubPlan = () => mapStore.subPlan;
+    mapStore.getState = () => mapStore.state;
+    mapStore.getHighlightDistrictId = () => mapStore.districtId;
+    mapStore.isPlanSelected = () => mapStore.plan !== null;
+    mapStore.isSubPlanSelected = () => mapStore.subPlan !== null;
+    mapStore.isStateChanged = () => mapStore.state !== mapStore.prevState;
+    mapStore.isStateNone = () => mapStore.state === StateType.NONE;
+    mapStore.isStateMatch = (stateType) => stateType === mapStore.state;
+
+    dataStore.getPlanType = () => dataStore.planType;
+    dataStore.getStateGeoJson = (planType, stateType) => JSON.parse(JSON.stringify(dataStore.geojson[planType][stateType]));
+    dataStore.getStateModelData = (planType, stateType) => dataStore.stateData[planType][stateType];
+    dataStore.getCurrentStateGeojson = (planType) => dataStore.geojson[planType][mapStore.state];
+    dataStore.isReadyToDisplayCurrentMap = () => dataStore.isStateDataReady(mapStore.plan, mapStore.state);
+    dataStore.isStateDataReady = (planType, stateType) => {
+        return dataStore.isModelDataReady(planType, stateType) && dataStore.isGeojsonReady(planType, stateType);
     }
-    storeData.isStateDataReady = (planType, stateType) => {
-        return storeData.isModelDataReady(planType, stateType) && storeData.isGeojsonReady(planType, stateType);
-    }
-    storeData.isModelDataReady = (planType, stateType) => {
-        if (!storeData.modelData[planType]) return false;
-        if (!storeData.modelData[planType][stateType]) return false;
+    dataStore.isModelDataReady = (planType, stateType) => {
+        if (!dataStore.stateData[planType]) return false;
+        if (!dataStore.stateData[planType][stateType]) return false;
         return true;
     }
-    storeData.isGeojsonReady = (planType, stateType) => {
-        if (!storeData.geojson[planType]) return false;
-        if (!storeData.geojson[planType][stateType]) return false;
+    dataStore.isGeojsonReady = (planType, stateType) => {
+        if (!dataStore.geojson[planType]) return false;
+        if (!dataStore.geojson[planType][stateType]) return false;
         return true;
     }
     // STORE PAGE
-    storePage.isTabMatch = (tabType) => { return tabType === storePage.tab; }
+    pageStore.isTabMatch = (tabType) => tabType === pageStore.tabType;
 
     return (
-        <StoreContext.Provider value={{storeMap, storeData, storePage, callbacks}}>
+        <StoreContext.Provider value={{mapStore, dataStore, pageStore, callbacks}}>
             {props.children}
         </StoreContext.Provider>
     )

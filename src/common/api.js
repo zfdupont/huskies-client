@@ -4,12 +4,6 @@ const api = axios.create({
     baseURL: 'http://localhost:8080/api',
 })
 
-function parseJSON(response) {
-    return response
-        .json()
-        .then((data) => ({ status: response.status, body: data }));
-}
-
 export const getStateSummaryJson = async (stateType) => {
     return api.get(`/state/${stateType}`)
         .then(response => response.data)
@@ -21,15 +15,15 @@ export const getStateSummaryJson = async (stateType) => {
 export const getStateGeojson = async (planType, stateType) => {
     return api.get(`/plan/plan`,
         {
-          params: {
-            state: stateType,
-            plan: planType,
-          }
+            params: {
+                state: stateType,
+                plan: planType,
+            }
         })
-      .then(response => response.data)
-      .catch(err => {
-          return null;
-      });
+        .then(response => response.data)
+        .catch(err => {
+            return null;
+        });
 }
 
 const apis = {
