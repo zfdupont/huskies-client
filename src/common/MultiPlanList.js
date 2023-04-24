@@ -12,7 +12,7 @@ import StoreContext from './Store';
 import {PlanType} from "./GlobalVariables";
 
 export default function NestedList() {
-    const { storeMap, storeData } = useContext(StoreContext);
+    const { mapStore, dataStore } = useContext(StoreContext);
     const [open, setOpen] = React.useState(true);
 
     useEffect(() => {
@@ -49,11 +49,11 @@ export default function NestedList() {
     }
 
     function isPlanSelected(planType){
-        return (storeMap.getMapPlan() === planType)
+        return (mapStore.getMapPlan() === planType)
     }
 
     function onPlanButtonClick(planType){
-        storeMap.selectPlan(planType);
+        mapStore.selectPlan(planType);
     }
 
     return (

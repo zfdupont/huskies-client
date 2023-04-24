@@ -29,14 +29,14 @@ import {
 } from "../../common/ConversionHelper";
 import {
     calculateHeatMapFeatureValues,
-    roundDownToFirstDecimal,
-    roundUpToFirstDecimal
+    roundDownToFirstDigit,
+    roundUpToFirstDigit
 } from "../../common/CalculationHelper";
 
 let currLayerGroups = {};
 
 export default function MapController() {
-    const { storeMap, storeData, callbacks } = useContext(StoreContext);
+    const { mapStore, dataStore, callbacks } = useContext(StoreContext);
     const [ viewType, setViewType ] = useState(StateType.NONE);
     const [ highlightedDistrictId, setHighlightedDistrictId ] = useState(-1);
     const mapControllerRef = useRef(null);
@@ -51,13 +51,10 @@ export default function MapController() {
         return setViewType(StateType.NONE);
     }, [])
 
-    main();
-    function main() {
-        removeAllLayer();
-        setupMapFilter();
-        setupHighlightDistrict();
-        setupView();
-    }
+    removeAllLayer();
+    setupMapFilter();
+    setupHighlightDistrict();
+    setupView();
 
     function removeAllLayer() {
         const layerGroupProperties = Object.keys(currLayerGroups);
@@ -80,18 +77,18 @@ export default function MapController() {
     }
 
     function setupView() {
-        if (storeMap.isStateNone())
+        if (mapStore.isStateNone())
             setCountryView();
         else
-            setStateView(storeMap.state);
+            setStateView(mapStore.state);
     }
 
     function setupMapFilter() {
-        if (storeMap.isStateNone() || storeMap.mapMapFilterType === MapFilterType.NONE || !storeData.isReadyToDisplayCurrentMap()) return;
+        if (mapStore.isStateNone() || mapStore.mapFilterType === MapFilterType.NONE || !dataStore.isReadyToDisplayCurrentMap()) return;
 
         let geojson = getProcessedGeoJson();
-        let stateModelData = storeData.getStateModelData(storeMap.plan, storeMap.state);
-        let mapFilterType = storeMap.mapMapFilterType;
+        let stateModelData = dataStore.getStateModelData(mapStore.plan, mapStore.state);
+        let mapFilterType = mapStore.mapFilterType;
         let layerGroupType = convertMapFilterTypeToLayerType(mapFilterType);
         let style = MapProperty.state[convertMapFilterTypeToStyleType(mapFilterType)];
         if (!validCheck([geojson, stateModelData, mapFilterType, layerGroupType])) return;
@@ -100,40 +97,35 @@ export default function MapController() {
     }
 
     function getColorByFilter(stateModel, districtId, mapFilterType) {
-        return (mapFilterType === MapFilterType.PARTY)? getColorByParty(stateModel, districtId) : getColorByPopulation(stateModel, districtId, mapFilterType);
+        if (mapFilterType === MapFilterType.VICTORYMARGIN){
+            let electionData = stateModel.electionDataDict[districtId];
+            let party = electionData.winnerParty;
+            let victoryMarginPercent = electionData.winVotePercent - electionData.loseVotePercent;
+            let featureValues = stateModel.heatMapData.victoryMarginFeatureValues;
+            return getColorByVictoryMargin(featureValues, victoryMarginPercent, party);
+        }
+        else
+        {
+            let populationType = convertMapFilterTypeToPopulationType(mapFilterType);
+            let population = stateModel.electionDataDict[districtId].getPopulationByType(populationType);
+            let featureValues = stateModel.heatMapData.getFeatureValuesByPopulationType(populationType);
+            return getColorByPopulation(featureValues, population);
+        }
     }
 
-    function getColorByParty(stateModel, districtId) {
-        let data = stateModel.summaryData;
-        let party = stateModel.electionDataDict[districtId]?.winnerParty;
-        let demVoteMargin = stateModel.electionDataDict[districtId]?.demVoteMargin;
-        if (!validCheck([data, demVoteMargin])) return colorDict.white;
-
-        let isDemocratic = party === PartyType.DEMOCRATIC;
-        let maxVoteMargin = isDemocratic? data.maxDemVoteMargin : -data.maxDemVoteMargin;
-
-        let featureValues = calculateHeatMapFeatureValues(0, maxVoteMargin);
-
-        let partyColorArray = isDemocratic? democraticColors : republicanColors;
+    function getColorByVictoryMargin(featureValues, victoryMarginPercent, partyType) {
+        let partyColorArray = partyType === PartyType.DEMOCRATIC? democraticColors : republicanColors;
 
         for (let i = 0; i < featureValues.length; i++) {
-            if (demVoteMargin < featureValues[i]) {
+            if (victoryMarginPercent < featureValues[i]) {
                 return partyColorArray[i];
             }
         }
     }
 
-    function getColorByPopulation(stateModel, districtId, mapFilterType) {
-        let stateSummaryData = stateModel.summaryData;
-        let populationType = convertMapFilterTypeToPopulationType(mapFilterType);
-        if (populationType === PopulationType.NONE) return colorDict.white;
-        let population = stateModel.electionDataDict[districtId].getPopulationByType(populationType);
-        let min = stateSummaryData.getMinPopulationByType(populationType);
-        let max = stateSummaryData.getMaxPopulationByType(populationType);
+    function getColorByPopulation(featureValues, population) {
+        if (featureValues == null || featureValues.length < populationColors.length) return colorDict.white;
 
-        if (!validCheck([stateSummaryData, population, min, max])) return colorDict.white;
-
-        let featureValues = calculateHeatMapFeatureValues(min, max);
         for (let i = 0; i < featureValues.length; i++) {
             if (population < featureValues[i]) {
                 return populationColors[i];
@@ -143,44 +135,43 @@ export default function MapController() {
 
     function setupHighlightDistrict() {
         if (
-            !storeData.isReadyToDisplayCurrentMap() ||
-            storeMap.isStateNone() ||
-            storeMap.getHighlightDistrictId() === -1
+            !dataStore.isReadyToDisplayCurrentMap() ||
+            mapStore.isStateNone() ||
+            mapStore.getHighlightDistrictId() === null
         ) return;
 
-        let geojson = storeData.getStateGeoJson(storeMap.getMapPlan(), storeMap.getState())
-        let selectedDistrictJson = geoJsonHelper.getFilteredGeoJsonByIDs(geojson, [storeMap.getHighlightDistrictId()])
+        let geojson = dataStore.getStateGeoJson(mapStore.getMapPlan(), mapStore.getState())
+        let selectedDistrictJson = geoJsonHelper.getFilteredGeoJsonByIDs(geojson, [mapStore.getHighlightDistrictId()])
         let option = {style: MapProperty.state[StyleType.HIGHLIGHT]}
         let layerGroup = addNewLayerToLayerGroup(selectedDistrictJson, LayerGroupType.HIGHLIGHT, option);
         let innerLayers = layerGroup.getLayers()[0]._layers
         let key = Object.keys(innerLayers)[0];
 
-        if (storeMap.getHighlightDistrictId() !== highlightedDistrictId) {
-            setHighlightedDistrictId(storeMap.getHighlightDistrictId());
+        if (mapStore.getHighlightDistrictId() !== highlightedDistrictId) {
+            setHighlightedDistrictId(mapStore.getHighlightDistrictId());
             flyToLayer(innerLayers[key])
         }
     }
 
     function getProcessedGeoJson() {
-        if (!storeData.isGeojsonReady(storeMap.plan, storeMap.state)) return null;
+        if (!dataStore.isGeojsonReady(mapStore.plan, mapStore.state)) return null;
 
-        let geojson = storeData.getStateGeoJson(storeMap.plan, storeMap.state);
+        let geojson = dataStore.getStateGeoJson(mapStore.plan, mapStore.state);
 
-        if (!storeMap.incumbentFilter) return geojson;
+        if (!mapStore.incumbentFilter) return geojson;
 
-        let stateModelData = storeData.getStateModelData(storeMap.plan, storeMap.state);
+        let stateModelData = dataStore.getStateModelData(mapStore.plan, mapStore.state);
         let ids = stateModelData.getIncumbentDistrictIDs();
         return geoJsonHelper.getFilteredGeoJsonByIDs(geojson, ids);
     }
 
 // --- EVENT HANDLER -------------------------
     function onStateClick(stateType) {
-        storeMap.selectState(stateType);
-        storeData.addStateData(storeMap.plan, stateType);
+        mapStore.selectState(stateType);
     }
 
     function onDistrictClick(feature, layer) {
-        storeMap.highlightDistrict(feature.properties.district_id);
+        mapStore.highlightDistrict(feature.properties.district_id);
         flyToLayer(layer);
     }
 
@@ -203,9 +194,9 @@ export default function MapController() {
         setMapFocus(StateType.NONE);
     }
     function setStateView(stateType) {
-        if (!storeData.isReadyToDisplayCurrentMap()) return;
+        if (!dataStore.isReadyToDisplayCurrentMap()) return;
 
-        addStateDistrictLayer(storeMap.plan, MapProperty.state.style);
+        addStateDistrictLayer(mapStore.plan, MapProperty.state.style);
         setMapFocus(stateType);
     }
 

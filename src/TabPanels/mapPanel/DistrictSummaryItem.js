@@ -15,15 +15,15 @@ const partyInitial = {
     [PartyType.REPUBLICAN]: "(R)",
 }
 export default function DistrictSummaryItem(props) {
-    const { storeMap } = useContext(StoreContext);
+    const { mapStore } = useContext(StoreContext);
 
     let data = props.electionData;
     let winVotePercent = Math.ceil((data.winnerVotes  / (data.winnerVotes + data.loserVotes)) * 100 );
     let loseVotePercent = 100 - winVotePercent;
-    let bgColor = (storeMap.getHighlightDistrictId() !== data.districtId)? colorDict.white: colorDict.highlight;
+    let bgColor = (mapStore.getHighlightDistrictId() !== data.districtId)? colorDict.white: colorDict.highlight;
 
     function onItemClick() {
-        storeMap.highlightDistrict(data.districtId);
+        mapStore.highlightDistrict(data.districtId);
     }
 
     function getLastName(name) {

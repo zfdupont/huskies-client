@@ -15,7 +15,7 @@ import {TabType} from "./GlobalVariables";
 const drawerWidth = 200;
 
 function ResponsiveDrawer(props) {
-    const { storePage } = useContext(StoreContext);
+    const { pageStore } = useContext(StoreContext);
 
     const drawer = (
         <div>
@@ -23,7 +23,7 @@ function ResponsiveDrawer(props) {
             <Divider />
             <DrawerLists/>
             <Divider />
-            {storePage.isTabMatch(TabType.MAP) && <ResetButtonGroup/>}
+            {pageStore.isTabMatch(TabType.MAP) && <ResetButtonGroup/>}
         </div>
     );
 
