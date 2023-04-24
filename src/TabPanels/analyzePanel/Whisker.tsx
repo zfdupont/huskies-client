@@ -160,7 +160,7 @@ const boxPlots: BoxPlot[] = [
         y2={y}
         stroke={"#185e87"}
         strokeWidth={2}
-        stroke-dasharray={"5"}
+        strokeDasharray={"5"}
       />
     );
   };
@@ -176,7 +176,7 @@ const boxPlots: BoxPlot[] = [
             topBox: v.upperQuartile - v.median,
             topWhisker: v.max - v.upperQuartile,
             average: v.average,
-            size: 250
+            size: 150
           };
         }),
       [boxPlots]
@@ -189,7 +189,7 @@ const boxPlots: BoxPlot[] = [
     const data = useBoxPlot(boxPlots);
   
     return (
-      <ResponsiveContainer minHeight={600}>
+      <ResponsiveContainer width="95%" height={400}>
         <ComposedChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <Bar stackId={"a"} dataKey={"min"} fill={"none"} />
@@ -202,7 +202,7 @@ const boxPlots: BoxPlot[] = [
           <Bar stackId={"a"} dataKey={"bar"} shape={<HorizonBar />} />
           <ZAxis type="number" dataKey="size" range={[0, 250]} />
   
-          <Scatter dataKey="average" fill={"#185e87"} />
+          <Scatter dataKey="average" fill={"#185a87"} />
           <XAxis/>
           <YAxis />
         </ComposedChart>
