@@ -26,7 +26,7 @@ function StoreContextProvider(props) {
     })
     const [dataStore, setDataStore] = useState({
         planType: PlanType,
-        modelData: {},
+        stateData: {},
         geojson: {},
         districtBoundData: {},
     })
@@ -58,7 +58,7 @@ function StoreContextProvider(props) {
             case MapActionType.HIGHLIGHT_DISTRICT:
                 return setMapStore((prev) => ({...prev, districtId: payload.districtId}));
             case MapActionType.SET_HEATMAP_FEATURE_VALUES:
-                return setMapStore((prev) => ({...prev, heatMapFeatureValues: payload.heatMapFeatureValues}))
+                return setMapStore((prev) => ({...prev, heatMapFeatureValues: []}))
             case MapActionType.RESET_STATE:
                 return setMapStore((prev) => ({...prev, districtId: null}))
             case MapActionType.RESET_PAGE:
@@ -71,14 +71,14 @@ function StoreContextProvider(props) {
         const {type, payload} = action;
         switch (type) {
             case DataActionType.ADD_STATE_DATA:
-                dataStore.modelData[payload.planType] = dataStore.modelData[payload.planType] ?? {};
+                dataStore.stateData[payload.planType] = dataStore.stateData[payload.planType] ?? {};
                 dataStore.geojson[payload.planType] = dataStore.geojson[payload.planType] ?? {};
 
-                dataStore.modelData[payload.planType][payload.stateType] = payload.stateModelData;
+                dataStore.stateData[payload.planType][payload.stateType] = payload.stateModelData;
                 dataStore.geojson[payload.planType][payload.stateType] = payload.geojson;
 
                 return setDataStore({
-                    modelData: dataStore.modelData,
+                    stateData: dataStore.stateData,
                     geojson: dataStore.geojson,
                 })
             default:
@@ -195,45 +195,45 @@ function StoreContextProvider(props) {
         })
     }
 
-    dataStore.createStateModelDataByGeojson = function(planType, stateType, geojson) {
-        let stateProperties = {};
+    dataStore.createStateDataByGeojson = function(planType, stateType, geojson) {
+        let geojsonStateProperties = {};
         geojson.features.forEach((district, index) => {
-            stateProperties[district.properties.district_id] = district.properties;
+            geojsonStateProperties[district.properties.district_id] = district.properties;
         })
 
-        dataStore.addMockData(stateProperties); // TO DO: remove this line if all data ready.
+        dataStore.addMockData(geojsonStateProperties); // TO DO: remove this line if all data ready.
 
-        return new StateModel(planType, stateType, stateProperties);
+        return new StateModel(planType, stateType, geojsonStateProperties);
     }
 
-    dataStore.addMockData = function(modelData) {
-        for (let key in modelData)
+    dataStore.addMockData = function(stateData) {
+        for (let key in stateData)
         {
-            modelData[key]["DemocraticCandidate"] = "NameName NameName1" + key;
-            modelData[key]["RepublicanCandidate"] = "NameName NameName2" + key;
-            modelData[key]["Incumbent"] = (parseInt(key) % 2 === 0)? "NameName NameName1" + key : "None";
-            modelData[key]["IncumbentParty"] = "Democratic";
-            modelData[key]["VAPTOTAL_common"] = 12345;
-            modelData[key]["VAPTOTAL_added"] = 2341;
-            modelData[key]["VAPTOTAL_lost"] = 1243;
-            modelData[key]["ALAND20_common"] = 123456;
-            modelData[key]["ALAND20_added"] = 2345;
-            modelData[key]["ALAND20_lost"] = 1234;
-            modelData[key]["VAPBLACK_common"] = 12345;
-            modelData[key]["VAPBLACK_added"] = 2345;
-            modelData[key]["VAPBLACK_lost"] = 1234;
-            modelData[key]["VAPWHITE_common"] = 34567;
-            modelData[key]["VAPWHITE_added"] = 1234;
-            modelData[key]["VAPWHITE_lost"] = 5432;
-            modelData[key]["VAPASIAN_common"] = 76543;
-            modelData[key]["VAPASIAN_added"] = 1234;
-            modelData[key]["VAPASIAN_lost"] = 2453;
-            modelData[key]["VAPREPUBLICAN_common"] = 76543;
-            modelData[key]["VAPREPUBLICAN_added"] = 1234;
-            modelData[key]["VAPREPUBLICAN_lost"] = 2345;
-            modelData[key]["VAPDEMOCRATS_common"] = 1234567;
-            modelData[key]["VAPDEMOCRATS_added"] = 23451;
-            modelData[key]["VAPDEMOCRATS_lost"] = 12345;
+            stateData[key]["DemocraticCandidate"] = "NameName NameName1" + key;
+            stateData[key]["RepublicanCandidate"] = "NameName NameName2" + key;
+            stateData[key]["Incumbent"] = (parseInt(key) % 2 === 0)? "NameName NameName1" + key : "None";
+            stateData[key]["IncumbentParty"] = "Democratic";
+            stateData[key]["VAPTOTAL_common"] = 12345;
+            stateData[key]["VAPTOTAL_added"] = 2341;
+            stateData[key]["VAPTOTAL_lost"] = 1243;
+            stateData[key]["ALAND20_common"] = 123456;
+            stateData[key]["ALAND20_added"] = 2345;
+            stateData[key]["ALAND20_lost"] = 1234;
+            stateData[key]["VAPBLACK_common"] = 12345;
+            stateData[key]["VAPBLACK_added"] = 2345;
+            stateData[key]["VAPBLACK_lost"] = 1234;
+            stateData[key]["VAPWHITE_common"] = 34567;
+            stateData[key]["VAPWHITE_added"] = 1234;
+            stateData[key]["VAPWHITE_lost"] = 5432;
+            stateData[key]["VAPASIAN_common"] = 76543;
+            stateData[key]["VAPASIAN_added"] = 1234;
+            stateData[key]["VAPASIAN_lost"] = 2453;
+            stateData[key]["VAPREPUBLICAN_common"] = 76543;
+            stateData[key]["VAPREPUBLICAN_added"] = 1234;
+            stateData[key]["VAPREPUBLICAN_lost"] = 2345;
+            stateData[key]["VAPDEMOCRATS_common"] = 1234567;
+            stateData[key]["VAPDEMOCRATS_added"] = 23451;
+            stateData[key]["VAPDEMOCRATS_lost"] = 12345;
         }
     }
 
@@ -246,7 +246,7 @@ function StoreContextProvider(props) {
         console.log(summaryJson);
         dataStore.setDistrictIdOfGeojson(geojson); // TO DO : remove this line if DistrictId error removed.
 
-        let stateModelData = dataStore.createStateModelDataByGeojson(planType, stateType, geojson);
+        let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
 
         dataStoreReducer({
             type: DataActionType.ADD_STATE_DATA,
@@ -283,15 +283,15 @@ function StoreContextProvider(props) {
 
     dataStore.getPlanType = () => dataStore.planType;
     dataStore.getStateGeoJson = (planType, stateType) => JSON.parse(JSON.stringify(dataStore.geojson[planType][stateType]));
-    dataStore.getStateModelData = (planType, stateType) => dataStore.modelData[planType][stateType];
+    dataStore.getStateModelData = (planType, stateType) => dataStore.stateData[planType][stateType];
     dataStore.getCurrentStateGeojson = (planType) => dataStore.geojson[planType][mapStore.state];
     dataStore.isReadyToDisplayCurrentMap = () => dataStore.isStateDataReady(mapStore.plan, mapStore.state);
     dataStore.isStateDataReady = (planType, stateType) => {
         return dataStore.isModelDataReady(planType, stateType) && dataStore.isGeojsonReady(planType, stateType);
     }
     dataStore.isModelDataReady = (planType, stateType) => {
-        if (!dataStore.modelData[planType]) return false;
-        if (!dataStore.modelData[planType][stateType]) return false;
+        if (!dataStore.stateData[planType]) return false;
+        if (!dataStore.stateData[planType][stateType]) return false;
         return true;
     }
     dataStore.isGeojsonReady = (planType, stateType) => {

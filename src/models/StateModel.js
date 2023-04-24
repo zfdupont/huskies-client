@@ -1,23 +1,21 @@
-import {MapFilterType, PartyType} from "../common/GlobalVariables";
+import {MapFilterType, PartyType, PopulationType} from "../common/GlobalVariables";
+import {calculateHeatMapFeatureValues} from "../common/CalculationHelper";
 
-export default class StateModel
-{
-    constructor(planType, stateType, modelData) {
+export default class StateModel {
+    constructor(planType, stateType, geojsonStateProperties) {
         this.planType = planType
         this.stateType = stateType;
-        this.electionDataDict = this.getElectionData(modelData)
-        this.compareDataDict = this.getCompareData(modelData)
-        this.summaryData = this.getSummaryData(modelData)
+        this.electionDataDict = this.getElectionData(geojsonStateProperties)
+        this.compareDataDict = this.getCompareData(geojsonStateProperties)
+        this.heatMapData = this.getHeatMapData(geojsonStateProperties)
     }
 
-    getElectionData(modelData)
-    {
-        let dict = {}
-        for (let key in modelData)
-        {
-            let data = modelData[key]
-            dict[key] = {
-                districtId : key,
+    getElectionData(geojsonStateProperties) {
+        let electionDataDict = {}
+        for (let districtId in geojsonStateProperties) {
+            let data = geojsonStateProperties[districtId]
+            let electionData = {
+                districtId : districtId,
                 democraticCandidate : data["DemocraticCandidate"],
                 republicanCandidate : data["RepublicanCandidate"],
                 winnerCandidate : (data["2020VBIDEN"] > data["2020VTRUMP"])? data["DemocraticCandidate"] : data["RepublicanCandidate"],
@@ -35,92 +33,89 @@ export default class StateModel
                 asianVotes : data["VAPASIAN"],
                 winnerVotes : (data["2020VBIDEN"] > data["2020VTRUMP"])? data["2020VBIDEN"] : data["2020VTRUMP"],
                 loserVotes : (data["2020VBIDEN"] < data["2020VTRUMP"])? data["2020VBIDEN"] : data["2020VTRUMP"],
+                winVotePercent: 0,
+                loseVotePercent: 0,
                 totalPopulation : data["POPTOT"],
                 totalVotes : data["VAPTOTAL"],
-            }
+            };
 
-            dict[key].getPopulationByType = (filter) => {
-                if (filter === MapFilterType.WHITE) return dict[key].whiteVotes;
-                if (filter === MapFilterType.BLACK) return dict[key].blackVotes;
-                if (filter === MapFilterType.ASIAN) return dict[key].asianVotes;
+            electionData.winVotePercent =  Math.ceil((electionData.winnerVotes  / (electionData.winnerVotes + electionData.loserVotes)) * 100 );
+            electionData.loseVotePercent =  100 - Math.ceil((electionData.winnerVotes  / (electionData.winnerVotes + electionData.loserVotes)) * 100 );
+
+            electionData.getPopulationByType = (filter) => {
+                if (filter === MapFilterType.WHITE) return electionData[districtId].whiteVotes;
+                if (filter === MapFilterType.BLACK) return electionData[districtId].blackVotes;
+                if (filter === MapFilterType.ASIAN) return electionData[districtId].asianVotes;
                 return 0;
             }
+            electionDataDict[districtId] = electionData;
         }
-        return dict;
+        return electionDataDict;
     }
 
-    getCompareData(modelData)
-    {
+    getCompareData(geojsonStateProperties) {
         let dict = {}
-        for (let key in modelData)
-        {
+        for (let key in geojsonStateProperties) {
+            let data = geojsonStateProperties[key];
             dict[key] = {
                 districtId : key,
-                area : (modelData[key]["ALAND20_added"] / (modelData[key]["ALAND20_common"] + modelData[key]["ALAND20_lost"])).toFixed(3),
-                democrats : (modelData[key]["VAPDEMOCRATS_added"] / (modelData[key]["VAPDEMOCRATS_common"] + modelData[key]["VAPDEMOCRATS_lost"])).toFixed(3),
-                republicans : (modelData[key]["VAPREPUBLICAN_added"] / (modelData[key]["VAPREPUBLICAN_common"] + modelData[key]["VAPREPUBLICAN_lost"])).toFixed(3),
-                population : (modelData[key]["VAPTOTAL_added"] / (modelData[key]["VAPTOTAL_common"] + modelData[key]["VAPTOTAL_lost"])).toFixed(3),
-                white : (modelData[key]["VAPWHITE_added"] / (modelData[key]["VAPWHITE_common"] + modelData[key]["VAPWHITE_lost"])).toFixed(3),
-                black : (modelData[key]["VAPBLACK_added"] / (modelData[key]["VAPBLACK_common"] + modelData[key]["VAPBLACK_lost"])).toFixed(3),
-                asian : (modelData[key]["VAPASIAN_added"] / (modelData[key]["VAPASIAN_common"] + modelData[key]["VAPASIAN_lost"])).toFixed(3),
+                area : (data["ALAND20_added"] / (data["ALAND20_common"] + data["ALAND20_lost"])).toFixed(3),
+                democrats : (data["VAPDEMOCRATS_added"] / (data["VAPDEMOCRATS_common"] + data["VAPDEMOCRATS_lost"])).toFixed(3),
+                republicans : (data["VAPREPUBLICAN_added"] / (data["VAPREPUBLICAN_common"] + data["VAPREPUBLICAN_lost"])).toFixed(3),
+                population : (data["VAPTOTAL_added"] / (data["VAPTOTAL_common"] + data["VAPTOTAL_lost"])).toFixed(3),
+                white : (data["VAPWHITE_added"] / (data["VAPWHITE_common"] + data["VAPWHITE_lost"])).toFixed(3),
+                black : (data["VAPBLACK_added"] / (data["VAPBLACK_common"] + data["VAPBLACK_lost"])).toFixed(3),
+                asian : (data["VAPASIAN_added"] / (data["VAPASIAN_common"] + data["VAPASIAN_lost"])).toFixed(3),
             }
         }
         return dict;
     }
 
-    getSummaryData(modelData)
-    {
-        let minDemVoteMargin = Number.MAX_SAFE_INTEGER;
-        let minWhite = Number.MAX_SAFE_INTEGER;
-        let minBlack = Number.MAX_SAFE_INTEGER;
-        let minAsian = Number.MAX_SAFE_INTEGER;
-
-        let maxDemVoteMargin = Number.MIN_SAFE_INTEGER;
-        let maxWhite = Number.MIN_SAFE_INTEGER;
-        let maxBlack = Number.MIN_SAFE_INTEGER;
-        let maxAsian = Number.MIN_SAFE_INTEGER;
-
-        for (let key in modelData)
-        {
-            if (key === "10") continue;
-            minDemVoteMargin = Math.min(modelData[key]["2020VBIDEN"] - modelData[key]["2020VTRUMP"], minDemVoteMargin);
-            minWhite = Math.min(modelData[key]["VAPWHITE"], minWhite);
-            minBlack = Math.min(modelData[key]["VAPBLACK"], minBlack);
-            minAsian = Math.min(modelData[key]["VAPASIAN"], minAsian);
-            maxDemVoteMargin = Math.max(modelData[key]["2020VBIDEN"] - modelData[key]["2020VTRUMP"], maxDemVoteMargin);
-            maxWhite = Math.max(modelData[key]["VAPWHITE"], maxWhite);
-            maxBlack = Math.max(modelData[key]["VAPBLACK"], maxBlack);
-            maxAsian = Math.max(modelData[key]["VAPASIAN"], maxAsian);
-        }
-        let result =  {
-            minDemVoteMargin: minDemVoteMargin,
-            minWhite: minWhite,
-            minBlack: minBlack,
-            minAsian: minAsian,
-            maxDemVoteMargin: maxDemVoteMargin,
-            maxWhite: maxWhite,
-            maxBlack: maxBlack,
-            maxAsian: maxAsian,
+    getHeatMapData(geojsonStateProperties) {
+        let result = {
+            minDemVoteMargin: Number.MAX_SAFE_INTEGER,
+            minWhite: Number.MAX_SAFE_INTEGER,
+            minBlack: Number.MAX_SAFE_INTEGER,
+            minAsian: Number.MAX_SAFE_INTEGER,
+            maxDemVoteMargin: Number.MIN_SAFE_INTEGER,
+            maxWhite: Number.MIN_SAFE_INTEGER,
+            maxBlack: Number.MIN_SAFE_INTEGER,
+            maxAsian: Number.MIN_SAFE_INTEGER,
+            whiteFeatureValues: [],
+            blackFeatureValues: [],
+            asianFeatureValues: [],
+            democraticFeatureValues: [],
+            republicanFeatureValues: [],
+            victoryMarginFeatureValues: [3, 5, 10, 20, 50, 100],
         }
 
-        result.getMinPopulationByType = (filter) => {
-            if (filter === MapFilterType.WHITE) return minWhite;
-            if (filter === MapFilterType.BLACK) return minBlack;
-            if (filter === MapFilterType.ASIAN) return minAsian;
-            return 0;
+        for (let key in geojsonStateProperties) {
+            if (key === "10") continue; // TO DO: remove if error of the data district 10 is fixed.
+            let data = geojsonStateProperties[key];
+            result.minDemVoteMargin = Math.min(data["2020VBIDEN"] - data["2020VTRUMP"], result.minDemVoteMargin);
+            result.minWhite = Math.min(data["VAPWHITE"], result.minWhite);
+            result.minBlack = Math.min(data["VAPBLACK"], result.minBlack);
+            result.minAsian = Math.min(data["VAPASIAN"], result.minAsian);
+            result.maxDemVoteMargin = Math.max(data["2020VBIDEN"] - data["2020VTRUMP"], result.maxDemVoteMargin);
+            result.maxWhite = Math.max(data["VAPWHITE"], result.maxWhite);
+            result.maxBlack = Math.max(data["VAPBLACK"], result.maxBlack);
+            result.maxAsian = Math.max(data["VAPASIAN"], result.maxAsian);
         }
 
-        result.getMaxPopulationByType = (filter) => {
-            if (filter === MapFilterType.WHITE) return maxWhite;
-            if (filter === MapFilterType.BLACK) return maxBlack;
-            if (filter === MapFilterType.ASIAN) return maxAsian;
-            return 0;
+        result.whiteFeatureValues = calculateHeatMapFeatureValues(result.minWhite, result.maxWhite);
+        result.blackFeatureValues = calculateHeatMapFeatureValues(result.minBlack, result.maxBlack);
+        result.asianFeatureValues = calculateHeatMapFeatureValues(result.minAsian, result.maxAsian);
+
+        result.getFeatureValuesByPopulationType = (filter) => {
+            if (filter === PopulationType.WHITE) return result.whiteFeatureValues;
+            if (filter === PopulationType.BLACK) return result.blackFeatureValues;
+            if (filter === PopulationType.ASIAN) return result.asianFeatureValues;
+            return null;
         }
         return result;
     }
 
-    getIncumbentDistrictIDs()
-    {
+    getIncumbentDistrictIDs() {
         let ids = [];
         for (let key in this.electionDataDict) {
             if (this.electionDataDict[key].hasIncumbent)

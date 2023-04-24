@@ -97,41 +97,34 @@ export default function MapController() {
     }
 
     function getColorByFilter(stateModel, districtId, mapFilterType) {
-        return (mapFilterType === MapFilterType.VICTORYMARGIN)? getColorByParty(stateModel, districtId) : getColorByPopulation(stateModel, districtId, mapFilterType);
+        if (mapFilterType === MapFilterType.VICTORYMARGIN){
+            let electionData = stateModel.electionDataDict[districtId];
+            let party = electionData.winnerParty;
+            let victoryMarginPercent = electionData.winVotePercent - electionData.loseVotePercent;
+            let featureValues = stateModel.heatMapData.victoryMarginFeatureValues;
+            return getColorByVictoryMargin(featureValues, victoryMarginPercent, party);
+        }
+        else
+        {
+            let populationType = convertMapFilterTypeToPopulationType(mapFilterType);
+            let population = stateModel.electionDataDict[districtId].getPopulationByType(populationType);
+            let featureValues = stateModel.heatMapData.getFeatureValuesByPopulationType(populationType);
+            return getColorByPopulation(featureValues, population);
+        }
     }
 
-    function getColorByParty(stateModel, districtId) {
-        let data = stateModel.summaryData;
-        let party = stateModel.electionDataDict[districtId]?.winnerParty;
-        let demVoteMargin = stateModel.electionDataDict[districtId]?.demVoteMargin;
-        if (!validCheck([data, demVoteMargin])) return colorDict.white;
-
-        let isDemocratic = party === PartyType.DEMOCRATIC;
-        let maxVoteMargin = isDemocratic? data.maxDemVoteMargin : -data.maxDemVoteMargin;
-
-        let featureValues = calculateHeatMapFeatureValues(0, maxVoteMargin);
-
-        let partyColorArray = isDemocratic? democraticColors : republicanColors;
+    function getColorByVictoryMargin(featureValues, victoryMarginPercent, partyType) {
+        let partyColorArray = partyType === PartyType.DEMOCRATIC? democraticColors : republicanColors;
 
         for (let i = 0; i < featureValues.length; i++) {
-            if (demVoteMargin < featureValues[i]) {
+            if (victoryMarginPercent < featureValues[i]) {
                 return partyColorArray[i];
             }
         }
     }
 
-    function getColorByPopulation(stateModel, districtId, mapFilterType) {
-        let stateSummaryData = stateModel.summaryData;
-        let populationType = convertMapFilterTypeToPopulationType(mapFilterType);
-        if (populationType === PopulationType.NONE) return colorDict.white;
-        let population = stateModel.electionDataDict[districtId].getPopulationByType(populationType);
-        let min = stateSummaryData.getMinPopulationByType(populationType);
-        let max = stateSummaryData.getMaxPopulationByType(populationType);
-
-        if (!validCheck([stateSummaryData, population, min, max])) return colorDict.white;
-
-        let featureValues = calculateHeatMapFeatureValues(min, max);
-        mapStore.setHeatMapFeatureValues(featureValues);
+    function getColorByPopulation(featureValues, population) {
+        if (featureValues == null || featureValues.length < populationColors.length) return colorDict.white;
 
         for (let i = 0; i < featureValues.length; i++) {
             if (population < featureValues[i]) {

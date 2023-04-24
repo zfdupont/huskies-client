@@ -90,12 +90,12 @@ export default function DistrictCompareTable() {
         let result = [];
         if (!dataStore.isReadyToDisplayCurrentMap()) return result;
 
-        let modelData = dataStore.getStateModelData(mapStore.getMapPlan(), mapStore.getState());
-        for (let key in modelData.compareDataDict)
+        let stateData = dataStore.getStateModelData(mapStore.getMapPlan(), mapStore.getState());
+        for (let key in stateData.compareDataDict)
         {
-            if (incumbentFilter && !modelData.electionDataDict[key].hasIncumbent) continue;
+            if (incumbentFilter && !stateData.electionDataDict[key].hasIncumbent) continue;
 
-            let data = modelData.compareDataDict[key];
+            let data = stateData.compareDataDict[key];
             result.push( createData(data.districtId, data.area, data.population, data.democrats, data.republicans, data.white, data.black, data.asian));
         }
         return result;
