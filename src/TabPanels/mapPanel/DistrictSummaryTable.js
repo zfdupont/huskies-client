@@ -21,33 +21,31 @@ export default function DistrictSummaryTable() {
         incumbentFilter: true,
     });
 
-    let title = (mapStore.getMapPlan() === PlanType.Y2022)? "2022 District Detail" : "Simulation Detail";
-    let titles = getTitles();
-    let districtInfo = getDistrictInfo();
-    selectedDistrictIdSetup();
-
     useEffect(() => {
         infoScrollSetup();
     });
 
+    let title = (mapStore.getMapPlan() === PlanType.Y2022)? "2022 District Detail" : "Simulation Detail";
+    let subTitles = getTitles();
+    let districtSummaryInfo = getDistrictSummaryInfo();
+    selectedDistrictIdSetup();
+
     function selectedDistrictIdSetup() {
-        if (state.selectedDistrictId !== mapStore.getHighlightDistrictId())
-        {
+        if (state.selectedDistrictId !== mapStore.getHighlightDistrictId()) {
             setState((prev) => ({...prev, selectedDistrictId: mapStore.getHighlightDistrictId()}))
         }
     }
 
-    function getDistrictInfo() {
-        const districts = [];
-        if (!dataStore.isReadyToDisplayCurrentMap()) return districts;
+    function getDistrictSummaryInfo() {
+        const districtSummaryInfo = [];
+        if (!dataStore.isReadyToDisplayCurrentMap()) return districtSummaryInfo;
         let stateModelData = dataStore.getStateModelData(mapStore.getMapPlan(), mapStore.getState());
-        for (let id in stateModelData.electionDataDict)
-        {
+        for (let id in stateModelData.electionDataDict) {
             if (state.incumbentFilter && !stateModelData.electionDataDict[id].hasIncumbent) continue;
 
-            districts.push(<DistrictSummaryItem key={id} electionData={stateModelData.electionDataDict[id]}/>);
+            districtSummaryInfo.push(<DistrictSummaryItem key={id} electionData={stateModelData.electionDataDict[id]}/>);
         }
-        return districts;
+        return districtSummaryInfo;
     }
 
     function getSimulatedInfo() {
@@ -55,11 +53,11 @@ export default function DistrictSummaryTable() {
     }
 
     function getTitles() {
-        if (state.selectedTableMenu !== TableButtonType.COMPARE) return getDistrictInfoTitle();
+        if (state.selectedTableMenu !== TableButtonType.COMPARE) return getSubTitles();
         else return getCompareInfoTitle();
     }
 
-    function getDistrictInfoTitle() {
+    function getSubTitles() {
         return (
             <div style={{display:'flex', flex: "0 1 50px", marginBottom:'10px'}}>
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 1.2,  fontSize:'12px', color:'grey'}}>Districts</div>
@@ -112,11 +110,11 @@ export default function DistrictSummaryTable() {
                 </div>
             </div>
             <div style={{justifyContent: 'left'}}>
-                {titles}
+                {subTitles}
             </div>
             <div style={{flex:'0 0 1px', backgroundColor:'#cbcbcb'}}/>
             <div ref={infoTableRef} style={{display:'flex', flexDirection:'column', flex:'1', overflow: 'auto', minHeight: 0}}>
-                {districtInfo}
+                {districtSummaryInfo}
             </div>
         </div>
     );
