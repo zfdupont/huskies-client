@@ -79,11 +79,10 @@ export const PopulationType = {
 // @enum {string}
 export const StyleType = {
     VICTORYMARGIN: 'partyStyle',
-    INCUMBENT: 'partyStyle',
+    INCUMBENT: 'incumbentStyle',
     DEMOGRAPHIC: 'demographicStyle',
     HIGHLIGHT: 'highlightStyle',
 }
-
 
 // @enum {string}
 export const TileLayerType = {

@@ -123,4 +123,13 @@ export default class StateModel {
         }
         return ids;
     }
+
+    getNotIncumbentDistrictIDs() {
+        let ids = [];
+        for (let key in this.electionDataDict) {
+            if (!this.electionDataDict[key].hasIncumbent)
+                ids.push(this.electionDataDict[key].districtId);
+        }
+        return ids;
+    }
 }

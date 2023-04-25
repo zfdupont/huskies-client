@@ -44,7 +44,7 @@
         "incumbentStyle": {
             "fill": true,
             "fillOpacity": 1,
-            "color": "#d62000",
+            "color": "#dfdfdf",
             "opacity": 0
         },
         "partyStyle": {
