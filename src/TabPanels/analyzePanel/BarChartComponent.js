@@ -11,47 +11,12 @@ import {
   ReferenceLine
 } from "recharts";
 
-const data = [
-  {
-    name: 17,
-    plan: 240
-  },
-  {
-    name: 18,
-    plan: 800
-  },
-  {
-    name: 19,
-    plan: 850
-  },
-  {
-    name: 20,
-    plan: 630
-  },
-  {
-    name: 21,
-    plan: 600
-  },
-  {
-    name: 22,
-    plan: 380
-  },
-  {
-    name: 23,
-    plan: 430
-  }
-];
-
-function mockBarData() {
-  
-}
-
 export default function BarChartComponent(props) {
   return (
     <BarChart
       width={500}
       height={300}
-      data={data}
+      data={props.data}
       margin={{
         top: 5,
         right: 30,
