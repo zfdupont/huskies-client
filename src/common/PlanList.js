@@ -30,7 +30,7 @@ export default function NestedList() {
         let planType = PlanType[planKey];
         planButtons.push(
             <ListItemButton key={planType} selected={mapStore.getMapPlan() === planType} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
-                <ListItemText primary={planType} primaryTypographyProps={{fontSize: "12px"}}  />
+                <ListItemText primary="2022 Enacted" primaryTypographyProps={{fontSize: "12px"}}  />
             </ListItemButton>
         )
     }

@@ -16,23 +16,22 @@ export default class StateModel {
             let data = geojsonStateProperties[districtId]
             let electionData = {
                 districtId : districtId,
-                democraticCandidate : data["DemocraticCandidate"],
-                republicanCandidate : data["RepublicanCandidate"],
-                winnerCandidate : (data["2020VBIDEN"] > data["2020VTRUMP"])? data["DemocraticCandidate"] : data["RepublicanCandidate"],
-                loserCandidate : (data["2020VBIDEN"] < data["2020VTRUMP"])? data["DemocraticCandidate"] : data["RepublicanCandidate"],
-                hasIncumbent : (data["Incumbent"] !== "None"),
-                incumbent : data["Incumbent"],
-                winnerParty : (data["2020VBIDEN"] > data["2020VTRUMP"])? PartyType.DEMOCRATIC : PartyType.REPUBLICAN,
-                loserParty : (data["2020VBIDEN"] < data["2020VTRUMP"])? PartyType.DEMOCRATIC : PartyType.REPUBLICAN,
-                incumbentParty : data["IncumbentParty"],
-                democraticVotes : data["2020VBIDEN"],
-                republicanVotes : data["2020VTRUMP"],
-                demVoteMargin : data["2020VBIDEN"] - data["2020VTRUMP"],
-                whiteVotes : data["VAPWHITE"],
-                blackVotes : data["VAPBLACK"],
-                asianVotes : data["VAPASIAN"],
-                winnerVotes : (data["2020VBIDEN"] > data["2020VTRUMP"])? data["2020VBIDEN"] : data["2020VTRUMP"],
-                loserVotes : (data["2020VBIDEN"] < data["2020VTRUMP"])? data["2020VBIDEN"] : data["2020VTRUMP"],
+                democraticCandidate : data["democrat_candidate"],
+                republicanCandidate : data["republican_candidate"],
+                winnerCandidate : (data["democrat_votes"] > data["republican_votes"])? data["democrat_candidate"] : data["republican_candidate"],
+                loserCandidate : (data["democrat_votes"] < data["republican_votes"])? data["democrat_candidate"] : data["republican_candidate"],
+                hasIncumbent : (data["incumbent"] !== null),
+                incumbent : data["incumbent"],
+                winnerParty : (data["democrat_votes"] > data["republican_votes"])? PartyType.DEMOCRATIC : PartyType.REPUBLICAN,
+                loserParty : (data["democrat_votes"] < data["republican_votes"])? PartyType.DEMOCRATIC : PartyType.REPUBLICAN,
+                democraticVotes : data["democrat_votes"],
+                republicanVotes : data["republican_votes"],
+                demVoteMargin : data["democrat_votes"] - data["republican_votes"],
+                whiteVotes : data["vap_white"],
+                blackVotes : data["vap_black"],
+                asianVotes : data["vap_asian"],
+                winnerVotes : (data["democrat_votes"] > data["republican_votes"])? data["democrat_votes"] : data["republican_votes"],
+                loserVotes : (data["democrat_votes"] < data["republican_votes"])? data["democrat_votes"] : data["republican_votes"],
                 winVotePercent: 0,
                 loseVotePercent: 0,
                 totalPopulation : data["POPTOT"],
@@ -59,13 +58,13 @@ export default class StateModel {
             let data = geojsonStateProperties[key];
             dict[key] = {
                 districtId : key,
-                area : (data["ALAND20_added"] / (data["ALAND20_common"] + data["ALAND20_lost"])).toFixed(3),
-                democrats : (data["VAPDEMOCRATS_added"] / (data["VAPDEMOCRATS_common"] + data["VAPDEMOCRATS_lost"])).toFixed(3),
-                republicans : (data["VAPREPUBLICAN_added"] / (data["VAPREPUBLICAN_common"] + data["VAPREPUBLICAN_lost"])).toFixed(3),
-                population : (data["VAPTOTAL_added"] / (data["VAPTOTAL_common"] + data["VAPTOTAL_lost"])).toFixed(3),
-                white : (data["VAPWHITE_added"] / (data["VAPWHITE_common"] + data["VAPWHITE_lost"])).toFixed(3),
-                black : (data["VAPBLACK_added"] / (data["VAPBLACK_common"] + data["VAPBLACK_lost"])).toFixed(3),
-                asian : (data["VAPASIAN_added"] / (data["VAPASIAN_common"] + data["VAPASIAN_lost"])).toFixed(3),
+                area : parseFloat(data.area_variation).toFixed(3),
+                democrats : parseFloat(data.democrat_variation).toFixed(3),
+                republicans : parseFloat(data.republican_variation).toFixed(3),
+                population : parseFloat(data.vap_total_variation).toFixed(3),
+                white : parseFloat(data.vap_white_variation).toFixed(3),
+                black : parseFloat(data.vap_black_variation).toFixed(3),
+                asian : parseFloat(data.vap_asian_variation).toFixed(3),
             }
         }
         return dict;
@@ -92,14 +91,14 @@ export default class StateModel {
         for (let key in geojsonStateProperties) {
             if (key === "10") continue; // TO DO: remove if error of the data district 10 is fixed.
             let data = geojsonStateProperties[key];
-            result.minDemVoteMargin = Math.min(data["2020VBIDEN"] - data["2020VTRUMP"], result.minDemVoteMargin);
-            result.minWhite = Math.min(data["VAPWHITE"], result.minWhite);
-            result.minBlack = Math.min(data["VAPBLACK"], result.minBlack);
-            result.minAsian = Math.min(data["VAPASIAN"], result.minAsian);
-            result.maxDemVoteMargin = Math.max(data["2020VBIDEN"] - data["2020VTRUMP"], result.maxDemVoteMargin);
-            result.maxWhite = Math.max(data["VAPWHITE"], result.maxWhite);
-            result.maxBlack = Math.max(data["VAPBLACK"], result.maxBlack);
-            result.maxAsian = Math.max(data["VAPASIAN"], result.maxAsian);
+            result.minDemVoteMargin = Math.min(data["democrat_votes"] - data["republican_votes"], result.minDemVoteMargin);
+            result.minWhite = Math.min(data["vap_white"], result.minWhite);
+            result.minBlack = Math.min(data["vap_black"], result.minBlack);
+            result.minAsian = Math.min(data["vap_asian"], result.minAsian);
+            result.maxDemVoteMargin = Math.max(data["democrat_votes"] - data["republican_votes"], result.maxDemVoteMargin);
+            result.maxWhite = Math.max(data["vap_white"], result.maxWhite);
+            result.maxBlack = Math.max(data["vap_black"], result.maxBlack);
+            result.maxAsian = Math.max(data["vap_asian"], result.maxAsian);
         }
 
         result.whiteFeatureValues = calculateHeatMapFeatureValues(result.minWhite, result.maxWhite);

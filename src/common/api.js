@@ -5,7 +5,12 @@ const api = axios.create({
 })
 
 export const getStateSummaryJson = async (stateType) => {
-    return api.get(`/state/${stateType}`)
+    return api.get(`/summary`,
+          {
+              params: {
+                state: stateType,
+              }
+          })
         .then(response => response.data)
         .catch(err => {
             return null;
@@ -13,7 +18,7 @@ export const getStateSummaryJson = async (stateType) => {
 }
 
 export const getStateGeojson = async (planType, stateType) => {
-    return api.get(`/plan/plan`,
+    return api.get(`/plan`,
         {
             params: {
                 state: stateType,

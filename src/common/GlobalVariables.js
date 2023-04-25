@@ -40,7 +40,7 @@ export const RefType = {
 
 // @enum {string}
 export const PlanType = {
-    Y2022: "Enacted",
+    Y2022: "enacted",
 }
 
 // @enum {string}

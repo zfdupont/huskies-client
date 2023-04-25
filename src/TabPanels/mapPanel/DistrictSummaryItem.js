@@ -27,26 +27,12 @@ export default function DistrictSummaryItem(props) {
         mapStore.highlightDistrict(data.districtId);
     }
 
-    function getLastName(name) {
-        return name.split(' ')[1]
-    }
 
     return (
         <div value={data.districtId} className="map-side-item" style={{display:'flex', flex: '0 0 50px', margin: '0px 5px 5px 5px', backgroundColor: bgColor, padding:"5px", borderRadius: '10px'}} onClick={onItemClick}>
-            <div style={{display:'flex', flexFlow: 'column', flex: 1}}>
+            <div style={{display:'flex', flexFlow: 'column', flex: 0.5}}>
                 <div style={{display:'flex', flex: '3', alignItems:'center', justifyContent: 'center', fontSize: '16px', fontWeight: '900'}}>
                     {convertNumToPlace(data.districtId)}
-                </div>
-                <div style={{display:'flex', alignItems:'center', justifyContent:'center', flex: 1.5}}>
-                    <div style={{position: 'relative', display:'flex', alignItems:'center', justifyContent:'center', width:'15px', height:'15px', marginRight: 5, color: 'black', fontSize:'10px', borderRadius: '5px', border: 'solid 1px black'}}>
-                        +2
-                    </div>
-                    <div style={{position: 'relative', display:'flex', alignItems:'center', justifyContent:'center', width:'15px', height:'15px', marginLeft: 5, color: 'black', fontSize:'10px', borderRadius: '5px', border: 'solid 1px black'}}>
-                        -3
-                    </div>
-                </div>
-                <div style={{display:'flex', alignItems:'center', justifyContent:'center', flex: 1.5, fontSize: '10px'}}>
-                    Precinct
                 </div>
             </div>
             <div style={{flex: '0 0 1px', backgroundColor:'darkgray'}}/>
@@ -54,7 +40,7 @@ export default function DistrictSummaryItem(props) {
             <div style={{display:'flex', flexFlow:'column', flex: 4, fontSize:'10px'}}>
                 <div style={{display: 'flex', flex:1}}>
                     <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1, fontWeight:'600', color:'white', backgroundColor: partyColor[data.winnerParty]}}>
-                        {getLastName(data.winnerCandidate)} {partyInitial[data.winnerParty]}
+                        {data.winnerCandidate} {partyInitial[data.winnerParty]}
                     </div>
                     <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 40px'}}>
                         {(data.winnerCandidate === data.incumbent) &&<Checkbox defaultChecked color="default" size="small" sx={{position: 'relative', margin:'-10px'}}/>}
@@ -70,7 +56,7 @@ export default function DistrictSummaryItem(props) {
                 <div style={{flex:'0 0 1px', backgroundColor:'darkgray'}}></div>
                 <div style={{display:'flex', flex:1}}>
                     <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1, fontWeight:'400', color:'black'}}>
-                        {getLastName(data.loserCandidate)} {partyInitial[data.loserParty]}
+                        {data.loserCandidate} {partyInitial[data.loserParty]}
                     </div>
                     <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 40px'}}>
                         {(data.loserCandidate === data.incumbent) && <Checkbox defaultChecked color="default" size="small" sx={{margin:'-10px'}}/>}
