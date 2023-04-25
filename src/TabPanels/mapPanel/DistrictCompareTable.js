@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
 import StoreContext from '../../common/Store';
 import {
   IconButton,
@@ -15,6 +15,7 @@ import Typography from "@mui/material/Typography";
 import Tooltip from '@mui/material/Tooltip';
 import Toolbar from "@mui/material/Toolbar";
 import HelpIcon from '@mui/icons-material/Help';
+import {colorDict} from "../../common/GlobalVariables";
 
 const columns = [
     { id: 'district', maxWidth: '30px', label: 'District', align:'center'},
@@ -48,13 +49,18 @@ const CustomTooltip = () => {
 
 
 export default function DistrictCompareTable() {
+    const infoTableRef = useRef();
     const { mapStore, dataStore } = useContext(StoreContext);
     const [incumbentFilter, setIncumbentFilter] = useState(true);
 
     let dataList = createElectionDataList();
 
+    useEffect(() => {
+        scrollToItem();
+    });
+
     function onIncumbentFilterClick(event) {
-      setIncumbentFilter(() => (event.target.checked));
+        setIncumbentFilter(() => (event.target.checked));
     }
 
     function EnhancedTableToolbar() {
@@ -100,6 +106,22 @@ export default function DistrictCompareTable() {
         }
         return result;
     }
+
+    function onItemClick(districtId) {
+        mapStore.highlightDistrict(districtId);
+    }
+
+    function scrollToItem() {
+        if (mapStore.getHighlightDistrictId() === null) return;
+        const infoItem = Array.from(infoTableRef?.current?.children).find((item) => {
+            return item.getAttribute('value') === mapStore.getHighlightDistrictId();
+        });
+        if (infoItem) {
+            console.log(infoItem);
+            infoItem.scrollIntoView({block: "center"});
+        }
+    }
+
     return (
         <Paper sx={{ width: '100%', height: '100%', overflow: 'hidden'}}>
             <TableContainer sx={{ maxHeight: "300px" }}>
@@ -118,10 +140,11 @@ export default function DistrictCompareTable() {
                                 ))}
                     </TableRow>
                 </TableHead>
-                <TableBody>
+                <TableBody ref={infoTableRef}>
                     {dataList.map((row) => {
+                        let bgColor = (mapStore.districtId === row.district)? colorDict.highlight : colorDict.white;
                         return (
-                            <TableRow hover role="checkbox" tabIndex={-1} key={row.district}>
+                            <TableRow hover role="checkbox" tabIndex={-1} key={row.district} value={row.district} onClick={() => onItemClick(row.district)} sx={{backgroundColor:bgColor}}>
                                 {columns.map((column) => {
                                     const value = row[column.id];
                                     return (

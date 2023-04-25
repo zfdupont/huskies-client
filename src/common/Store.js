@@ -241,9 +241,8 @@ function StoreContextProvider(props) {
         if (dataStore.isStateDataReady(planType, stateType)) return;
 
         let geojson = await api.getStateGeojson(planType, stateType);
-        console.log(geojson);
         let summaryJson =  await api.getStateSummaryJson(stateType);
-        console.log(summaryJson);
+
         dataStore.setDistrictIdOfGeojson(geojson); // TO DO : remove this line if DistrictId error removed.
 
         let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);

@@ -3,6 +3,7 @@ import StoreContext from "../../common/Store";
 import {colorDict, PartyType} from "../../common/GlobalVariables";
 import '../../App.css';
 import {convertNumToPlace} from "../../common/ConversionHelper";
+import {Checkbox} from "@mui/material";
 
 
 const partyColor = {
@@ -52,32 +53,32 @@ export default function DistrictSummaryItem(props) {
             <div style={{flex: '0 0 10px'}}/>
             <div style={{display:'flex', flexFlow:'column', flex: 4, fontSize:'10px'}}>
                 <div style={{display: 'flex', flex:1}}>
-                    <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1.5, fontWeight:'600', color:'white', backgroundColor: partyColor[data.winnerParty]}}>
+                    <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1, fontWeight:'600', color:'white', backgroundColor: partyColor[data.winnerParty]}}>
                         {getLastName(data.winnerCandidate)} {partyInitial[data.winnerParty]}
                     </div>
-                    <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 10px'}}>
-                        {(data.winnerCandidate === data.incumbent) && "v"}
+                    <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 40px'}}>
+                        {(data.winnerCandidate === data.incumbent) &&<Checkbox defaultChecked color="default" size="small" sx={{position: 'relative', margin:'-10px'}}/>}
                     </div>
-                    <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 1, color:'gray'}}>
+                    <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, color:'gray'}}>
                         {data.winnerVotes.toLocaleString()}
                     </div>
-                    <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 1, fontWeight:'800', color:'black'}}>
+                    <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, fontWeight:'800', color:'black'}}>
                         {winVotePercent}%
                     </div>
                     <div style={{flex:'0.1'}}/>
                 </div>
                 <div style={{flex:'0 0 1px', backgroundColor:'darkgray'}}></div>
                 <div style={{display:'flex', flex:1}}>
-                    <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1.5, fontWeight:'400', color:'black'}}>
+                    <div style={{display:'flex', alignItems: 'center', paddingLeft:'10px', flex: 1, fontWeight:'400', color:'black'}}>
                         {getLastName(data.loserCandidate)} {partyInitial[data.loserParty]}
                     </div>
-                    <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 10px'}}>
-                        {(data.loserCandidate === data.incumbent) && "v"}
+                    <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 40px'}}>
+                        {(data.loserCandidate === data.incumbent) && <Checkbox defaultChecked color="default" size="small" sx={{margin:'-10px'}}/>}
                     </div>
-                    <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 1, color:'gray'}}>
+                    <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, color:'gray'}}>
                         {data.loserVotes.toLocaleString()}
                     </div>
-                    <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 1, fontWeight:'800', color:'black'}}>
+                    <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, fontWeight:'800', color:'black'}}>
                         {loseVotePercent}%
                     </div>
                     <div style={{flex:'0.1'}}/>
