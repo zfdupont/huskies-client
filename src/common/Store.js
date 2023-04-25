@@ -29,6 +29,7 @@ function StoreContextProvider(props) {
         stateData: {},
         geojson: {},
         districtBoundData: {},
+        ensemble: {}
     })
     const [pageStore, setPageStore] = useState({
         tabType: TabType.MAP
@@ -77,9 +78,11 @@ function StoreContextProvider(props) {
                 dataStore.stateData[payload.planType][payload.stateType] = payload.stateModelData;
                 dataStore.geojson[payload.planType][payload.stateType] = payload.geojson;
 
+                dataStore.ensemble = payload.ensemble;
                 return setDataStore({
                     stateData: dataStore.stateData,
                     geojson: dataStore.geojson,
+                    ensemble: dataStore.ensemble
                 })
             default:
                 return;
@@ -252,6 +255,16 @@ function StoreContextProvider(props) {
         }
     }
 
+    dataStore.createBarchartDataByEnsemble = function(ensemble) {
+        //because ensemble is currently not populated by server, all data will be mocked
+        // TO DO: remove below code after api call is implemented
+        let data = []
+        for (let x = 17; x < 24; x++) {
+            data.push({name: x, plan: Math.floor(Math.random() * 700) + 100});
+        }
+        return data;
+    }
+
     dataStore.addStateData = async (planType, stateType) => {
         if (dataStore.isStateDataReady(planType, stateType)) return;
 
@@ -262,10 +275,10 @@ function StoreContextProvider(props) {
         dataStore.setDistrictIdOfGeojson(geojson); // TO DO : remove this line if DistrictId error removed.
 
         let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
-
+        let barchartData = dataStore.createBarchartDataByEnsemble();
         dataStoreReducer({
             type: DataActionType.ADD_STATE_DATA,
-            payload: {planType: planType, stateType: stateType, geojson: geojson, stateModelData: stateModelData}
+            payload: {planType: planType, stateType: stateType, geojson: geojson, stateModelData: stateModelData, ensemble: {barchartData}}
         })
     }
 
@@ -300,7 +313,9 @@ function StoreContextProvider(props) {
     dataStore.getStateGeoJson = (planType, stateType) => JSON.parse(JSON.stringify(dataStore.geojson[planType][stateType]));
     dataStore.getStateModelData = (planType, stateType) => dataStore.stateData[planType][stateType];
     dataStore.getCurrentStateGeojson = (planType) => dataStore.geojson[planType][mapStore.state];
+    dataStore.getEnsembleData = () => dataStore.ensemble;
     dataStore.isReadyToDisplayCurrentMap = () => dataStore.isStateDataReady(mapStore.plan, mapStore.state);
+    // TO DO: once ensemble api call is usable, add to following functions -->
     dataStore.isStateDataReady = (planType, stateType) => {
         return dataStore.isModelDataReady(planType, stateType) && dataStore.isGeojsonReady(planType, stateType);
     }
