@@ -41,6 +41,20 @@ export const RefType = {
 // @enum {string}
 export const PlanType = {
     Y2022: "enacted",
+    S0001: "s1",
+    S0002: "s2",
+    S0003: "s3",
+    S0004: "s4",
+    S0005: "s5",
+}
+
+export const PlanTitleType = {
+    [PlanType.Y2022]: "2022 enacted",
+    [PlanType.S0001]: "fairest seat vote",
+    [PlanType.S0002]: "fair geo pop.",
+    [PlanType.S0003]: "highest geo pop.",
+    [PlanType.S0004]: "most dem favored",
+    [PlanType.S0005]: "most rep favored",
 }
 
 // @enum {string}
@@ -131,18 +145,20 @@ export const zoomLevelDict = {
 export const colorDict = {
     white: "#ffffff",
     highlight: "#ffe8a4",
-    democraticLevel1: "#ffb6a1",
-    democraticLevel2: "#ff8963",
-    democraticLevel3: "#ff4000",
-    democraticLevel4: "#ff2000",
-    democraticLevel5: "#d91000",
-    democraticLevel6: "#b30000",
-    republicanLevel1: "#aec1ff",
-    republicanLevel2: "#507bff",
-    republicanLevel3: "#0040ff",
-    republicanLevel4: "#0020ff",
-    republicanLevel5: "#0010d9",
-    republicanLevel6: "#0000b3",
+    democraticDefault: "#0984e3",
+    democraticLevel1: "#aec1ff",
+    democraticLevel2: "#507bff",
+    democraticLevel3: "#0040ff",
+    democraticLevel4: "#0020ff",
+    democraticLevel5: "#0010d9",
+    democraticLevel6: "#0000b3",
+    republicanDefault: "#d63031",
+    republicanLevel1: "#ffb6a1",
+    republicanLevel2: "#ff8963",
+    republicanLevel3: "#ff4000",
+    republicanLevel4: "#ff2000",
+    republicanLevel5: "#d91000",
+    republicanLevel6: "#b30000",
     populationLevel1: "#b8ffb8",
     populationLevel2: "#7eff7e",
     populationLevel3: "#33e533",

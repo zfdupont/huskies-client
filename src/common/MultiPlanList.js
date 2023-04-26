@@ -31,14 +31,10 @@ export default function NestedList() {
     function createPlanButtons()
     {
         let planButtons = [];
-        let simulatedPlansDummy = {
-            S0001: "#0001",
-            S0002: "#0002",
-            S0003: "#0003",
-        }
-        for (const planKey in simulatedPlansDummy)
+        for (const key in PlanType)
         {
-            let planType = simulatedPlansDummy[planKey];
+            if (PlanType[key] === PlanType.Y2022) continue;
+            let planType = PlanType[key];
             planButtons.push(
                 <ListItemButton key={planType} selected={isPlanSelected(planType)} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
                     <ListItemText primary={planType} primaryTypographyProps={{fontSize: "12px"}}  />

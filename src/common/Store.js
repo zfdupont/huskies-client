@@ -191,7 +191,6 @@ function StoreContextProvider(props) {
 
 
 // --- DATA STORE FUNCTIONS -----------------------------
-    
     dataStore.setDistrictIdOfGeojson = function(geojson) {
         geojson.features.forEach((district, index) => {
             district.properties.district_id = (index + 1).toString();
@@ -269,10 +268,9 @@ function StoreContextProvider(props) {
         if (dataStore.isStateDataReady(planType, stateType)) return;
 
         let geojson = await api.getStateGeojson(planType, stateType);
-        console.log(geojson);
         let summaryJson =  await api.getStateSummaryJson(stateType);
 
-        dataStore.setDistrictIdOfGeojson(geojson); // TO DO : remove this line if DistrictId error removed.
+        dataStore.setDistrictIdOfGeojson(geojson); // TO DO : remove this line if DistrictId added from server.
 
         let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
         let barchartData = dataStore.createBarchartDataByEnsemble();

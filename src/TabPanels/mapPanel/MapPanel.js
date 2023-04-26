@@ -20,7 +20,7 @@ export default function MapPanel() {
                     <HeatMap/>
                 </Paper>
                 <Paper style={{display:'flex', flexDirection:"column", alignItems:'center', justifyContents:'center', flex: "0 0 300px"}}>
-                    {(!mapStore.isStateNone()) && <DistrictCompareTable/>}
+
                 </Paper>
             </div>
             <div style={{display:'flex', flexDirection:'column', flex:1.7}}>
