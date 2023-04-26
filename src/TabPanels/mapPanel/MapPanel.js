@@ -19,7 +19,7 @@ export default function MapPanel() {
                     <MainMap/>
                     <HeatMap/>
                 </Paper>
-                <Paper style={{display:'flex', flexDirection:"column", alignItems:'center', justifyContents:'center', flex: "0 0 300px"}}>
+                <Paper style={{display:'flex', flexDirection:"column", alignItems:'center', justifyContents:'center', flex: "1"}}>
 
                 </Paper>
             </div>
