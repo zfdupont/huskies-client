@@ -6,7 +6,6 @@ import MainMap from "./MainMap";
 import DistrictSummaryTable from "./DistrictSummaryTable";
 import StateInfoTable from "./StateInfoTable";
 import StoreReducer from '../../common/Store';
-import DistrictCompareTable from './DistrictCompareTable';
 import HeatMap from "./HeatMap";
 
 
