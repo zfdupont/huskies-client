@@ -12,7 +12,7 @@ const partyColor = {
 }
 
 export default function DistrictSummaryItem(props) {
-    const { mapStore } = useContext(StoreContext);
+    const { mapStore, dataStore } = useContext(StoreContext);
 
     let data = props.electionData;
     let winVotePercent = Math.ceil((data.winnerVotes  / (data.winnerVotes + data.loserVotes)) * 100 );
@@ -24,18 +24,20 @@ export default function DistrictSummaryItem(props) {
         mapStore.highlightDistrict(data.districtId);
     }
 
-    function createData(name, proportion) {
-        return {name, proportion};
+    function createData(name, percentage) {
+        return {name, percentage};
     }
 
+    const stateData = dataStore.getStateModelData(mapStore.plan, mapStore.state);
+    const compareDataDict = stateData.compareDataDict;
     const rows = [
-        createData('Geographic difference', 15),
-        createData('Democrat difference', 2),
-        createData('Republican difference', 7),
-        createData('Total Population difference', 23),
-        createData('White population difference', 23),
-        createData('Black population difference', 18),
-        createData('Asian population difference', 7),
+        createData('Geographic difference', compareDataDict[data.districtId].area * 100),
+        createData('Democrat difference', compareDataDict[data.districtId].democrats  * 100 ),
+        createData('Republican difference', compareDataDict[data.districtId].republicans  * 100 ),
+        createData('Total Population difference', compareDataDict[data.districtId].population  * 100 ),
+        createData('White population difference', compareDataDict[data.districtId].white  * 100 ),
+        createData('Black population difference', compareDataDict[data.districtId].black  * 100 ),
+        createData('Asian population difference', compareDataDict[data.districtId].asian  * 100 ),
     ];
 
     return (
@@ -91,7 +93,7 @@ export default function DistrictSummaryItem(props) {
                         <TableHead>
                             <TableRow>
                                 <TableCell sx={{fontWeight:'800'}}>Compare to 2020 plan</TableCell>
-                                <TableCell sx={{fontWeight:'800'}} align="right">Proportion&nbsp;(%)</TableCell>
+                                <TableCell sx={{fontWeight:'800'}} align="right">Percentage&nbsp;(%)</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -103,7 +105,7 @@ export default function DistrictSummaryItem(props) {
                                     <TableCell component="th" scope="row" sx={{fontSize:'14px'}}>
                                         {row.name}
                                     </TableCell>
-                                    <TableCell align="right" sx={{fontWeight:'700', fontSize:'14px'}}>{row.proportion}</TableCell>
+                                    <TableCell align="right" sx={{fontWeight:'700', fontSize:'14px'}}>{row.percentage}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

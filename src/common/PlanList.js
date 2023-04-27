@@ -33,6 +33,7 @@ export default function NestedList() {
                 <ListItemText primary="2022 Enacted" primaryTypographyProps={{fontSize: "12px"}}  />
             </ListItemButton>
         )
+        break;
     }
 
     function getListTitle() {
