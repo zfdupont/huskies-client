@@ -9,7 +9,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Star from '@mui/icons-material/Star';
 import StoreContext from './Store';
-import {PlanType} from "./GlobalVariables";
+import {PlanTitleType, PlanType} from "./GlobalVariables";
 
 export default function NestedList() {
     const { mapStore } = useContext(StoreContext);
@@ -30,10 +30,9 @@ export default function NestedList() {
         let planType = PlanType[planKey];
         planButtons.push(
             <ListItemButton key={planType} selected={mapStore.getMapPlan() === planType} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
-                <ListItemText primary="2022 Enacted" primaryTypographyProps={{fontSize: "12px"}}  />
+                <ListItemText primary={PlanTitleType[planType]} primaryTypographyProps={{fontSize: "12px"}}  />
             </ListItemButton>
         )
-        break;
     }
 
     function getListTitle() {

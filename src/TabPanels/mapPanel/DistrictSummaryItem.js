@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import StoreContext from "../../common/Store";
-import {colorDict, PartyType} from "../../common/GlobalVariables";
+import {colorDict, PartyType, PlanType} from "../../common/GlobalVariables";
 import '../../App.css';
 import {convertNumToPlace} from "../../common/ConversionHelper";
 import {Checkbox, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
@@ -17,7 +17,8 @@ export default function DistrictSummaryItem(props) {
     let data = props.electionData;
     let winVotePercent = Math.ceil((data.winnerVotes  / (data.winnerVotes + data.loserVotes)) * 100 );
     let loseVotePercent = 100 - winVotePercent;
-    let isHighlighted = mapStore.getHighlightDistrictId() === data.districtId;
+    const isHighlighted = mapStore.getHighlightDistrictId() === data.districtId;
+    const isSimulation = mapStore.plan !== PlanType.Y2022;
     let bgColor = (isHighlighted)? colorDict.highlight : colorDict.white;
 
     function onItemClick() {
@@ -29,15 +30,15 @@ export default function DistrictSummaryItem(props) {
     }
 
     const stateData = dataStore.getStateModelData(mapStore.plan, mapStore.state);
-    const compareDataDict = stateData.compareDataDict;
+    const compareData = stateData.compareDataDict[data.districtId];
     const rows = [
-        createData('Geographic difference', compareDataDict[data.districtId].area * 100),
-        createData('Democrat difference', compareDataDict[data.districtId].democrats  * 100 ),
-        createData('Republican difference', compareDataDict[data.districtId].republicans  * 100 ),
-        createData('Total Population difference', compareDataDict[data.districtId].population  * 100 ),
-        createData('White population difference', compareDataDict[data.districtId].white  * 100 ),
-        createData('Black population difference', compareDataDict[data.districtId].black  * 100 ),
-        createData('Asian population difference', compareDataDict[data.districtId].asian  * 100 ),
+        createData('Geographic difference', (compareData.area * 100).toFixed(1)),
+        createData('Democrat difference', (compareData.democrats  * 100).toFixed(1)),
+        createData('Republican difference', (compareData.republicans  * 100).toFixed(1)),
+        createData('Total Population difference', (compareData.population  * 100).toFixed(1)),
+        createData('White population difference', (compareData.white  * 100).toFixed(1)),
+        createData('Black population difference', (compareData.black  * 100).toFixed(1)),
+        createData('Asian population difference', (compareData.asian  * 100).toFixed(1)),
     ];
 
     return (
@@ -59,7 +60,7 @@ export default function DistrictSummaryItem(props) {
                             {(data.winnerCandidate === data.incumbent) &&<Checkbox defaultChecked color="default" size="small" sx={{position: 'relative', margin:'-10px'}}/>}
                         </div>
                         <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, color:'black'}}>
-                            {data.winnerVotes.toLocaleString()}
+                            {data.winnerVotes?.toLocaleString()}
                         </div>
                         <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, fontWeight:'800', color:'black'}}>
                             {winVotePercent}%
@@ -76,7 +77,7 @@ export default function DistrictSummaryItem(props) {
                             {(data.loserCandidate === data.incumbent) && <Checkbox defaultChecked color="default" size="small" sx={{margin:'-10px'}}/>}
                         </div>
                         <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, color:'black'}}>
-                            {data.loserVotes.toLocaleString()}
+                            {data.loserVotes?.toLocaleString()}
                         </div>
                         <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, fontWeight:'800', color:'black'}}>
                             {loseVotePercent}%

@@ -41,11 +41,11 @@ export const RefType = {
 // @enum {string}
 export const PlanType = {
     Y2022: "enacted",
-    S0001: "s1",
-    S0002: "s2",
-    S0003: "s3",
-    S0004: "s4",
-    S0005: "s5",
+    S0001: "democrat_favored",
+    S0002: "republican_favored",
+    S0003: "fair_geo_pop_var",
+    S0004: "high_geo_pop_var",
+    S0005: "fair_seat_vote",
 }
 
 export const PlanTitleType = {
