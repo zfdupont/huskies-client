@@ -5,9 +5,10 @@ export default class StateModel {
     constructor(planType, stateType, geojsonStateProperties) {
         this.planType = planType
         this.stateType = stateType;
-        this.electionDataDict = this.getElectionData(geojsonStateProperties)
-        this.compareDataDict = this.getCompareData(geojsonStateProperties)
-        this.heatMapData = this.getHeatMapData(geojsonStateProperties)
+        this.electionDataDict = this.getElectionData(geojsonStateProperties);
+        this.compareDataDict = this.getCompareData(geojsonStateProperties);
+        this.heatMapData = this.getHeatMapData(geojsonStateProperties);
+        this.summaryData = this.getSummaryData(geojsonStateProperties);
     }
 
     getElectionData(geojsonStateProperties) {
@@ -114,6 +115,16 @@ export default class StateModel {
         return result;
     }
 
+    getSummaryData(geojsonStateProperties) {
+        let summaryData = {
+            numOfDistrics: 0,
+            numOfIncumbents: 0,
+        }
+        summaryData.numOfDistrics = Object.keys(geojsonStateProperties).length;
+        summaryData.numOfIncumbents = this.getIncumbentDistrictIDs().length;
+        return summaryData;
+    }
+
     getIncumbentDistrictIDs() {
         let ids = [];
         for (let key in this.electionDataDict) {
@@ -131,4 +142,6 @@ export default class StateModel {
         }
         return ids;
     }
+
+
 }

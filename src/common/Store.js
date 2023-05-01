@@ -10,13 +10,14 @@ import {
 } from './GlobalVariables';
 import api from './api.js';
 import StateModel from "../models/StateModel";
+import {remove} from "./CalculationHelper";
 export const StoreContext = createContext({});
 
 // --- CONTEXT PROVIDER---------------------------------
 function StoreContextProvider(props) {
     const [mapStore, setMapStore] = useState({
         plan: null,
-        subPlan: null,
+        planFilterTypes: [],
         state: StateType.NONE,
         prevState: null,
         districtId: null,
@@ -46,8 +47,12 @@ function StoreContextProvider(props) {
         switch (type) {
             case MapActionType.SELECT_PLAN:
                 return setMapStore((prev) => ({...prev, plan: payload.planType}));
-            case MapActionType.SELECT_SUB_PLAN:
-                return setMapStore((prev) => ({...prev, subPlan: payload.subPlanType}));
+            case MapActionType.ADD_PLAN_FILTER:
+                return setMapStore((prev) => ({...prev, planFilterTypes: [...prev.planFilterTypes, payload.planType]}));
+            case MapActionType.REMOVE_PLAN_FILTER:
+                let tempTypes = mapStore.planFilterTypes;
+                remove(tempTypes, payload.planType);
+                return setMapStore((prev) => ({...prev, planFilterTypes: tempTypes}))
             case MapActionType.SELECT_STATE:
                 return setMapStore((prev) => ({...prev, state: payload.stateType, districtId: null}));
             case MapActionType.UNSELECT_STATE:
@@ -99,24 +104,36 @@ function StoreContextProvider(props) {
     }
 
 // --- MAP STORE FUNCTIONS -----------------------------
-    mapStore.selectPlan = function(planType) {
+    mapStore.selectPlan = async function(planType) {
         if (planType === mapStore.plan) return;
 
         mapStoreReducer({
             type: MapActionType.SELECT_PLAN,
             payload: { planType: planType }
         })
+
+        if (mapStore.state !== StateType.NONE) {
+            await dataStore.addStateData(planType, mapStore.state);
+        }
     }
 
-    mapStore.selectSubPlan = async function(planType)
-    {
-        if (mapStore.subPlan === planType || mapStore.plan === planType) return;
+    mapStore.addPlanFilter = async function(planType) {
+        if (mapStore.plan === planType) return;
 
         mapStoreReducer({
-            type: MapActionType.SELECT_SUB_PLAN,
-            payload: {subPlanType: planType},
+            type: MapActionType.ADD_PLAN_FILTER,
+            payload: {planType: planType},
         })
         await dataStore.addStateData(planType, mapStore.state);
+    }
+    
+    mapStore.removePlanFilter = function(planType) {
+        if (!mapStore.planFilterTypes.includes(planType)) return;
+        
+        mapStoreReducer({
+            type: MapActionType.REMOVE_PLAN_FILTER,
+            payload: {planType: planType},
+        })
     }
 
     mapStore.selectState = async function(stateType) {
@@ -160,13 +177,6 @@ function StoreContextProvider(props) {
         })
     }
 
-    mapStore.mixingValueChange = function(value) {
-        mapStoreReducer({
-            type: MapActionType.MIXING_VALUE_CHANGE,
-            payload: {value: value},
-        })
-    }
-
     mapStore.resetPage = function() {
         mapStoreReducer({
             type: MapActionType.RESET_PAGE,
@@ -203,54 +213,14 @@ function StoreContextProvider(props) {
             geojsonStateProperties[district.properties.district_id] = district.properties;
         })
 
-        dataStore.addMockData(geojsonStateProperties); // TO DO: remove this line if all data ready.
-
         return new StateModel(planType, stateType, geojsonStateProperties);
     }
 
     dataStore.addMockData = function(stateData) {
         for (let key in stateData)
         {
-            stateData[key].area_added = (!stateData[key].area_added)? 12345 : stateData[key].area_added;
-            stateData[key].area_common = (!stateData[key].area_common)? 12345 : stateData[key].area_common;
-            stateData[key].area_lost = (!stateData[key].area_added)? 12345 : stateData[key].area_added;
-            stateData[key].area_variation = (!stateData[key].area_variation)? 0.123 : stateData[key].area_variation;
-            stateData[key].democrat = (!stateData[key].democrat)? 12345 : stateData[key].democrat;
-            stateData[key].democrat_added = (!stateData[key].democrat_added)? 12345 : stateData[key].democrat_added;
-            stateData[key].democrat_candidate = (!stateData[key].democrat_candidate)? "dem Candidate" + key : stateData[key].democrat_candidate;
-            stateData[key].democrat_common = (!stateData[key].democrat_common)? 12345 : stateData[key].democrat_common;
-            stateData[key].democrat_lost = (!stateData[key].democrat_lost)? 12345 : stateData[key].democrat_lost;
-            stateData[key].democrat_variation = (!stateData[key].democrat_variation)? 0.123 : stateData[key].democrat_variation;
-            stateData[key].democrat_votes = (!stateData[key].democrat_votes)? 12345 : stateData[key].democrat_votes;
             stateData[key].district_id = (!stateData[key].district_id)? key : stateData[key].district_id;
-            stateData[key].incumbent = (parseInt(key) % 2 === 0 )? stateData[key].democrat_candidate : null
-            stateData[key].pop_total = (!stateData[key].pop_total)? 12345 : stateData[key].pop_total;
-            stateData[key].republican = (!stateData[key].republican)? 12345 : stateData[key].republican;
-            stateData[key].republican_added = (!stateData[key].republican_added)? 12345 : stateData[key].republican_added;
-            stateData[key].republican_candidate = (!stateData[key].republican_candidate)? "rep Candidate" + key: stateData[key].republican_candidate;
-            stateData[key].republican_common = (!stateData[key].republican_common)? 12345 : stateData[key].republican_common;
-            stateData[key].republican_lost = (!stateData[key].republican_lost)? 12345 : stateData[key].republican_lost;
-            stateData[key].republican_variation = (!stateData[key].republican_variation)? 0.123 : stateData[key].republican_variation;
-            stateData[key].republican_votes = (!stateData[key].republican_votes)? 54321 : stateData[key].republican_votes;
-            stateData[key].area_variation = (!stateData[key].area_variation)? 0.232 : stateData[key].area_variation;
-            stateData[key].vap_asian = (!stateData[key].vap_asian)? 12345 : stateData[key].vap_asian;
-            stateData[key].vap_asian_added = (!stateData[key].vap_asian)? 12345 : stateData[key].vap_asian;
-            stateData[key].vap_asian_lost = (!stateData[key].vap_asian_lost)? 12345 : stateData[key].vap_asian_lost;
-            stateData[key].vap_asian_variation = (!stateData[key].vap_asian_variation)? 0.123 : stateData[key].vap_asian_variation;
-            stateData[key].vap_black_common = (!stateData[key].vap_black_common)? 12345 : stateData[key].vap_black_common;
-            stateData[key].vap_black_lost = (!stateData[key].vap_black_lost)? 12345 : stateData[key].vap_black_lost;
-            stateData[key].vap_black_variation = (!stateData[key].vap_black_variation)? 0.123 : stateData[key].vap_black_variation;
-            stateData[key].vap_total = (!stateData[key].vap_total)? 12345 : stateData[key].vap_total;
-            stateData[key].vap_total_added = (!stateData[key].vap_total_added)? 12345 : stateData[key].vap_total_added;
-            stateData[key].vap_total_common = (!stateData[key].vap_total_common)? 12345 : stateData[key].vap_total_common;
-            stateData[key].vap_total_lost = (!stateData[key].vap_total_lost)? 12345 : stateData[key].vap_total_lost;
-            stateData[key].vap_total_variation = (!stateData[key].vap_total_variation)? 0.123 : stateData[key].vap_total_variation;
-            stateData[key].vap_white = (!stateData[key].vap_white)? 12345 : stateData[key].vap_white;
-            stateData[key].vap_white_added = (!stateData[key].vap_white_added)? 12345 : stateData[key].vap_white_added;
-            stateData[key].vap_white_common = (!stateData[key].vap_white_common)? 12345 : stateData[key].vap_white_common;
-            stateData[key].vap_white_lost = (!stateData[key].vap_white_lost)? 12345 : stateData[key].vap_white_lost;
-            stateData[key].vap_white_variation = (!stateData[key].vap_white_variation)? 0.123 : stateData[key].vap_white_variation;
-            stateData[key].winner = (!stateData[key].winner)? 'D' : stateData[key].winner;
+
         }
     }
 
@@ -268,12 +238,14 @@ function StoreContextProvider(props) {
         if (dataStore.isStateDataReady(planType, stateType)) return;
 
         let geojson = await api.getStateGeojson(planType, stateType);
+        dataStore.setDistrictIdOfGeojson(geojson);
+        let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
+        console.log(stateModelData);
+
         let summaryJson =  await api.getStateSummaryJson(stateType);
 
-        dataStore.setDistrictIdOfGeojson(geojson); // TO DO : remove this line if DistrictId added from server.
-
-        let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
         let barchartData = dataStore.createBarchartDataByEnsemble();
+
         dataStoreReducer({
             type: DataActionType.ADD_STATE_DATA,
             payload: {planType: planType, stateType: stateType, geojson: geojson, stateModelData: stateModelData, ensemble: {barchartData}}
@@ -302,7 +274,7 @@ function StoreContextProvider(props) {
     mapStore.getState = () => mapStore.state;
     mapStore.getHighlightDistrictId = () => mapStore.districtId;
     mapStore.isPlanSelected = () => mapStore.plan !== null;
-    mapStore.isSubPlanSelected = () => mapStore.subPlan !== null;
+    mapStore.isPlanFilterSelected = (planType) => mapStore.planFilterTypes.includes(planType);
     mapStore.isStateChanged = () => mapStore.state !== mapStore.prevState;
     mapStore.isStateNone = () => mapStore.state === StateType.NONE;
     mapStore.isStateMatch = (stateType) => stateType === mapStore.state;

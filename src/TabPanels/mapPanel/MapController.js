@@ -24,7 +24,7 @@ import {
     convertBoundSizeToZoomLevel,
     convertMapFilterTypeToLayerType,
     convertMapFilterTypeToPopulationType,
-    convertMapFilterTypeToStyleType
+    convertMapFilterTypeToStyleType, convertPlanTypeToColorType
 } from "../../common/ConversionHelper";
 
 let currLayerGroups = {};
@@ -48,6 +48,7 @@ export default function MapController() {
     removeAllLayer();
     setupMapFilter();
     setupHighlightDistrict();
+    setupPlanFilter();
     setupView();
 
     function removeAllLayer() {
@@ -93,7 +94,7 @@ export default function MapController() {
     }
 
     function setMapColorFilter() {
-        let geojson = getFilteredGeojson();
+        let geojson = getFilteredGeojson(mapStore.plan);
         let stateData = dataStore.getStateModelData(mapStore.plan, mapStore.state);
         let mapFilterType = mapStore.mapFilterType;
         let layerGroupType = convertMapFilterTypeToLayerType(mapFilterType);
@@ -173,6 +174,24 @@ export default function MapController() {
         return (bounds)? bounds.getNorthEast().distanceTo(bounds.getNorthWest()) : boundSizeDict.level6;
     }
 
+    function setupPlanFilter() {
+        if (mapStore.planFilterTypes === []) return;
+        console.log(mapStore.planFilterTypes);
+
+        for (let i = 0; i < mapStore.planFilterTypes.length; i++) {
+            let planType = mapStore.planFilterTypes[i];
+            if (!dataStore.isStateDataReady(planType, mapStore.state)) continue;
+            let style = {
+                color: convertPlanTypeToColorType(planType),
+                "fill": false,
+                "fillOpacity": 0,
+            }
+
+            let geojson = getFilteredGeojson(planType);
+            addNewLayerToLayerGroup(geojson, LayerGroupType.PLANFILTER, {style: style});
+        }
+    }
+
     function setupView() {
         if (mapStore.isStateNone())
             setCountryView();
@@ -196,7 +215,7 @@ export default function MapController() {
             onEachFeature: (feature, layer) => layer.on('click', () => onDistrictClick(feature, layer)),
         };
 
-        let geojson = getFilteredGeojson();
+        let geojson = getFilteredGeojson(mapStore.plan);
         addNewLayerToLayerGroup(geojson, LayerGroupType.STATE_DEFAULT, option);
     }
 
@@ -241,9 +260,9 @@ export default function MapController() {
         return layerGroup;
     }
 
-    function getFilteredGeojson() {
-        let stateData = dataStore.getStateModelData(mapStore.plan, mapStore.state);
-        let geojson = dataStore.getStateGeoJson(mapStore.plan, mapStore.state);
+    function getFilteredGeojson(planType) {
+        let stateData = dataStore.getStateModelData(planType, mapStore.state);
+        let geojson = dataStore.getStateGeoJson(planType, mapStore.state);
         if (mapStore.incumbentFilter) {
             geojson = geoJsonHelper.getFilteredGeoJsonByIDs(geojson, stateData.getIncumbentDistrictIDs());
         }

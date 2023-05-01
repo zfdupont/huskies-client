@@ -28,6 +28,14 @@ export function calculateHeatMapFeatureValues(min, max) {
     for (let i = 0; i < 5; i++) {
         values.push((start + (i * variation)))
     }
-    values.push(end);
+    values.push(end)
     return values;
+}
+
+export function remove(array, element) {
+    const index = array.indexOf(element);
+    if (index !== -1) {
+        return array.splice(index, 1);
+    }
+    return array
 }
