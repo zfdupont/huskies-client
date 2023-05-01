@@ -1,4 +1,12 @@
-import {LayerGroupType, MapFilterType, StyleType, boundSizeDict, zoomLevelDict, PopulationType} from "./GlobalVariables";
+import {
+    LayerGroupType,
+    MapFilterType,
+    StyleType,
+    boundSizeDict,
+    zoomLevelDict,
+    PopulationType,
+    PlanType, colorDict
+} from "./GlobalVariables";
 
 
 export function convertMapFilterTypeToLayerType(filterType){
@@ -58,6 +66,19 @@ export function convertBoundSizeToZoomLevel(targetSize)
             return zoomLevels[i]
     }
     return zoomLevelDict.level6;
+}
+
+export function convertPlanTypeToColorType(planType) {
+    // eslint-disable-next-line default-case
+    switch(planType)
+    {
+        case PlanType.S0001: return colorDict.outlineLevel1
+        case PlanType.S0002: return colorDict.outlineLevel2
+        case PlanType.S0003: return colorDict.outlineLevel3
+        case PlanType.S0004: return colorDict.outlineLevel4
+        case PlanType.S0005: return colorDict.outlineLevel5
+        default: return colorDict.black;
+    }
 }
 
 export const convertNumToPlace = (n) => {

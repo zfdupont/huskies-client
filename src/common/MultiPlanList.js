@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useContext, useEffect} from 'react';
+import {useState, useContext, useEffect} from 'react';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -12,13 +12,15 @@ import StoreContext from './Store';
 import {PlanType} from "./GlobalVariables";
 
 export default function NestedList() {
-    const { mapStore, dataStore } = useContext(StoreContext);
-    const [open, setOpen] = React.useState(true);
-
-    useEffect(() => {
-        // Select 2022 plan by default.
-        onPlanButtonClick(PlanType.Y2022);
-    }, [])
+    const { mapStore } = useContext(StoreContext);
+    const [open, setOpen] = useState(true);
+    const [filters, setFilters]= useState({
+        [PlanType.S0001]: false,
+        [PlanType.S0002]: false,
+        [PlanType.S0003]: false,
+        [PlanType.S0004]: false,
+        [PlanType.S0005]: false,
+    })
 
     const handleClick = () => {
         setOpen(!open);
@@ -27,7 +29,6 @@ export default function NestedList() {
     let listTitle = "Plan Filter";
     let planButtons = createPlanButtons();
 
-
     function createPlanButtons()
     {
         let planButtons = [];
@@ -35,8 +36,9 @@ export default function NestedList() {
         {
             if (PlanType[key] === PlanType.Y2022) continue;
             let planType = PlanType[key];
+            console.log(planType);
             planButtons.push(
-                <ListItemButton key={planType} selected={isPlanSelected(planType)} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
+                <ListItemButton key={planType} selected={filters[planType]} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
                     <ListItemText primary={planType} primaryTypographyProps={{fontSize: "12px"}}  />
                 </ListItemButton>
             )
@@ -44,12 +46,16 @@ export default function NestedList() {
         return planButtons;
     }
 
-    function isPlanSelected(planType){
-        return (mapStore.getMapPlan() === planType)
-    }
-
     function onPlanButtonClick(planType){
-        mapStore.selectPlan(planType);
+        console.log(planType);
+        if (!filters[planType]) {
+            mapStore.addPlanFilter(planType);
+            setFilters((prev) => ({...prev, [planType]: true}));
+        }
+        else {
+            mapStore.removePlanFilter(planType);
+            setFilters((prev) => ({...prev, [planType]: false}));
+        }
     }
 
     return (

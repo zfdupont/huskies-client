@@ -31,3 +31,11 @@ export function calculateHeatMapFeatureValues(min, max) {
     values.push(end);
     return values;
 }
+
+export function remove(array, element) {
+    const index = array.indexOf(element);
+    if (index !== -1) {
+        return array.splice(index, 1);
+    }
+    return array
+}

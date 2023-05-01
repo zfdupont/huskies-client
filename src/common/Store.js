@@ -10,13 +10,14 @@ import {
 } from './GlobalVariables';
 import api from './api.js';
 import StateModel from "../models/StateModel";
+import {remove} from "./CalculationHelper";
 export const StoreContext = createContext({});
 
 // --- CONTEXT PROVIDER---------------------------------
 function StoreContextProvider(props) {
     const [mapStore, setMapStore] = useState({
         plan: null,
-        subPlan: null,
+        planFilterTypes: [],
         state: StateType.NONE,
         prevState: null,
         districtId: null,
@@ -46,8 +47,12 @@ function StoreContextProvider(props) {
         switch (type) {
             case MapActionType.SELECT_PLAN:
                 return setMapStore((prev) => ({...prev, plan: payload.planType}));
-            case MapActionType.SELECT_SUB_PLAN:
-                return setMapStore((prev) => ({...prev, subPlan: payload.subPlanType}));
+            case MapActionType.ADD_PLAN_FILTER:
+                return setMapStore((prev) => ({...prev, planFilterTypes: [...prev.planFilterTypes, payload.planType]}));
+            case MapActionType.REMOVE_PLAN_FILTER:
+                let tempTypes = mapStore.planFilterTypes;
+                remove(tempTypes, payload.planType);
+                return setMapStore((prev) => ({...prev, planFilterTypes: tempTypes}))
             case MapActionType.SELECT_STATE:
                 return setMapStore((prev) => ({...prev, state: payload.stateType, districtId: null}));
             case MapActionType.UNSELECT_STATE:
@@ -112,14 +117,23 @@ function StoreContextProvider(props) {
         }
     }
 
-    mapStore.selectSubPlan = async function(planType) {
-        if (mapStore.subPlan === planType || mapStore.plan === planType) return;
+    mapStore.addPlanFilter = async function(planType) {
+        if (mapStore.plan === planType) return;
 
         mapStoreReducer({
-            type: MapActionType.SELECT_SUB_PLAN,
-            payload: {subPlanType: planType},
+            type: MapActionType.ADD_PLAN_FILTER,
+            payload: {planType: planType},
         })
         await dataStore.addStateData(planType, mapStore.state);
+    }
+    
+    mapStore.removePlanFilter = function(planType) {
+        if (!mapStore.planFilterTypes.includes(planType)) return;
+        
+        mapStoreReducer({
+            type: MapActionType.REMOVE_PLAN_FILTER,
+            payload: {planType: planType},
+        })
     }
 
     mapStore.selectState = async function(stateType) {
@@ -160,13 +174,6 @@ function StoreContextProvider(props) {
         mapStoreReducer({
             type: MapActionType.HIGHLIGHT_DISTRICT,
             payload: {districtId: districtId}
-        })
-    }
-
-    mapStore.mixingValueChange = function(value) {
-        mapStoreReducer({
-            type: MapActionType.MIXING_VALUE_CHANGE,
-            payload: {value: value},
         })
     }
 
@@ -267,7 +274,7 @@ function StoreContextProvider(props) {
     mapStore.getState = () => mapStore.state;
     mapStore.getHighlightDistrictId = () => mapStore.districtId;
     mapStore.isPlanSelected = () => mapStore.plan !== null;
-    mapStore.isSubPlanSelected = () => mapStore.subPlan !== null;
+    mapStore.isPlanFilterSelected = (planType) => mapStore.planFilterTypes.includes(planType);
     mapStore.isStateChanged = () => mapStore.state !== mapStore.prevState;
     mapStore.isStateNone = () => mapStore.state === StateType.NONE;
     mapStore.isStateMatch = (stateType) => stateType === mapStore.state;

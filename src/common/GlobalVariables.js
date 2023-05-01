@@ -8,7 +8,8 @@ import ILD from "../0.data/ILD.json";
 
 export const MapActionType = {
     SELECT_PLAN: "selectPlan",
-    SELECT_SUB_PLAN: "selectSubPlan",
+    ADD_PLAN_FILTER: "addPlanFilter",
+    REMOVE_PLAN_FILTER: "removePlanFilter",
     SELECT_STATE: "selectState",
     UNSELECT_STATE: "unselectState",
     UPDATE_COLOR_FILTER: "updateColorFilter",
@@ -114,6 +115,7 @@ export const LayerGroupType = {
     BLACK: "black",
     ASIAN: "asian",
     HIGHLIGHT: "highlight",
+    PLANFILTER: "planFilter",
 }
 
 // @enum {string}
@@ -144,7 +146,13 @@ export const zoomLevelDict = {
 
 export const colorDict = {
     white: "#ffffff",
+    black: "#000000",
     highlight: "#ffe8a4",
+    outlineLevel1: "#6b0000",
+    outlineLevel2: "#6b3900",
+    outlineLevel3: "#006b19",
+    outlineLevel4: "#00466b",
+    outlineLevel5: "#34006b",
     democraticDefault: "#0984e3",
     democraticLevel1: "#aec1ff",
     democraticLevel2: "#507bff",
@@ -194,6 +202,13 @@ export const populationColors = [
     colorDict.populationLevel6,
 ]
 
+export const outlineColors = [
+    colorDict.outlineLevel1,
+    colorDict.outlineLevel2,
+    colorDict.outlineLevel3,
+    colorDict.outlineLevel4,
+    colorDict.outlineLevel5,
+]
 
 export const GeoData = {}
 GeoData[StateType.NEWYORK] = {}
