@@ -18,7 +18,6 @@ import {
     republicanColors,
     StyleType,
     populationColors,
-    outlineColors,
 } from '../../common/GlobalVariables';
 import geoJsonHelper from '../../common/GeoJsonHelper';
 import {

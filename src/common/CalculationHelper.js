@@ -28,7 +28,7 @@ export function calculateHeatMapFeatureValues(min, max) {
     for (let i = 0; i < 5; i++) {
         values.push((start + (i * variation)))
     }
-    values.push(end);
+    values.push(end)
     return values;
 }
 

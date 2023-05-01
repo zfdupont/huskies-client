@@ -1,7 +1,15 @@
 import * as React from "react";
+import {useContext} from 'react';
+import StoreContext from '../../common/Store';
 import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 
 export default function StateInfoTable() {
+
+    const {mapStore, dataStore} = useContext(StoreContext);
+    if (!dataStore.isReadyToDisplayCurrentMap()) return null;
+    const modelData = dataStore.getStateModelData(mapStore.plan, mapStore.state);
+    const summaryData = modelData.summaryData;
+
     return (
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight:'500', fontSize:'12px', color:'white'}}>
             <TableContainer component={Paper}>
@@ -9,8 +17,6 @@ export default function StateInfoTable() {
                     <TableHead>
                         <TableRow>
                             <TableCell sx={{ fontSize: 12 }} align="center">Total Districts</TableCell>
-                            <TableCell sx={{ fontSize: 12 }} align="center">Dem</TableCell>
-                            <TableCell sx={{ fontSize: 12 }} align="center">Rep</TableCell>
                             <TableCell sx={{ fontSize: 12 }} align="center">Incumbents</TableCell>
                         </TableRow>
                     </TableHead>
@@ -19,10 +25,8 @@ export default function StateInfoTable() {
                             key={'summary'}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <TableCell sx={{ fontSize: 12 }} align="center">10</TableCell>
-                            <TableCell sx={{ fontSize: 12 }} align="center">10</TableCell>
-                            <TableCell sx={{ fontSize: 12 }} align="center">10</TableCell>
-                            <TableCell sx={{ fontSize: 12 }} align="center">10</TableCell>
+                            <TableCell sx={{ fontSize: 12 }} align="center">{summaryData.numOfDistrics}</TableCell>
+                            <TableCell sx={{ fontSize: 12 }} align="center">{summaryData.numOfIncumbents}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>

@@ -57,7 +57,7 @@ export default function DistrictSummaryItem(props) {
                             {data.winnerCandidate}
                         </div>
                         <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 40px'}}>
-                            {(data.winnerCandidate === data.incumbent) &&<Checkbox defaultChecked color="default" size="small" sx={{position: 'relative', margin:'-10px'}}/>}
+                            {(data.winnerCandidate === data.incumbent) &&<Checkbox defaultChecked disabled={true} color="default" size="small" sx={{position: 'relative', margin:'-10px'}}/>}
                         </div>
                         <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, color:'black'}}>
                             {data.winnerVotes?.toLocaleString()}
