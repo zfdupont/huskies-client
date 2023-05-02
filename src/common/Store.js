@@ -56,7 +56,7 @@ function StoreContextProvider(props) {
             case MapActionType.SELECT_STATE:
                 return setMapStore((prev) => ({...prev, state: payload.stateType, districtId: null}));
             case MapActionType.UNSELECT_STATE:
-                return setMapStore((prev) => ({...prev, state: StateType.NONE}));
+                return setMapStore((prev) => ({...prev, state: StateType.NONE, planFilterTypes: [],  incumbentFilter: false, mapFilterType: MapFilterType.NONE, districtId: null}));
             case MapActionType.UPDATE_COLOR_FILTER:
                 return setMapStore((prev) => ({...prev, mapFilterType: payload.mapFilterType}));
             case MapActionType.UPDATE_INCUMBENT_FILTER:
@@ -66,7 +66,7 @@ function StoreContextProvider(props) {
             case MapActionType.RESET_STATE:
                 return setMapStore((prev) => ({...prev, planFilterTypes: [],  incumbentFilter: false, mapFilterType: MapFilterType.NONE, districtId: null}))
             case MapActionType.RESET_PAGE:
-                return setMapStore((prev) => ({...prev}));
+                return setMapStore((prev) => ({...prev, state: StateType.NONE, planFilterTypes: [],  incumbentFilter: false, mapFilterType: MapFilterType.NONE, districtId: null}));
             default:
                 return;
         }
