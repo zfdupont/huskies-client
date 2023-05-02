@@ -138,6 +138,8 @@ export default function MapController() {
                 return populationColors[i];
             }
         }
+        console.log(featureValues);
+        console.log(population);
     }
 
     function setupHighlightDistrict() {
@@ -176,7 +178,6 @@ export default function MapController() {
 
     function setupPlanFilter() {
         if (mapStore.planFilterTypes === []) return;
-        console.log(mapStore.planFilterTypes);
 
         for (let i = 0; i < mapStore.planFilterTypes.length; i++) {
             let planType = mapStore.planFilterTypes[i];

@@ -16,7 +16,7 @@ export function convertMapFilterTypeToLayerType(filterType){
         case MapFilterType.VICTORYMARGIN: return LayerGroupType.VICTORYMARGIN;
         case MapFilterType.WHITE: return LayerGroupType.WHITE;
         case MapFilterType.BLACK: return LayerGroupType.BLACK;
-        case MapFilterType.ASIAN: return LayerGroupType.ASIAN;
+        case MapFilterType.HISPANIC: return LayerGroupType.HISPANIC;
     }
 }
 
@@ -27,7 +27,7 @@ export function convertMapFilterTypeToStyleType(filterType){
         case MapFilterType.VICTORYMARGIN: return StyleType.VICTORYMARGIN;
         case MapFilterType.WHITE: return StyleType.DEMOGRAPHIC;
         case MapFilterType.BLACK: return StyleType.DEMOGRAPHIC;
-        case MapFilterType.ASIAN: return StyleType.DEMOGRAPHIC;
+        case MapFilterType.HISPANIC: return StyleType.DEMOGRAPHIC;
     }
 }
 
@@ -37,7 +37,7 @@ export function convertMapFilterTypeToPopulationType(filterType){
     {
         case MapFilterType.WHITE: return PopulationType.WHITE;
         case MapFilterType.BLACK: return PopulationType.BLACK;
-        case MapFilterType.ASIAN: return PopulationType.ASIAN;
+        case MapFilterType.HISPANIC: return PopulationType.HISPANIC;
         default: return PopulationType.NONE;
     }
 }

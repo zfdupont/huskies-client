@@ -18,7 +18,6 @@ export default function DistrictSummaryItem(props) {
     let winVotePercent = Math.ceil((data.winnerVotes  / (data.winnerVotes + data.loserVotes)) * 100 );
     let loseVotePercent = 100 - winVotePercent;
     const isHighlighted = mapStore.getHighlightDistrictId() === data.districtId;
-    const isSimulation = mapStore.plan !== PlanType.Y2022;
     let bgColor = (isHighlighted)? colorDict.highlight : colorDict.white;
 
     function onItemClick() {
@@ -38,7 +37,7 @@ export default function DistrictSummaryItem(props) {
         createData('Total Population difference', (compareData.population  * 100).toFixed(1)),
         createData('White population difference', (compareData.white  * 100).toFixed(1)),
         createData('Black population difference', (compareData.black  * 100).toFixed(1)),
-        createData('Asian population difference', (compareData.asian  * 100).toFixed(1)),
+        createData('Hispanic population difference', (compareData.hispanic  * 100).toFixed(1)),
     ];
 
     return (

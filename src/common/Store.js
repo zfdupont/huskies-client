@@ -206,11 +206,21 @@ function StoreContextProvider(props) {
         return new StateModel(planType, stateType, geojsonStateProperties);
     }
 
-    dataStore.addMockData = function(stateData) {
-        for (let key in stateData)
-        {
-            stateData[key].district_id = (!stateData[key].district_id)? key : stateData[key].district_id;
+    dataStore.addExtraPropForSimulationPlan = function(planType, geojson) {
+        if (planType === PlanType.Y2022) return;
 
+        for (let i = 0; i < geojson.features.length; i++) {
+            const props = geojson.features[i].properties;
+            props["democrat_votes"] = props["democrat"];
+            props["republican_votes"] = props["republican"];
+            if (props["incumbent_party"] === "D") {
+                props["democrat_candidate"] = props["incumbent"];
+                props["republican_candidate"] = "Opponent";
+            }
+            if (props["incumbent_party"] === "R") {
+                props["republican_candidate"] = props["incumbent"];
+                props["democrat_candidate"] = "Opponent";
+            }
         }
     }
 
@@ -228,7 +238,9 @@ function StoreContextProvider(props) {
         if (dataStore.isStateDataReady(planType, stateType)) return;
 
         let geojson = await api.getStateGeojson(planType, stateType);
+        console.log(geojson);
         dataStore.setDistrictIdOfGeojson(geojson);
+        dataStore.addExtraPropForSimulationPlan(planType, geojson);
         let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
         console.log(stateModelData);
 

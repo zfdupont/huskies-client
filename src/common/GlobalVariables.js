@@ -79,7 +79,7 @@ export const MapFilterType = {
     VICTORYMARGIN: "party",
     WHITE: "white",
     BLACK: "black",
-    ASIAN: "asian",
+    HISPANIC: "hispanic",
 }
 
 // @enum {string}
@@ -88,7 +88,7 @@ export const PopulationType = {
     TOTAL: 'total',
     WHITE: 'white',
     BLACK: 'black',
-    ASIAN: 'asian',
+    HISPANIC: 'hispanic',
 }
 
 // @enum {string}
@@ -113,7 +113,7 @@ export const LayerGroupType = {
     VICTORYMARGIN: "party",
     WHITE: "white",
     BLACK: "black",
-    ASIAN: "asian",
+    HISPANIC: "hispanic",
     HIGHLIGHT: "highlight",
     PLANFILTER: "planFilter",
 }

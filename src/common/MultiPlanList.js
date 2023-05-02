@@ -54,7 +54,6 @@ export default function NestedList() {
         {
             if (PlanType[key] === PlanType.Y2022) continue;
             let planType = PlanType[key];
-            console.log(planType);
             planButtons.push(
                 <ListItemButton key={planType} selected={filters[planType]} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
                     <ListItemText primary={PlanTitleType[planType]} primaryTypographyProps={{fontSize: "12px"}}  />
@@ -65,7 +64,6 @@ export default function NestedList() {
     }
 
     function onPlanButtonClick(planType){
-        console.log(planType);
         if (!filters[planType]) {
             mapStore.addPlanFilter(planType);
             setFilters((prev) => ({...prev, [planType]: true}));
