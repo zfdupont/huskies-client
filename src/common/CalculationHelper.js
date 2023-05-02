@@ -4,7 +4,7 @@ function getFirstDigit(number) {
 
 export function roundUpToFirstDigit(number) {
     if (number <= 0) return 0;
-    return getFirstDigit(number) * 10 ** (Math.floor(Math.log10(number)));
+    return (getFirstDigit(number)+1) * 10 ** (Math.floor(Math.log10(number)));
 }
 
 export function roundDownToFirstDigit(number) {

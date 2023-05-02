@@ -30,7 +30,7 @@ export default class StateModel {
                 demVoteMargin : data["democrat_votes"] - data["republican_votes"],
                 whiteVotes : data["vap_white"],
                 blackVotes : data["vap_black"],
-                asianVotes : data["vap_asian"],
+                hispanicVotes : data["vap_hisp"],
                 winnerVotes : (data["democrat_votes"] > data["republican_votes"])? data["democrat_votes"] : data["republican_votes"],
                 loserVotes : (data["democrat_votes"] < data["republican_votes"])? data["democrat_votes"] : data["republican_votes"],
                 winVotePercent: 0,
@@ -45,7 +45,7 @@ export default class StateModel {
             electionData.getPopulationByType = (filter) => {
                 if (filter === MapFilterType.WHITE) return electionData.whiteVotes;
                 if (filter === MapFilterType.BLACK) return electionData.blackVotes;
-                if (filter === MapFilterType.ASIAN) return electionData.asianVotes;
+                if (filter === MapFilterType.HISPANIC) return electionData.hispanicVotes;
                 return 0;
             }
             electionDataDict[districtId] = electionData;
@@ -65,7 +65,7 @@ export default class StateModel {
                 population : parseFloat(data.vap_total_variation).toFixed(3),
                 white : parseFloat(data.vap_white_variation).toFixed(3),
                 black : parseFloat(data.vap_black_variation).toFixed(3),
-                asian : parseFloat(data.vap_asian_variation).toFixed(3),
+                hispanic : parseFloat(data.vap_hisp_variation).toFixed(3),
             }
         }
         return dict;
@@ -76,14 +76,14 @@ export default class StateModel {
             minDemVoteMargin: Number.MAX_SAFE_INTEGER,
             minWhite: Number.MAX_SAFE_INTEGER,
             minBlack: Number.MAX_SAFE_INTEGER,
-            minAsian: Number.MAX_SAFE_INTEGER,
+            minHispanic: Number.MAX_SAFE_INTEGER,
             maxDemVoteMargin: Number.MIN_SAFE_INTEGER,
             maxWhite: Number.MIN_SAFE_INTEGER,
             maxBlack: Number.MIN_SAFE_INTEGER,
-            maxAsian: Number.MIN_SAFE_INTEGER,
+            maxHispanic: Number.MIN_SAFE_INTEGER,
             whiteFeatureValues: [],
             blackFeatureValues: [],
-            asianFeatureValues: [],
+            hispanicVotesFeatureValues: [],
             democraticFeatureValues: [],
             republicanFeatureValues: [],
             victoryMarginFeatureValues: [3, 5, 10, 20, 50, 100],
@@ -95,21 +95,21 @@ export default class StateModel {
             result.minDemVoteMargin = Math.min(data["democrat_votes"] - data["republican_votes"], result.minDemVoteMargin);
             result.minWhite = Math.min(data["vap_white"], result.minWhite);
             result.minBlack = Math.min(data["vap_black"], result.minBlack);
-            result.minAsian = Math.min(data["vap_asian"], result.minAsian);
+            result.minHispanic = Math.min(data["vap_hisp"], result.minHispanic);
             result.maxDemVoteMargin = Math.max(data["democrat_votes"] - data["republican_votes"], result.maxDemVoteMargin);
             result.maxWhite = Math.max(data["vap_white"], result.maxWhite);
             result.maxBlack = Math.max(data["vap_black"], result.maxBlack);
-            result.maxAsian = Math.max(data["vap_asian"], result.maxAsian);
+            result.maxHispanic = Math.max(data["vap_hisp"], result.maxHispanic);
         }
 
         result.whiteFeatureValues = calculateHeatMapFeatureValues(result.minWhite, result.maxWhite);
         result.blackFeatureValues = calculateHeatMapFeatureValues(result.minBlack, result.maxBlack);
-        result.asianFeatureValues = calculateHeatMapFeatureValues(result.minAsian, result.maxAsian);
+        result.hispanicFeatureValues = calculateHeatMapFeatureValues(result.minHispanic, result.maxHispanic);
 
         result.getFeatureValuesByPopulationType = (filter) => {
             if (filter === PopulationType.WHITE) return result.whiteFeatureValues;
             if (filter === PopulationType.BLACK) return result.blackFeatureValues;
-            if (filter === PopulationType.ASIAN) return result.asianFeatureValues;
+            if (filter === PopulationType.HISPANIC) return result.hispanicFeatureValues;
             return null;
         }
         return result;
