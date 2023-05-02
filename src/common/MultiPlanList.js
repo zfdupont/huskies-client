@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useState, useContext, useEffect} from 'react';
+import {useState, useContext, useEffect, useCallback} from 'react';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -12,7 +12,7 @@ import StoreContext from './Store';
 import {PlanTitleType, PlanType} from "./GlobalVariables";
 
 export default function NestedList() {
-    const { mapStore } = useContext(StoreContext);
+    const { mapStore, callbacks } = useContext(StoreContext);
     const [open, setOpen] = useState(true);
     const [filters, setFilters]= useState({
         [PlanType.S0001]: false,
@@ -21,6 +21,24 @@ export default function NestedList() {
         [PlanType.S0004]: false,
         [PlanType.S0005]: false,
     })
+
+    useEffect(() => {
+        callbacks.addOnResetState(resetStateFilter);
+    }, [])
+
+    const resetStateFilter = useCallback(() => {
+        resetFilters();
+    }, [])
+
+    function resetFilters() {
+        setFilters(() => ({
+            [PlanType.S0001]: false,
+            [PlanType.S0002]: false,
+            [PlanType.S0003]: false,
+            [PlanType.S0004]: false,
+            [PlanType.S0005]: false,
+        }))
+    }
 
     const handleClick = () => {
         setOpen(!open);
