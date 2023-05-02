@@ -56,19 +56,17 @@ function StoreContextProvider(props) {
             case MapActionType.SELECT_STATE:
                 return setMapStore((prev) => ({...prev, state: payload.stateType, districtId: null}));
             case MapActionType.UNSELECT_STATE:
-                return setMapStore((prev) => ({...prev, state: StateType.NONE}));
+                return setMapStore((prev) => ({...prev, state: StateType.NONE, planFilterTypes: [],  incumbentFilter: false, mapFilterType: MapFilterType.NONE, districtId: null}));
             case MapActionType.UPDATE_COLOR_FILTER:
                 return setMapStore((prev) => ({...prev, mapFilterType: payload.mapFilterType}));
             case MapActionType.UPDATE_INCUMBENT_FILTER:
                 return setMapStore((prev) => ({...prev, incumbentFilter: payload.isIncumbent}));
             case MapActionType.HIGHLIGHT_DISTRICT:
                 return setMapStore((prev) => ({...prev, districtId: payload.districtId}));
-            case MapActionType.SET_HEATMAP_FEATURE_VALUES:
-                return setMapStore((prev) => ({...prev, heatMapFeatureValues: []}))
             case MapActionType.RESET_STATE:
-                return setMapStore((prev) => ({...prev, districtId: null}))
+                return setMapStore((prev) => ({...prev, planFilterTypes: [],  incumbentFilter: false, mapFilterType: MapFilterType.NONE, districtId: null}))
             case MapActionType.RESET_PAGE:
-                return setMapStore((prev) => ({...prev}));
+                return setMapStore((prev) => ({...prev, state: StateType.NONE, planFilterTypes: [],  incumbentFilter: false, mapFilterType: MapFilterType.NONE, districtId: null}));
             default:
                 return;
         }
@@ -191,14 +189,6 @@ function StoreContextProvider(props) {
         })
         callbacks.invokeAll(callbacks.resetState);
     }
-    
-    mapStore.setHeatMapFeatureValues = function(heatMapFeatureValues) {
-        mapStoreReducer({
-            type: MapActionType.SET_HEATMAP_FEATURE_VALUES,
-            payload: { heatMapFeatureValues: heatMapFeatureValues }
-        })
-    }
-
 
 // --- DATA STORE FUNCTIONS -----------------------------
     dataStore.setDistrictIdOfGeojson = function(geojson) {
