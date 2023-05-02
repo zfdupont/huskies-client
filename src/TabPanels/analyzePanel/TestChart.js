@@ -32,9 +32,10 @@ class TestChart extends Component {
         }
     }
 
-    handleChange = function(a) {
-        console.log(a);
-        //this.setState({age : a}); 
+    handleChange = (e) => {
+        console.log(e.target.value);
+        let val = e.target.value;
+        this.setState({age : val}); 
     }
 
   constructor(props) {
@@ -89,11 +90,16 @@ class TestChart extends Component {
             },
             type: 'boxPlot',
             height: 350,
-            width: 500
+            width: 500,
+            sparkline: {
+                enabled: false
+              },
+            parentHeightOffset: 0,
+            
           },
           title: {
-            //text: 'Basic BoxPlot Chart',
-            align: 'left'
+            text: 'Variation',
+            align: 'center'
           },
           yaxis: {
             title: {
@@ -134,7 +140,7 @@ class TestChart extends Component {
     //       </div>
     //     </div>
         <div>
-        <div style={{display:'flex', flexDirection:'column', flex:'1', overflow: 'auto', minHeight: 0}}>
+        <div style={{}}>
             <Chart
                 options={this.state.options}
                 series={this.state.series}
@@ -143,14 +149,14 @@ class TestChart extends Component {
                 width={500}
                 />            
         </div>
-        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+        <FormControl sx={{ m: 1, minWidth: 120, marginLeft: 70 }} size="small">
                 <InputLabel id="demo-select-small-label">Variation</InputLabel>
                 <Select
                     labelId="demo-select-small-label"
                     id="demo-select-small"
                     value={this.state.age}
                     label="Select"
-                    onChange={this.handleChange(this.value)}
+                    onChange={this.handleChange}
                 >
                     {/* <MenuItem value="">
                     <em>None</em>

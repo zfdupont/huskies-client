@@ -25,24 +25,24 @@ export default function ChartBox()
         //console.log(state);
     });
     
-    let districtSummaryInfo = getDistrictSummaryInfo();
+    let boxWhiskerChart = getDistrictSummaryInfo();
 
     function getDistrictSummaryInfo() {
-        const districtSummaryInfo = [];
-        if (!dataStore.isEnsemblejsonReady()) return districtSummaryInfo;
+        const boxWhiskerChart = [];
+        if (!dataStore.isEnsemblejsonReady()) return boxWhiskerChart;
         //let stateModelData = dataStore.getStateModelData(mapStore.getMapPlan(), mapStore.getState());
         let bw_data = dataStore.getEnsembleData().box_w_data;
         if(bw_data) {
-            districtSummaryInfo.push(<TestChart key={1} data={bw_data}/>);
+            boxWhiskerChart.push(<TestChart key={1} data={bw_data}/>);
         }
         console.log(bw_data);
         // for (let id in stateModelData.electionDataDict) {
         //     if (state.incumbentFilter && !stateModelData.electionDataDict[id].hasIncumbent) continue;
 
-        //     districtSummaryInfo.push(<TestChart data={bw_data}} />);
-        //     districtSummaryInfo.push(<DistrictSummaryItem key={id} electionData={stateModelData.electionDataDict[id]}/>);
+        //     boxWhiskerChart.push(<TestChart data={bw_data}} />);
+        //     boxWhiskerChart.push(<DistrictSummaryItem key={id} electionData={stateModelData.electionDataDict[id]}/>);
         // }
-        return districtSummaryInfo;
+        return boxWhiskerChart;
     }
 
 
@@ -71,7 +71,7 @@ export default function ChartBox()
                 </div>
             ) : <div></div>} */}
             {/* {bwdata} */}
-            {districtSummaryInfo}
+            {boxWhiskerChart}
         </div>
     );
 }
