@@ -6,9 +6,6 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 class TestChart extends Component {
-    // state = {
-    //     type: 'geo_var'
-    // };
 
     buildData = function(bw_data) {
         if(!bw_data){
@@ -35,7 +32,7 @@ class TestChart extends Component {
     handleChange = (e) => {
         console.log(e.target.value);
         let val = e.target.value;
-        this.setState({age : val}); 
+        this.setState({type : val}); 
     }
 
   constructor(props) {
@@ -43,7 +40,7 @@ class TestChart extends Component {
     var graphData = this.buildData(props.data);
     //console.log(graphData);
     this.state = { 
-        age: 'geo-var',
+        type: 'geo-var',
         series: [
           {
             type: 'boxPlot',
@@ -154,7 +151,7 @@ class TestChart extends Component {
                 <Select
                     labelId="demo-select-small-label"
                     id="demo-select-small"
-                    value={this.state.age}
+                    value={this.state.type}
                     label="Select"
                     onChange={this.handleChange}
                 >

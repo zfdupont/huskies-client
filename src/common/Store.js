@@ -264,6 +264,8 @@ function StoreContextProvider(props) {
         dataStore.setDistrictIdOfGeojson(geojson); // TO DO : remove this line if DistrictId added from server.
 
         let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
+        console.log(summaryJson);
+        console.log(stateModelData);
         dataStoreReducer({
             type: DataActionType.ADD_STATE_DATA,
             payload: {planType: planType, stateType: stateType, geojson: geojson, stateModelData: stateModelData, ensemble: summaryJson}
