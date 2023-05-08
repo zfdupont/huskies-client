@@ -3,11 +3,11 @@ import Chart from "react-apexcharts";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 
-class TestChart extends Component {
+class BoxAndWhiskerChart extends Component {
 
-    buildData = function(bw_data) {
+    buildData = function(bw_data, type) {
         if(!bw_data){
             return [];
         }
@@ -16,65 +16,90 @@ class TestChart extends Component {
             // for (let point in bw_data.geo_variations) {
             //     boxplot_data.push({x: , y: point})
             // }
-            bw_data.geo_variations.forEach(function (value, i) {
-                
+            var data = [];
+            bw_data[type].forEach(function (value, i) {
                 for(let i = 0; i < value.length; i++) {
-                    value[i] =  Math.round((value[i] * 10) * 100)/100;
-                    //y[x] = Math.round((y[x] * 100) * 100)/100;
+                    let val = value[i];
+                    val =  Math.round(val * 1e4) / 1e2;
+                    data.push(val);
+                    //value[i] =  Math.round((value[i] * 10) * 100)/100;
                 }
                 
-                boxplot_data.push({x: (i+1), y: value})
+                boxplot_data.push({x: (i+1), y: data})
+                data = [];
             });
             return boxplot_data;
         }
     }
 
     handleChange = (e) => {
-        console.log(e.target.value);
         let val = e.target.value;
-        this.setState({type : val}); 
+        var data;
+        if(val === 'pop-var') {
+          data = this.buildData(this.state.originalData, 'pop_variations');
+          this.setState((prevState) => ({
+            ...prevState,
+            type: val,
+            series: [{
+              ...prevState.series,
+              data: data
+            }],
+            options:{ ...prevState.options,
+              chart: {
+                  ...prevState.chart,
+                  id: 'pie-chart'
+              }
+            }
+          }));
+        }
+        if(val === 'geo-var') {
+          data = this.buildData(this.state.originalData, 'geo_variations');
+          this.setState((prevState) => ({
+            ...prevState,
+            type: val,
+            series: [{
+              ...prevState.series,
+              data: data
+            }],
+            options:{ ...prevState.options,
+              chart: {
+                  ...prevState.chart,
+                  id: 'pie-chart'
+              }
+            }
+          }));
+        }
+        if(val === 'dem-var') {
+          data = this.buildData(this.state.originalData, 'vap_black_proportions');
+          this.setState((prevState) => ({
+            ...prevState,
+            type: val,
+            series: [{
+              ...prevState.series,
+              data: data
+            }],
+            options:{ ...prevState.options,
+              chart: {
+                  ...prevState.chart,
+                  id: 'pie-chart'
+              }
+            }
+          }));
+        }
+
+
     }
 
   constructor(props) {
     super(props);
-    var graphData = this.buildData(props.data);
-    //console.log(graphData);
+    var graphData = this.buildData(props.data, 'geo_variations');
     this.state = { 
         type: 'geo-var',
+        originalData: props.data,
         series: [
           {
             type: 'boxPlot',
-            //data: graphData,
-            data: [
-              {
-                x: 'Jan 2015',
-                y: [54, 66, 69, 75, 88]
-              },
-              {
-                x: 'Jan 2016',
-                y: [43, 65, 69, 76, 81]
-              },
-              {
-                x: 'Jan 2017',
-                y: [31, 39, 45, 51, 59]
-              },
-              {
-                x: 'Jan 2018',
-                y: [39, 46, 55, 65, 71]
-              },
-              {
-                x: 'Jan 2019',
-                y: [29, 31, 35, 39, 44]
-              },
-              {
-                x: 'Jan 2020',
-                y: [41, 49, 58, 61, 67]
-              },
-              {
-                x: 'Jan 2021',
-                y: [54, 59, 66, 71, 88]
-              }
-            ]
+            data: graphData
           }
         ],
         options: {
@@ -88,9 +113,10 @@ class TestChart extends Component {
             type: 'boxPlot',
             height: 350,
             width: 500,
-            sparkline: {
-                enabled: false
-              },
+            // sparkline: {
+            //     enabled: false
+            //   },
+            id: 'box-chart',
             parentHeightOffset: 0,
             
           },
@@ -101,7 +127,10 @@ class TestChart extends Component {
           yaxis: {
             title: {
               text: 'Variation (%)',
-            }
+            },
+            min: 0,
+            max: 100,
+            tickAmount: 10,
           },
           xaxis: {
             title: {
@@ -124,18 +153,6 @@ class TestChart extends Component {
 
   render() {
     return (
-    //   <div className="testchart">
-    //     <div className="row">
-    //       <div className="mixed-chart">
-    //         <Chart
-    //           options={this.state.options}
-    //           series={this.state.series}
-    //           type="boxPlot" 
-    //           height={350}
-    //           width={500}
-    //         />
-    //       </div>
-    //     </div>
         <div>
         <div style={{}}>
             <Chart
@@ -144,9 +161,10 @@ class TestChart extends Component {
                 type="boxPlot" 
                 height={350}
                 width={500}
+                id={'box-chart'}
                 />            
         </div>
-        <FormControl sx={{ m: 1, minWidth: 120, marginLeft: 70 }} size="small">
+        <FormControl sx={{ m: 1, minWidth: 120, marginLeft: 50 }} size="small">
                 <InputLabel id="demo-select-small-label">Variation</InputLabel>
                 <Select
                     labelId="demo-select-small-label"
@@ -155,9 +173,6 @@ class TestChart extends Component {
                     label="Select"
                     onChange={this.handleChange}
                 >
-                    {/* <MenuItem value="">
-                    <em>None</em>
-                    </MenuItem> */}
                     <MenuItem value={'geo-var'}>Geo Variation</MenuItem>
                     <MenuItem value={'pop-var'}>Pop Variation</MenuItem>
                     <MenuItem value={'dem-var'}>Demographic Var</MenuItem>
@@ -170,4 +185,4 @@ class TestChart extends Component {
   }
 }
 
-export default TestChart;
+export default BoxAndWhiskerChart;

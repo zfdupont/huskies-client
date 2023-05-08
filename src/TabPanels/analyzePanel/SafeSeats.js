@@ -47,7 +47,6 @@ class SafeSeats extends React.Component {
       };
     }
     setData = function(selected) {
-        console.log("setting data...");
         let d = this.state.data;
         if(selected === 'Incumbent') {
             this.setState((prevState) => ({

@@ -3,7 +3,7 @@ import * as React from "react";
 import Whisker from "./Whisker.tsx";
 import {useContext, useState, useEffect} from "react";
 import StoreContext from "../../common/Store";
-import TestChart from "./TestChart";
+import BoxAndWhiskerChart from "./BoxAndWhiskerChart";
 import BarChart from "./BarChart";
 import SafeSeats from "./SafeSeats";
 
@@ -37,7 +37,7 @@ export default function ChartBox()
         let safeSeatsData = generateSafeSeatsData(stateModelData.electionDataDict);
         let bw_data = allGraphData.box_w_data;
         if(bw_data) {
-            boxWhiskerChart.push(<TestChart key={1} data={bw_data}/>);
+            boxWhiskerChart.push(<BoxAndWhiskerChart key={1} data={bw_data}/>);
         }
         if(safeSeatsData) {
             boxWhiskerChart.push(<SafeSeats key={2} data={safeSeatsData}/>);
@@ -115,7 +115,8 @@ export default function ChartBox()
                 </div>
             ) : <div></div>} */}
             {/* {bwdata} */}
-            {boxWhiskerChart[1]}
+            {boxWhiskerChart[0]}
+            {/* {boxWhiskerChart[1]} */}
             {/* <BarChart></BarChart> */}
             {/* <SafeSeats></SafeSeats> */}
         </div>
