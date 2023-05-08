@@ -36,7 +36,7 @@ class BoxAndWhiskerChart extends Component {
         let val = e.target.value;
         var data;
         if(val === 'pop-var') {
-          data = this.buildData(this.state.originalData, 'pop_variations');
+          data = this.buildData(this.state.originalData, 'area_variations');
           this.setState((prevState) => ({
             ...prevState,
             type: val,
@@ -53,7 +53,7 @@ class BoxAndWhiskerChart extends Component {
           }));
         }
         if(val === 'geo-var') {
-          data = this.buildData(this.state.originalData, 'geo_variations');
+          data = this.buildData(this.state.originalData, 'vap_total_variations');
           this.setState((prevState) => ({
             ...prevState,
             type: val,
@@ -69,8 +69,8 @@ class BoxAndWhiskerChart extends Component {
             }
           }));
         }
-        if(val === 'dem-var') {
-          data = this.buildData(this.state.originalData, 'vap_black_proportions');
+        if(val === 'black-var') {
+          data = this.buildData(this.state.originalData, 'vap_black_variations');
           this.setState((prevState) => ({
             ...prevState,
             type: val,
@@ -92,7 +92,7 @@ class BoxAndWhiskerChart extends Component {
 
   constructor(props) {
     super(props);
-    var graphData = this.buildData(props.data, 'geo_variations');
+    var graphData = this.buildData(props.data, 'vap_total_variations');
     this.state = { 
         type: 'geo-var',
         originalData: props.data,
@@ -175,7 +175,7 @@ class BoxAndWhiskerChart extends Component {
                 >
                     <MenuItem value={'geo-var'}>Geo Variation</MenuItem>
                     <MenuItem value={'pop-var'}>Pop Variation</MenuItem>
-                    <MenuItem value={'dem-var'}>Demographic Var</MenuItem>
+                    <MenuItem value={'black-var'}>Black Pop Var</MenuItem>
                 </Select>
             </FormControl>
         

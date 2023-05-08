@@ -36,6 +36,7 @@ export default function ChartBox()
         let allGraphData = dataStore.getEnsembleData();
         let safeSeatsData = generateSafeSeatsData(stateModelData.electionDataDict);
         let bw_data = allGraphData.box_w_data;
+        console.log(bw_data);
         if(bw_data) {
             boxWhiskerChart.push(<BoxAndWhiskerChart key={1} data={bw_data}/>);
         }
