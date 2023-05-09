@@ -3,27 +3,38 @@ import Chart from "react-apexcharts";
 
 
 class BarChart extends Component {
+
+
+
+    buildData = function(winner_splits) {
+        //for key in winner_splits.ke
+    }
+
     constructor(props) {
       super(props);
 
       this.state = {
       
         series: [{
-          data: [44, 55, 41, 64, 22, 43, 21]
-        }, {
-          data: [53, 32, 33, 52, 13, 44, 32]
+          data: [9, 0, 5]
         }],
         options: {
           chart: {
             type: 'bar',
             height: 350,
-            width: 500
+            width: 500,
+            toolbar: {
+                show: false,
+                tools: {
+                  download: false
+                }
+            }
           },
           plotOptions: {
             bar: {
-              dataLabels: {
-                position: 'top',
-              },
+            //   dataLabels: {
+            //     position: 'top',
+            //   },
             }
           },
           dataLabels: {
@@ -44,8 +55,22 @@ class BarChart extends Component {
             intersect: false
           },
           xaxis: {
-            categories: [2001, 2002, 2003, 2004, 2005, 2006, 2007],
+            categories: ['20/6','15/11', '21/5'],
           },
+          annotations: {
+            xaxis: [
+              {
+                x: '15/11',
+                borderColor: '#775DD0',
+                label: {
+                  style: {
+                    color: 'black',
+                  },
+                  text: 'Actual Split'
+                }
+              }
+            ]
+          }
         },
       
       

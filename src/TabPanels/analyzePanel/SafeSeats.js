@@ -25,7 +25,13 @@ class SafeSeats extends React.Component {
             },
             width: 380,
             type: 'pie',
-            id: 'pie-chart'
+            id: 'pie-chart',
+            toolbar: {
+                show: false,
+                tools: {
+                  download: false
+                }
+            },
           },
           labels: data['safeLabels'],
           title: {

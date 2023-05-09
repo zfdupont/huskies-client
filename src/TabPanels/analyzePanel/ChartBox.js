@@ -6,9 +6,11 @@ import StoreContext from "../../common/Store";
 import BoxAndWhiskerChart from "./BoxAndWhiskerChart";
 import BarChart from "./BarChart";
 import SafeSeats from "./SafeSeats";
+import { Stack, Paper, MenuList, MenuItem } from "@mui/material";
 
 const ChartButtonType = {
     BW: "box-and-whisker",
+    SAFE: 'safe-seats',
     BAR: "barchart"
 }
 
@@ -35,13 +37,18 @@ export default function ChartBox()
         let stateModelData = dataStore.getStateModelData(mapStore.getMapPlan(), mapStore.getState());
         let allGraphData = dataStore.getEnsembleData();
         let safeSeatsData = generateSafeSeatsData(stateModelData.electionDataDict);
+        let winnerSplits = generateWinnerSplitsData(allGraphData.winner_split, allGraphData['enacted_data'].winner_split);
         let bw_data = allGraphData.box_w_data;
-        console.log(bw_data);
+        console.log(winnerSplits);
         if(bw_data) {
             boxWhiskerChart.push(<BoxAndWhiskerChart key={1} data={bw_data}/>);
         }
         if(safeSeatsData) {
             boxWhiskerChart.push(<SafeSeats key={2} data={safeSeatsData}/>);
+        }
+        if(winnerSplits) {
+            console.log(winnerSplits);
+            boxWhiskerChart.push(<BarChart key={3} data={winnerSplits}/>);
         }
         //console.log(bw_data);
         // for (let id in stateModelData.electionDataDict) {
@@ -62,6 +69,11 @@ export default function ChartBox()
         //ahh how should we do this...load all data at the beginning and then load charts as necessary?
         //or request data when needed? it's already being computed anyways so it makes more sense to
         //to load all at once...
+    }
+
+    function generateWinnerSplitsData(calculated_splits, actual_split) {
+        calculated_splits[actual_split] =[1, 'enacted'];
+        return calculated_splits;
     }
 
     function generateSafeSeatsData(election_data) {
@@ -87,7 +99,7 @@ export default function ChartBox()
                 }
             } 
         }
-        console.log(safe_seats_data);
+        //console.log(safe_seats_data);
         return safe_seats_data;
     }
 
@@ -110,13 +122,24 @@ export default function ChartBox()
 
     return (
         <div>
+            <Stack direction="row" spacing={2}>
+                {/* <Paper>
+                    <MenuList>
+                        <MenuItem>Profile</MenuItem>
+                        <MenuItem>My account</MenuItem>
+                        <MenuItem>Logout</MenuItem>
+                    </MenuList>
+                </Paper> */}
+
+                {boxWhiskerChart[2]}
+             </Stack>
            {/* {state.dataReady ? (
                 <div>
                     <TestChart data={state.data}></TestChart>
                 </div>
             ) : <div></div>} */}
             {/* {bwdata} */}
-            {boxWhiskerChart[0]}
+            {/* {boxWhiskerChart[2]} */}
             {/* {boxWhiskerChart[1]} */}
             {/* <BarChart></BarChart> */}
             {/* <SafeSeats></SafeSeats> */}
