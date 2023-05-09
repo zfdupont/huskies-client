@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useContext, useEffect} from 'react';
+import {useState, useContext, useEffect, useCallback} from 'react';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -9,16 +9,36 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Star from '@mui/icons-material/Star';
 import StoreContext from './Store';
-import {PlanType} from "./GlobalVariables";
+import {PlanTitleType, PlanType} from "./GlobalVariables";
 
 export default function NestedList() {
-    const { mapStore, dataStore } = useContext(StoreContext);
-    const [open, setOpen] = React.useState(true);
+    const { mapStore, callbacks } = useContext(StoreContext);
+    const [open, setOpen] = useState(true);
+    const [filters, setFilters]= useState({
+        [PlanType.S0001]: false,
+        [PlanType.S0002]: false,
+        [PlanType.S0003]: false,
+        [PlanType.S0004]: false,
+        [PlanType.S0005]: false,
+    })
 
     useEffect(() => {
-        // Select 2022 plan by default.
-        onPlanButtonClick(PlanType.Y2022);
+        callbacks.addOnResetState(resetStateFilter);
     }, [])
+
+    const resetStateFilter = useCallback(() => {
+        resetFilters();
+    }, [])
+
+    function resetFilters() {
+        setFilters(() => ({
+            [PlanType.S0001]: false,
+            [PlanType.S0002]: false,
+            [PlanType.S0003]: false,
+            [PlanType.S0004]: false,
+            [PlanType.S0005]: false,
+        }))
+    }
 
     const handleClick = () => {
         setOpen(!open);
@@ -26,7 +46,6 @@ export default function NestedList() {
 
     let listTitle = "Plan Filter";
     let planButtons = createPlanButtons();
-
 
     function createPlanButtons()
     {
@@ -36,20 +55,23 @@ export default function NestedList() {
             if (PlanType[key] === PlanType.Y2022) continue;
             let planType = PlanType[key];
             planButtons.push(
-                <ListItemButton key={planType} selected={isPlanSelected(planType)} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
-                    <ListItemText primary={planType} primaryTypographyProps={{fontSize: "12px"}}  />
+                <ListItemButton key={planType} selected={filters[planType]} sx={{ pl: 6 }} onClick={() => onPlanButtonClick(planType)}>
+                    <ListItemText primary={PlanTitleType[planType]} primaryTypographyProps={{fontSize: "12px"}}  />
                 </ListItemButton>
             )
         }
         return planButtons;
     }
 
-    function isPlanSelected(planType){
-        return (mapStore.getMapPlan() === planType)
-    }
-
     function onPlanButtonClick(planType){
-        mapStore.selectPlan(planType);
+        if (!filters[planType]) {
+            mapStore.addPlanFilter(planType);
+            setFilters((prev) => ({...prev, [planType]: true}));
+        }
+        else {
+            mapStore.removePlanFilter(planType);
+            setFilters((prev) => ({...prev, [planType]: false}));
+        }
     }
 
     return (

@@ -48,10 +48,6 @@ export default function DistrictSummaryTable() {
         return districtSummaryInfo;
     }
 
-    function getSimulatedInfo() {
-        return []
-    }
-
     function getTitles() {
         if (state.selectedTableMenu !== TableButtonType.COMPARE) return getSubTitles();
         else return getCompareInfoTitle();
@@ -105,7 +101,7 @@ export default function DistrictSummaryTable() {
                     </div>
                     <div style={{display:'flex', alignItems:'center', justifyContent: 'right', flex:'1', fontSize:'12px'}}>
                         Only Incumbents
-                        <Switch aria-label='Switch demo' size="small" sx={{margin: 1}} checked={state.incumbentFilter} onClick={onIncumbentFilterClick} />
+                        <Switch aria-label='Switch demo' disabled={mapStore.plan !== PlanType.Y2022} size="small" sx={{margin: 1}} checked={state.incumbentFilter} onClick={onIncumbentFilterClick} />
                     </div>
                 </div>
             </div>

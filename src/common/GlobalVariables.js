@@ -8,7 +8,8 @@ import ILD from "../0.data/ILD.json";
 
 export const MapActionType = {
     SELECT_PLAN: "selectPlan",
-    SELECT_SUB_PLAN: "selectSubPlan",
+    ADD_PLAN_FILTER: "addPlanFilter",
+    REMOVE_PLAN_FILTER: "removePlanFilter",
     SELECT_STATE: "selectState",
     UNSELECT_STATE: "unselectState",
     UPDATE_COLOR_FILTER: "updateColorFilter",
@@ -41,20 +42,20 @@ export const RefType = {
 // @enum {string}
 export const PlanType = {
     Y2022: "enacted",
-    S0001: "s1",
-    S0002: "s2",
-    S0003: "s3",
-    S0004: "s4",
-    S0005: "s5",
+    S0001: "democrat_favored",
+    S0002: "republican_favored",
+    S0003: "fair_geo_pop_var",
+    S0004: "high_geo_pop_var",
+    S0005: "fair_seat_vote",
 }
 
 export const PlanTitleType = {
     [PlanType.Y2022]: "2022 enacted",
-    [PlanType.S0001]: "fairest seat vote",
-    [PlanType.S0002]: "fair geo pop.",
-    [PlanType.S0003]: "highest geo pop.",
-    [PlanType.S0004]: "most dem favored",
-    [PlanType.S0005]: "most rep favored",
+    [PlanType.S0001]: "Fairest Seat Vote",
+    [PlanType.S0002]: "Fair Geo / Pop.",
+    [PlanType.S0003]: "Highest Geo / Pop.",
+    [PlanType.S0004]: "Most Dem Favored",
+    [PlanType.S0005]: "Most Rep Favored",
 }
 
 // @enum {string}
@@ -78,7 +79,7 @@ export const MapFilterType = {
     VICTORYMARGIN: "party",
     WHITE: "white",
     BLACK: "black",
-    ASIAN: "asian",
+    HISPANIC: "hispanic",
 }
 
 // @enum {string}
@@ -87,7 +88,7 @@ export const PopulationType = {
     TOTAL: 'total',
     WHITE: 'white',
     BLACK: 'black',
-    ASIAN: 'asian',
+    HISPANIC: 'hispanic',
 }
 
 // @enum {string}
@@ -112,8 +113,9 @@ export const LayerGroupType = {
     VICTORYMARGIN: "party",
     WHITE: "white",
     BLACK: "black",
-    ASIAN: "asian",
+    HISPANIC: "hispanic",
     HIGHLIGHT: "highlight",
+    PLANFILTER: "planFilter",
 }
 
 // @enum {string}
@@ -144,7 +146,13 @@ export const zoomLevelDict = {
 
 export const colorDict = {
     white: "#ffffff",
+    black: "#000000",
     highlight: "#ffe8a4",
+    outlineLevel1: "#b60000",
+    outlineLevel2: "#be6300",
+    outlineLevel3: "#006b19",
+    outlineLevel4: "#00466b",
+    outlineLevel5: "#34006b",
     democraticDefault: "#0984e3",
     democraticLevel1: "#aec1ff",
     democraticLevel2: "#507bff",
@@ -194,6 +202,13 @@ export const populationColors = [
     colorDict.populationLevel6,
 ]
 
+export const outlineColors = [
+    colorDict.outlineLevel1,
+    colorDict.outlineLevel2,
+    colorDict.outlineLevel3,
+    colorDict.outlineLevel4,
+    colorDict.outlineLevel5,
+]
 
 export const GeoData = {}
 GeoData[StateType.NEWYORK] = {}

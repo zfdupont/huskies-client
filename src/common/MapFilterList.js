@@ -23,7 +23,7 @@ export default function MapFilterList() {
         [MapFilterType.VICTORYMARGIN]: false,
         [MapFilterType.WHITE]: false,
         [MapFilterType.BLACK]: false,
-        [MapFilterType.ASIAN]: false,
+        [MapFilterType.HISPANIC]: false,
     })
     const resetStateFilter = useCallback(() => {
         resetFilters();
@@ -52,7 +52,7 @@ export default function MapFilterList() {
                 [MapFilterType.VICTORYMARGIN]: false,
                 [MapFilterType.WHITE]: false,
                 [MapFilterType.BLACK]: false,
-                [MapFilterType.ASIAN]: false,
+                [MapFilterType.HISPANIC]: false,
             }
             state[filterType] = e.target.checked;
             filterType = (e.target.checked)? filterType : MapFilterType.NONE;
@@ -67,7 +67,7 @@ export default function MapFilterList() {
             [MapFilterType.VICTORYMARGIN]: false,
             [MapFilterType.WHITE]: false,
             [MapFilterType.BLACK]: false,
-            [MapFilterType.ASIAN]: false,
+            [MapFilterType.HISPANIC]: false,
         })
     }
 
@@ -91,20 +91,20 @@ export default function MapFilterList() {
                         <Switch {...label} checked={switches[MapFilterType.INCUMBENT]} size="small" onClick={(e) => {onToggle(e, MapFilterType.INCUMBENT)}} />
                     </ListItem>
                     <ListItem sx={{ pl: 6 }}>
-                        <ListItemText primary="VictoryMargin" primaryTypographyProps={{fontSize: '12px'}} />
+                        <ListItemText primary="Victory Margin" primaryTypographyProps={{fontSize: '12px'}} />
                         <Switch {...label} checked={switches[MapFilterType.VICTORYMARGIN]} size="small"  onClick={(e) => {onToggle(e, MapFilterType.VICTORYMARGIN)}} />
                     </ListItem>
                     <ListItem sx={{ pl: 6 }}>
-                        <ListItemText primary="White" primaryTypographyProps={{fontSize: '12px'}} />
+                        <ListItemText primary="White Pop" primaryTypographyProps={{fontSize: '12px'}} />
                         <Switch {...label} checked={switches[MapFilterType.WHITE]} size="small" onClick={(e) => {onToggle(e, MapFilterType.WHITE)}} />
                     </ListItem>
                     <ListItem sx={{ pl: 6 }}>
-                        <ListItemText primary="Black" primaryTypographyProps={{fontSize: '12px'}} />
+                        <ListItemText primary="Black Pop" primaryTypographyProps={{fontSize: '12px'}} />
                         <Switch {...label} checked={switches[MapFilterType.BLACK]} size="small" onClick={(e) => {onToggle(e, MapFilterType.BLACK)}} />
                     </ListItem>
                     <ListItem sx={{ pl: 6 }}>
-                        <ListItemText primary="Asian" primaryTypographyProps={{fontSize: '12px'}} />
-                        <Switch {...label} checked={switches[MapFilterType.ASIAN]} size="small" onClick={(e) => {onToggle(e, MapFilterType.ASIAN)}} />
+                        <ListItemText primary="Hispanic Pop" primaryTypographyProps={{fontSize: '12px'}} />
+                        <Switch {...label} checked={switches[MapFilterType.HISPANIC]} size="small" onClick={(e) => {onToggle(e, MapFilterType.HISPANIC)}} />
                     </ListItem>
                 </List>
             </Collapse>

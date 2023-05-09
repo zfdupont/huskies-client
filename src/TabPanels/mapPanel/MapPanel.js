@@ -26,7 +26,7 @@ export default function MapPanel() {
             </div>
             <div style={{display:'flex', flexDirection:'column', flex:1.7}}>
                 <div style={{flex: '0', marginBottom:'10px', height:'100%'}}>
-                    <StateInfoTable/>
+                  {(!mapStore.isStateNone()) && <StateInfoTable/>}
                 </div>
                 <div style={{flex: '0', marginBottom:'10px', height:'100%'}}>
                     <SummaryEnsembleTable/>
