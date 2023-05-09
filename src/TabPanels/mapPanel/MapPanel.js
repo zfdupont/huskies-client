@@ -7,6 +7,8 @@ import DistrictSummaryTable from "./DistrictSummaryTable";
 import StateInfoTable from "./StateInfoTable";
 import StoreReducer from '../../common/Store';
 import HeatMap from "./HeatMap";
+import ChartBox from "../analyzePanel/ChartBox";
+import SummaryEnsembleTable from "../analyzePanel/SummaryEnsembleTable";
 
 
 export default function MapPanel() {
@@ -19,12 +21,15 @@ export default function MapPanel() {
                     <HeatMap/>
                 </Paper>
                 <Paper style={{display:'flex', flexDirection:"column", alignItems:'center', justifyContents:'center', flex: "1"}}>
-
+                    {(!mapStore.isStateNone()) && <ChartBox/>}
                 </Paper>
             </div>
             <div style={{display:'flex', flexDirection:'column', flex:1.7}}>
                 <div style={{flex: '0', marginBottom:'10px', height:'100%'}}>
                   {(!mapStore.isStateNone()) && <StateInfoTable/>}
+                </div>
+                <div style={{flex: '0', marginBottom:'10px', height:'100%'}}>
+                    <SummaryEnsembleTable/>
                 </div>
                 <Paper style={{display:'flex', flex: '1', height: '90%'}}>
                     {(!mapStore.isStateNone()) && <DistrictSummaryTable/>}

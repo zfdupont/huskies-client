@@ -1,17 +1,95 @@
-import * as React from "react";
-import Switch from '@mui/material/Switch';
-import './AnalyzePanel.css'
-import BarChartComponent from "./BarChartComponent";
-import FormControlLabel from '@mui/material/FormControlLabel';
+import React, { Component } from "react";
+import Chart from "react-apexcharts";
 
-export default function BarChart(props) {
-    const [checked, setChecked] = React.useState(false);
 
-    return(
-        <div>
-             <FormControlLabel control={ <Switch aria-label='Switch demo' sx={{margin: 1}} onClick={setChecked} />} label={`${checked? 'Population Variation':'Geographic Variation'}`} />
-                <BarChartComponent name="Geographic Variation" data={props.data}></BarChartComponent>
+class BarChart extends Component {
 
+
+
+    buildData = function(winner_splits) {
+        //for key in winner_splits.ke
+    }
+
+    constructor(props) {
+      super(props);
+
+      this.state = {
+      
+        series: [{
+          data: [9, 0, 5]
+        }],
+        options: {
+          chart: {
+            type: 'bar',
+            height: 350,
+            width: 500,
+            toolbar: {
+                show: false,
+                tools: {
+                  download: false
+                }
+            }
+          },
+          plotOptions: {
+            bar: {
+            //   dataLabels: {
+            //     position: 'top',
+            //   },
+            }
+          },
+          dataLabels: {
+            enabled: true,
+            offsetX: -6,
+            style: {
+              fontSize: '12px',
+              //colors: ['#fff']
+            }
+          },
+          stroke: {
+            show: true,
+            width: 1,
+            colors: ['#fff']
+          },
+          tooltip: {
+            shared: true,
+            intersect: false
+          },
+          xaxis: {
+            categories: ['20/6','15/11', '21/5'],
+          },
+          annotations: {
+            xaxis: [
+              {
+                x: '15/11',
+                borderColor: '#775DD0',
+                label: {
+                  style: {
+                    color: 'black',
+                  },
+                  text: 'Actual Split'
+                }
+              }
+            ]
+          }
+        },
+      
+      
+      };
+    }
+
+  
+
+    render() {
+      return (
+        
+
+        <div id="chart">
+            <Chart options={this.state.options} series={this.state.series} type="bar" height={350} width={500} />
         </div>
-    );
-}
+
+
+      );
+    }
+  }
+
+  export default BarChart;
