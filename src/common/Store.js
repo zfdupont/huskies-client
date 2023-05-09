@@ -228,24 +228,14 @@ function StoreContextProvider(props) {
         if (dataStore.isStateDataReady(planType, stateType)) return;
 
         let geojson = await api.getStateGeojson(planType, stateType);
-
-        let summaryJson =  await api.getStateSummaryJson(stateType);
-        //console.log(summaryJson['name']);
-
         console.log(geojson);
         dataStore.setDistrictIdOfGeojson(geojson);
         dataStore.addExtraPropForSimulationPlan(planType, geojson);
-        let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
-        console.log(stateModelData);
-
+        
         let summaryJson =  await api.getStateSummaryJson(stateType);
-
-
         let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
         console.log(summaryJson);
         console.log(stateModelData);
-
-        let barchartData = dataStore.createBarchartDataByEnsemble();
 
         dataStoreReducer({
             type: DataActionType.ADD_STATE_DATA,
