@@ -4,7 +4,7 @@ import {colorDict, PartyType, PlanType} from "../../common/GlobalVariables";
 import '../../App.css';
 import {convertNumToPlace} from "../../common/ConversionHelper";
 import {Checkbox, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
-
+import IncumbentVariation from '../analyzePanel/IncumbentVariation';
 
 const partyColor = {
     [PartyType.DEMOCRATIC]: colorDict.democraticDefault,
@@ -15,6 +15,8 @@ export default function DistrictSummaryItem(props) {
     const { mapStore, dataStore } = useContext(StoreContext);
 
     let data = props.electionData;
+    let enactedData = props.enactedData;
+    let incumbentData = props.incumbentData;
     let winVotePercent = Math.ceil((data.winnerVotes  / (data.winnerVotes + data.loserVotes)) * 100 );
     let loseVotePercent = 100 - winVotePercent;
     const isHighlighted = mapStore.getHighlightDistrictId() === data.districtId;
@@ -108,6 +110,11 @@ export default function DistrictSummaryItem(props) {
                                     <TableCell align="right" sx={{fontWeight:'700', fontSize:'14px'}}>{row.percentage}</TableCell>
                                 </TableRow>
                             ))}
+                            <TableRow key={'chart'}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 }}}>
+                                {(data.hasIncumbent) && <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData}/> }
+                                {(data.hasIncumbent) && <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData}/> }
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>

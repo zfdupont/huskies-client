@@ -36,7 +36,7 @@ class BoxAndWhiskerChart extends Component {
         let val = e.target.value;
         var data;
         if(val === 'pop-var') {
-          data = this.buildData(this.state.originalData, 'area_variations');
+          data = this.buildData(this.state.originalData, 'vap_total_variations');
           this.setState((prevState) => ({
             ...prevState,
             type: val,
@@ -53,7 +53,7 @@ class BoxAndWhiskerChart extends Component {
           }));
         }
         if(val === 'geo-var') {
-          data = this.buildData(this.state.originalData, 'vap_total_variations');
+          data = this.buildData(this.state.originalData, 'area_variations');
           this.setState((prevState) => ({
             ...prevState,
             type: val,
@@ -92,14 +92,23 @@ class BoxAndWhiskerChart extends Component {
 
   constructor(props) {
     super(props);
-    var graphData = this.buildData(props.data, 'vap_total_variations');
+    var enactedData = props.enactedData;
+    var graphData = this.buildData(props.data, 'area_variations');
     this.state = { 
         type: 'geo-var',
         originalData: props.data,
         series: [
           {
+            name: 'Predicted Variation',
             type: 'boxPlot',
             data: graphData
+          },
+          {
+            name: 'Actual Variation',
+            type: 'scatter',
+            data: [
+              {x: 1, y: 4}
+            ]
           }
         ],
         options: {
@@ -120,6 +129,16 @@ class BoxAndWhiskerChart extends Component {
             parentHeightOffset: 0,
             
           },
+          dataLabels: {
+            // formatter: function (val, opt) {
+            //   return 'Name'
+            // }
+          },
+          tooltip: {
+            x: {
+              formatter: (value) => { return value + "%" },
+            }
+          },
           title: {
             text: 'Variation',
             align: 'center'
@@ -129,7 +148,7 @@ class BoxAndWhiskerChart extends Component {
               text: 'Variation (%)',
             },
             min: 0,
-            max: 100,
+            max: 350,
             tickAmount: 10,
           },
           xaxis: {

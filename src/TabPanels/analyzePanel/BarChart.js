@@ -8,10 +8,20 @@ class BarChart extends Component {
 
     buildData = function(winner_splits) {
         //for key in winner_splits.ke
+        console.log(winner_splits);
+        for(let key in Object.keys(winner_splits)) {
+            //
+            console.log(key);
+            console.log(winner_splits[key])
+        }
     }
 
     constructor(props) {
       super(props);
+
+      let winnerData = props.data;
+      let a = this.buildData(winnerData);
+      //console.log(winnerData);
 
       this.state = {
       

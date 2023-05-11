@@ -7,6 +7,7 @@ import BoxAndWhiskerChart from "./BoxAndWhiskerChart";
 import BarChart from "./BarChart";
 import SafeSeats from "./SafeSeats";
 import { Stack, Paper, MenuList, MenuItem } from "@mui/material";
+import { act } from "react-dom/test-utils";
 
 const ChartButtonType = {
     BW: "box-and-whisker",
@@ -39,15 +40,15 @@ export default function ChartBox()
         let safeSeatsData = generateSafeSeatsData(stateModelData.electionDataDict);
         let winnerSplits = generateWinnerSplitsData(allGraphData.winner_split, allGraphData['enacted_data'].winner_split);
         let bw_data = allGraphData.box_w_data;
-        console.log(winnerSplits);
+        //console.log(winnerSplits);
         if(bw_data) {
-            boxWhiskerChart.push(<BoxAndWhiskerChart key={1} data={bw_data}/>);
+            boxWhiskerChart.push(<BoxAndWhiskerChart key={1} data={bw_data} enactedData={allGraphData.enacted_data}/>);
         }
         if(safeSeatsData) {
             boxWhiskerChart.push(<SafeSeats key={2} data={safeSeatsData}/>);
         }
         if(winnerSplits) {
-            console.log(winnerSplits);
+            //console.log(winnerSplits);
             boxWhiskerChart.push(<BarChart key={3} data={winnerSplits}/>);
         }
         //console.log(bw_data);
@@ -72,8 +73,21 @@ export default function ChartBox()
     }
 
     function generateWinnerSplitsData(calculated_splits, actual_split) {
-        calculated_splits[actual_split] =[1, 'enacted'];
+        // if(actual_split in calculated_splits) {
+        //     calculated_splits[actual_split] = ;
+        // }
+        calculated_splits[actual_split] = [1, 'enacted'];
         return calculated_splits;
+    }
+
+    function buildIncumbentList(election_data) {
+        let incumbentList = {};
+        for (let id in election_data) {
+            let district = election_data[id];
+            if (district.hasIncumbent) {
+                incumbentList[district.districtId] = district.incumbent;
+            }  
+        }
     }
 
     function generateSafeSeatsData(election_data) {
