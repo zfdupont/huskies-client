@@ -24,6 +24,7 @@ class SafeSeats extends React.Component {
                 setTimeout(() => {this.setData(config.w.config.labels[config.dataPointIndex])}, 10),
             },
             width: 380,
+            height: 500,
             type: 'pie',
             id: 'pie-chart',
             toolbar: {
@@ -42,7 +43,7 @@ class SafeSeats extends React.Component {
             breakpoint: 480,
             options: {
               chart: {
-                width: 200
+                width: 380
               },
               legend: {
                 position: 'bottom'

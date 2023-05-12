@@ -6,7 +6,7 @@ import StoreContext from "../../common/Store";
 import BoxAndWhiskerChart from "./BoxAndWhiskerChart";
 import BarChart from "./BarChart";
 import SafeSeats from "./SafeSeats";
-import { Stack, Paper, MenuList, MenuItem } from "@mui/material";
+import { Stack, Paper, MenuList, MenuItem, Divider } from "@mui/material";
 import { act } from "react-dom/test-utils";
 
 const ChartButtonType = {
@@ -19,9 +19,10 @@ export default function ChartBox()
 {
     const { mapStore, dataStore } = useContext(StoreContext);
     const [ state, setState ] = useState({
-        selectedChart: ChartButtonType.BW,
+        selectedChart: 0,
         dataReady: false,
-        data: {}
+        data: {},
+        margin: -10
     });
     //var bwdata = getBoxAndWhiskerData();
     //console.log(dataStore.ensemble);
@@ -31,14 +32,14 @@ export default function ChartBox()
     });
     
     let boxWhiskerChart = getDistrictSummaryInfo();
-
+    
     function getDistrictSummaryInfo() {
         const boxWhiskerChart = [];
         if (!dataStore.isEnsemblejsonReady()) return boxWhiskerChart;
         let stateModelData = dataStore.getStateModelData(mapStore.getMapPlan(), mapStore.getState());
         let allGraphData = dataStore.getEnsembleData();
         let safeSeatsData = generateSafeSeatsData(stateModelData.electionDataDict);
-        let winnerSplits = generateWinnerSplitsData(allGraphData.winner_split, allGraphData['enacted_data'].winner_split);
+        //let winnerSplits = generateWinnerSplitsData(allGraphData.winner_split, allGraphData['enacted_data'].winner_split);
         let bw_data = allGraphData.box_w_data;
         //console.log(winnerSplits);
         if(bw_data) {
@@ -47,9 +48,9 @@ export default function ChartBox()
         if(safeSeatsData) {
             boxWhiskerChart.push(<SafeSeats key={2} data={safeSeatsData}/>);
         }
-        if(winnerSplits) {
+        if(allGraphData) {
             //console.log(winnerSplits);
-            boxWhiskerChart.push(<BarChart key={3} data={winnerSplits}/>);
+            boxWhiskerChart.push(<BarChart key={3} winnerData={allGraphData.winner_split} enactedData={allGraphData['enacted_data'].winner_split}/>);
         }
         //console.log(bw_data);
         // for (let id in stateModelData.electionDataDict) {
@@ -58,6 +59,9 @@ export default function ChartBox()
         //     boxWhiskerChart.push(<TestChart data={bw_data}} />);
         //     boxWhiskerChart.push(<DistrictSummaryItem key={id} electionData={stateModelData.electionDataDict[id]}/>);
         // }
+        // setState({
+        //     selectedChart: boxWhiskerChart[0]
+        // });
         return boxWhiskerChart;
     }
 
@@ -73,11 +77,30 @@ export default function ChartBox()
     }
 
     function generateWinnerSplitsData(calculated_splits, actual_split) {
+        console.log(calculated_splits);
+        console.log(actual_split);
+        let calc = calculated_splits;
+        let actual = actual_split;
+        if(actual in calc) {
+            console.log("here");
+            let val = calc[actual];
+            console.log(val);
+            calc[actual] = [val, 'enacted'];
+        }
+        else {
+            console.log("not in calculated")
+            calc[actual] = [1, 'enacted'];
+        }
+        console.log(calc);
         // if(actual_split in calculated_splits) {
-        //     calculated_splits[actual_split] = ;
+        //     console.log("here");
+        //     calculated_splits[actual_split] = [calculated_splits[actual_split], 'enacted'];
         // }
-        calculated_splits[actual_split] = [1, 'enacted'];
-        return calculated_splits;
+        // else {
+        //     calculated_splits[actual_split] = [1, 'enacted'];
+        // }
+        //calculated_splits[actual_split] = [1, 'enacted'];
+        return calc;
     }
 
     function buildIncumbentList(election_data) {
@@ -134,18 +157,42 @@ export default function ChartBox()
         // return <TestChart data={bw_data}></TestChart>;
     }
 
+    // function handleClick() {
+
+    // }
+
+    const handleClick = (event) => {
+        let chart = event.target.id;
+        if(chart === 'bw') {
+            setState({ margin: -10 });
+            setState({ selectedChart: boxWhiskerChart[0] });
+        }
+        else if(chart === 'ensemble') {
+            setState({ margin: -7 });
+            setState({ selectedChart: boxWhiskerChart[2] });
+        }
+        else if(chart === 'safeseats') {
+            //setState({ margin: -15 });
+            setState({ selectedChart: boxWhiskerChart[1] });
+        }
+        else {
+            //do nothing
+        }
+    }
+
     return (
         <div>
+            {/* <Stack direction="row" spacing={6} marginLeft={state.margin}> */}
             <Stack direction="row" spacing={2}>
-                {/* <Paper>
+                <Paper>
                     <MenuList>
-                        <MenuItem>Profile</MenuItem>
-                        <MenuItem>My account</MenuItem>
-                        <MenuItem>Logout</MenuItem>
+                        <MenuItem id={'bw'} onClick={handleClick}>Box and Whisker</MenuItem>
+                        <MenuItem id={'ensemble'} onClick={handleClick}>Ensemble Splits</MenuItem>
+                        <MenuItem id={'safeseats'} onClick={handleClick}>Safe Seats</MenuItem>
                     </MenuList>
-                </Paper> */}
-
-                {boxWhiskerChart[2]}
+                </Paper>
+                {state.selectedChart}
+                {/* {boxWhiskerChart[0]} */}
              </Stack>
            {/* {state.dataReady ? (
                 <div>
