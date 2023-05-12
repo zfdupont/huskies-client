@@ -19,7 +19,7 @@ export default function ChartBox()
 {
     const { mapStore, dataStore } = useContext(StoreContext);
     const [ state, setState ] = useState({
-        selectedChart: 0,
+        selectedChart: '',
         dataReady: false,
         data: {},
         margin: -10
@@ -35,6 +35,7 @@ export default function ChartBox()
     
     function getDistrictSummaryInfo() {
         const boxWhiskerChart = [];
+        if (!dataStore.isReadyToDisplayCurrentMap()) return boxWhiskerChart;
         if (!dataStore.isEnsemblejsonReady()) return boxWhiskerChart;
         let stateModelData = dataStore.getStateModelData(mapStore.getMapPlan(), mapStore.getState());
         let allGraphData = dataStore.getEnsembleData();
@@ -139,27 +140,6 @@ export default function ChartBox()
         //console.log(safe_seats_data);
         return safe_seats_data;
     }
-
-    function getBoxAndWhiskerData() {
-        let bw_data = {};
-        if (!dataStore.isEnsemblejsonReady()) return;
-        bw_data = dataStore.getEnsembleData().box_w_data;
-        setState((prevState) => ({...prevState, dataReady: true, data: bw_data}));
-        return bw_data;
-        //return bw_data;
-       // return bw_data;
-    }
-
-    function box_and_whisker() {
-        // if(!state.dataReady) {
-        //     return null;
-        // }
-        // return <TestChart data={bw_data}></TestChart>;
-    }
-
-    // function handleClick() {
-
-    // }
 
     const handleClick = (event) => {
         let chart = event.target.id;

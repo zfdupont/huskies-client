@@ -39,6 +39,8 @@ export default function DistrictSummaryTable() {
     function getDistrictSummaryInfo() {
         const districtSummaryInfo = [];
         if (!dataStore.isReadyToDisplayCurrentMap()) return districtSummaryInfo;
+        if (!dataStore.isEnsemblejsonReady()) return districtSummaryInfo;
+        
         let ensembleData = dataStore.getEnsembleData();
         let stateModelData = dataStore.getStateModelData(mapStore.getMapPlan(), mapStore.getState());
         for (let id in stateModelData.electionDataDict) {

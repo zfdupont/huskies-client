@@ -13,6 +13,7 @@ import SummaryEnsembleTable from "../analyzePanel/SummaryEnsembleTable";
 
 export default function MapPanel() {
     let { mapStore } = useContext(StoreReducer);
+
     return (
         <div style={{position: 'absolute', width: 'calc(100% - 20px)', height:'calc(100% - 20px)', padding: '10px', display:'flex'}}>
             <div style={{display: "flex", flexDirection: "column", justifyContent:'center', flex:3.5, marginRight: '10px'}}>
@@ -21,7 +22,7 @@ export default function MapPanel() {
                     <HeatMap/>
                 </Paper>
                 <Paper style={{display:'flex', flexDirection:"column", alignItems:'center', justifyContents:'center', flex: "1"}}>
-                    {(!mapStore.isStateNone()) && <ChartBox/>}
+                    {(!mapStore.isStateNone() && (mapStore.getMapPlan() === 'enacted')) && <ChartBox/>}
                 </Paper>
             </div>
             <div style={{display:'flex', flexDirection:'column', flex:1.7}}>
@@ -29,7 +30,7 @@ export default function MapPanel() {
                   {(!mapStore.isStateNone()) && <StateInfoTable/>}
                 </div>
                 <div style={{flex: '0', marginBottom:'10px', height:'100%'}}>
-                    <SummaryEnsembleTable/>
+                    {(!mapStore.isStateNone() && (mapStore.getMapPlan() === 'enacted')) && <SummaryEnsembleTable/>}
                 </div>
                 <Paper style={{display:'flex', flex: '1', height: '90%'}}>
                     {(!mapStore.isStateNone()) && <DistrictSummaryTable/>}

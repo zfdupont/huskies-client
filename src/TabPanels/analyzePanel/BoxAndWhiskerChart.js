@@ -153,7 +153,7 @@ class BoxAndWhiskerChart extends Component {
           },
           xaxis: {
             title: {
-              text: 'District',
+              text: 'Indexed Districts',
             }
           },
           plotOptions: {

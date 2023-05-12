@@ -14,6 +14,7 @@ export default function SummaryEnsembleTable() {
         if (!dataStore.isEnsemblejsonReady()) return ensembleTable;
 
         let allGraphData = dataStore.getEnsembleData();
+       // console.log(dataStore.getPlanType());
         let summary_data = allGraphData.ensemble_summary;
         if(summary_data) {
             let table = getSummaryEnsembleTable(summary_data);
