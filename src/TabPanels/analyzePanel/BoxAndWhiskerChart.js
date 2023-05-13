@@ -13,16 +13,12 @@ class BoxAndWhiskerChart extends Component {
         }
         else{
             var boxplot_data = []
-            // for (let point in bw_data.geo_variations) {
-            //     boxplot_data.push({x: , y: point})
-            // }
             var data = [];
             bw_data[type].forEach(function (value, i) {
                 for(let i = 0; i < value.length; i++) {
                     let val = value[i];
                     val =  Math.round(val * 1e4) / 1e2;
                     data.push(val);
-                    //value[i] =  Math.round((value[i] * 10) * 100)/100;
                 }
                 
                 boxplot_data.push({x: (i+1), y: data})
@@ -32,18 +28,38 @@ class BoxAndWhiskerChart extends Component {
         }
     }
 
+    buildScatterData = function(bw_dots, type) {
+      var data = [];
+      bw_dots[type].forEach(function(value, i) {
+          let val = value;
+          val =  Math.round(val * 1e4) / 1e2;
+          data.push({
+            x: (i+1), y: val
+          });
+      });
+      return data;
+    }
+
     handleChange = (e) => {
         let val = e.target.value;
         var data;
+        var scatterData;
         if(val === 'pop-var') {
-          data = this.buildData(this.state.originalData, 'area_variations');
+          data = this.buildData(this.state.originalData, 'vap_total_variations');
+          scatterData = this.buildScatterData(this.state.originalScatterData, 'vap_total_variation');
+          console.log(this.state.series);
           this.setState((prevState) => ({
             ...prevState,
             type: val,
             series: [{
               ...prevState.series,
               data: data
-            }],
+            },
+            {
+              ...prevState.series,
+              data: scatterData
+            }
+          ],
             options:{ ...prevState.options,
               chart: {
                   ...prevState.chart,
@@ -53,13 +69,18 @@ class BoxAndWhiskerChart extends Component {
           }));
         }
         if(val === 'geo-var') {
-          data = this.buildData(this.state.originalData, 'vap_total_variations');
+          data = this.buildData(this.state.originalData, 'area_variations');
+          scatterData = this.buildScatterData(this.state.originalScatterData, 'area_variation');
           this.setState((prevState) => ({
             ...prevState,
             type: val,
             series: [{
               ...prevState.series,
               data: data
+            },
+            {
+              ...prevState.series,
+              data: scatterData
             }],
             options:{ ...prevState.options,
               chart: {
@@ -71,12 +92,17 @@ class BoxAndWhiskerChart extends Component {
         }
         if(val === 'black-var') {
           data = this.buildData(this.state.originalData, 'vap_black_variations');
+          scatterData = this.buildScatterData(this.state.originalScatterData, 'vap_black_variation');
           this.setState((prevState) => ({
             ...prevState,
             type: val,
             series: [{
               ...prevState.series,
               data: data
+            },
+            {
+              ...prevState.series,
+              data: scatterData
             }],
             options:{ ...prevState.options,
               chart: {
@@ -92,14 +118,23 @@ class BoxAndWhiskerChart extends Component {
 
   constructor(props) {
     super(props);
-    var graphData = this.buildData(props.data, 'vap_total_variations');
+    var enactedData = props.enactedData;
+    var graphData = this.buildData(props.data, 'area_variations');
+    var scatterData = this.buildScatterData(enactedData.box_w_dots, 'area_variation');
     this.state = { 
         type: 'geo-var',
         originalData: props.data,
+        originalScatterData: enactedData.box_w_dots,
         series: [
           {
+            name: 'Predicted Variation',
             type: 'boxPlot',
             data: graphData
+          },
+          {
+            name: 'Actual Variation',
+            type: 'scatter',
+            data: scatterData
           }
         ],
         options: {
@@ -113,9 +148,6 @@ class BoxAndWhiskerChart extends Component {
             type: 'boxPlot',
             height: 350,
             width: 500,
-            // sparkline: {
-            //     enabled: false
-            //   },
             id: 'box-chart',
             parentHeightOffset: 0,
             
@@ -129,12 +161,13 @@ class BoxAndWhiskerChart extends Component {
               text: 'Variation (%)',
             },
             min: 0,
-            max: 100,
-            tickAmount: 10,
+            max: function(max) { return max + 15 },
+            forceNiceScale: true
+            //tickAmount: 10,
           },
           xaxis: {
             title: {
-              text: 'District',
+              text: 'Indexed Districts',
             }
           },
           plotOptions: {

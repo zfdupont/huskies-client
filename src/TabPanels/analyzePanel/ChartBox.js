@@ -6,7 +6,8 @@ import StoreContext from "../../common/Store";
 import BoxAndWhiskerChart from "./BoxAndWhiskerChart";
 import BarChart from "./BarChart";
 import SafeSeats from "./SafeSeats";
-import { Stack, Paper, MenuList, MenuItem } from "@mui/material";
+import { Stack, Paper, MenuList, MenuItem, Divider } from "@mui/material";
+import { act } from "react-dom/test-utils";
 
 const ChartButtonType = {
     BW: "box-and-whisker",
@@ -18,9 +19,10 @@ export default function ChartBox()
 {
     const { mapStore, dataStore } = useContext(StoreContext);
     const [ state, setState ] = useState({
-        selectedChart: ChartButtonType.BW,
+        selectedChart: '',
         dataReady: false,
-        data: {}
+        data: {},
+        margin: -10
     });
     //var bwdata = getBoxAndWhiskerData();
     //console.log(dataStore.ensemble);
@@ -30,51 +32,30 @@ export default function ChartBox()
     });
     
     let boxWhiskerChart = getDistrictSummaryInfo();
-
+    
     function getDistrictSummaryInfo() {
         const boxWhiskerChart = [];
+        if (!dataStore.isReadyToDisplayCurrentMap()) return boxWhiskerChart;
         if (!dataStore.isEnsemblejsonReady()) return boxWhiskerChart;
         let stateModelData = dataStore.getStateModelData(mapStore.getMapPlan(), mapStore.getState());
         let allGraphData = dataStore.getEnsembleData();
         let safeSeatsData = generateSafeSeatsData(stateModelData.electionDataDict);
-        let winnerSplits = generateWinnerSplitsData(allGraphData.winner_split, allGraphData['enacted_data'].winner_split);
+        //let winnerSplits = generateWinnerSplitsData(allGraphData.winner_split, allGraphData['enacted_data'].winner_split);
         let bw_data = allGraphData.box_w_data;
-        console.log(winnerSplits);
+        //console.log(winnerSplits);
         if(bw_data) {
-            boxWhiskerChart.push(<BoxAndWhiskerChart key={1} data={bw_data}/>);
+            boxWhiskerChart.push(<BoxAndWhiskerChart key={1} data={bw_data} enactedData={allGraphData.enacted_data}/>);
         }
         if(safeSeatsData) {
             boxWhiskerChart.push(<SafeSeats key={2} data={safeSeatsData}/>);
         }
-        if(winnerSplits) {
-            console.log(winnerSplits);
-            boxWhiskerChart.push(<BarChart key={3} data={winnerSplits}/>);
+        if(allGraphData) {
+            //console.log(winnerSplits);
+            boxWhiskerChart.push(<BarChart key={3} winnerData={allGraphData.winner_split} enactedData={allGraphData['enacted_data'].winner_split}/>);
         }
-        //console.log(bw_data);
-        // for (let id in stateModelData.electionDataDict) {
-        //     if (state.incumbentFilter && !stateModelData.electionDataDict[id].hasIncumbent) continue;
-
-        //     boxWhiskerChart.push(<TestChart data={bw_data}} />);
-        //     boxWhiskerChart.push(<DistrictSummaryItem key={id} electionData={stateModelData.electionDataDict[id]}/>);
-        // }
         return boxWhiskerChart;
     }
 
-    function generateBarChartData(incumbent_data) {
-        //structure --> {incumbent: [{change in range: count, ...}]}
-    }
-
-    function onChartButtonClick() {
-        //when we're trying to change the chart
-        //ahh how should we do this...load all data at the beginning and then load charts as necessary?
-        //or request data when needed? it's already being computed anyways so it makes more sense to
-        //to load all at once...
-    }
-
-    function generateWinnerSplitsData(calculated_splits, actual_split) {
-        calculated_splits[actual_split] =[1, 'enacted'];
-        return calculated_splits;
-    }
 
     function generateSafeSeatsData(election_data) {
         let safe_seats_data = {'incumbent': 0, 'open_seat': 0, 'dem-incmb': 0, 'rep-incmb': 0, 'dem-open': 0, 'rep-open': 0};
@@ -103,46 +84,37 @@ export default function ChartBox()
         return safe_seats_data;
     }
 
-    function getBoxAndWhiskerData() {
-        let bw_data = {};
-        if (!dataStore.isEnsemblejsonReady()) return;
-        bw_data = dataStore.getEnsembleData().box_w_data;
-        setState((prevState) => ({...prevState, dataReady: true, data: bw_data}));
-        return bw_data;
-        //return bw_data;
-       // return bw_data;
-    }
-
-    function box_and_whisker() {
-        // if(!state.dataReady) {
-        //     return null;
-        // }
-        // return <TestChart data={bw_data}></TestChart>;
+    const handleClick = (event) => {
+        let chart = event.target.id;
+        if(chart === 'bw') {
+            setState({ margin: -10 });
+            setState({ selectedChart: boxWhiskerChart[0] });
+        }
+        else if(chart === 'ensemble') {
+            setState({ margin: -7 });
+            setState({ selectedChart: boxWhiskerChart[2] });
+        }
+        else if(chart === 'safeseats') {
+            //setState({ margin: -15 });
+            setState({ selectedChart: boxWhiskerChart[1] });
+        }
+        else {
+            //do nothing
+        }
     }
 
     return (
-        <div>
-            <Stack direction="row" spacing={2}>
-                {/* <Paper>
+        <div style={{display:'flex', flexDirection:'column', flex:1}}>
+            <Stack direction="row" spacing={2} style={{display:'flex', flexDirection:"row", alignItems:'left', justifyContents:'left', flex: "1"}}>
+                <Paper>
                     <MenuList>
-                        <MenuItem>Profile</MenuItem>
-                        <MenuItem>My account</MenuItem>
-                        <MenuItem>Logout</MenuItem>
+                        <MenuItem id={'bw'} onClick={handleClick}>Box and Whisker</MenuItem>
+                        <MenuItem id={'ensemble'} onClick={handleClick}>Ensemble Splits</MenuItem>
+                        <MenuItem id={'safeseats'} onClick={handleClick}>Safe Seats</MenuItem>
                     </MenuList>
-                </Paper> */}
-
-                {boxWhiskerChart[2]}
+                </Paper>
+                {state.selectedChart}
              </Stack>
-           {/* {state.dataReady ? (
-                <div>
-                    <TestChart data={state.data}></TestChart>
-                </div>
-            ) : <div></div>} */}
-            {/* {bwdata} */}
-            {/* {boxWhiskerChart[2]} */}
-            {/* {boxWhiskerChart[1]} */}
-            {/* <BarChart></BarChart> */}
-            {/* <SafeSeats></SafeSeats> */}
         </div>
     );
 }

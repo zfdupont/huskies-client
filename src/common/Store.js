@@ -231,7 +231,7 @@ function StoreContextProvider(props) {
         console.log(geojson);
         dataStore.setDistrictIdOfGeojson(geojson);
         dataStore.addExtraPropForSimulationPlan(planType, geojson);
-        
+
         let summaryJson =  await api.getStateSummaryJson(stateType);
         let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
         console.log(summaryJson);
@@ -292,7 +292,7 @@ function StoreContextProvider(props) {
     }
 
     dataStore.isEnsemblejsonReady = () => {
-        if(!dataStore.ensemble['name']) return false;
+        if(!(dataStore.ensemble['name'])) return false;
         return true;
     }
     // STORE PAGE

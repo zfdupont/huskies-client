@@ -4,19 +4,27 @@ import Chart from "react-apexcharts";
 
 class BarChart extends Component {
 
-
-
-    buildData = function(winner_splits) {
-        //for key in winner_splits.ke
-    }
-
     constructor(props) {
       super(props);
+
+      let winnerData = props.winnerData;
+      let enactedData = props.enactedData;
+      let enactedLabel = ''+enactedData;
+      let seriesLabels = [];
+      let data = [];
+      for(let x in winnerData) {
+        seriesLabels.push(''+x);
+        data.push(winnerData[x]);
+      }
+      if(!(enactedLabel in seriesLabels)) {
+        seriesLabels.push(''+enactedLabel);
+        data.push(0);
+      }
 
       this.state = {
       
         series: [{
-          data: [9, 0, 5]
+          data: data
         }],
         options: {
           chart: {
@@ -28,6 +36,20 @@ class BarChart extends Component {
                 tools: {
                   download: false
                 }
+            }
+          },
+          title: {
+            text: 'Ensemble Splits',
+            align: 'center'
+          },
+          yaxis: {
+            title: {
+              text: '# Occurences',
+            }
+          },
+          xaxis: {
+            title: {
+              text: 'R/D Splits',
             }
           },
           plotOptions: {
@@ -55,12 +77,12 @@ class BarChart extends Component {
             intersect: false
           },
           xaxis: {
-            categories: ['20/6','15/11', '21/5'],
+            categories: seriesLabels,
           },
           annotations: {
             xaxis: [
               {
-                x: '15/11',
+                x: enactedLabel,
                 borderColor: '#775DD0',
                 label: {
                   style: {

@@ -24,6 +24,7 @@ class SafeSeats extends React.Component {
                 setTimeout(() => {this.setData(config.w.config.labels[config.dataPointIndex])}, 10),
             },
             width: 380,
+            height: 500,
             type: 'pie',
             id: 'pie-chart',
             toolbar: {
@@ -32,17 +33,24 @@ class SafeSeats extends React.Component {
                   download: false
                 }
             },
+            // donut: {
+            //     size: '110%'
+            //   },
           },
+          colors: ['#FF5A5F', '#BFD7EA'],
           labels: data['safeLabels'],
           title: {
             text: 'Safe Seats',
-            align: 'center'
+            align: 'left',
+            margin: 30,
+            offsetX: 20,
+            floating: true
           },
           responsive: [{
             breakpoint: 480,
             options: {
               chart: {
-                width: 200
+                width: 380
               },
               legend: {
                 position: 'bottom'

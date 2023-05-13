@@ -14,6 +14,7 @@ export default function SummaryEnsembleTable() {
         if (!dataStore.isEnsemblejsonReady()) return ensembleTable;
 
         let allGraphData = dataStore.getEnsembleData();
+       // console.log(dataStore.getPlanType());
         let summary_data = allGraphData.ensemble_summary;
         if(summary_data) {
             let table = getSummaryEnsembleTable(summary_data);
@@ -44,7 +45,7 @@ export default function SummaryEnsembleTable() {
                             >
                                 <TableCell sx={{ fontSize: 12 }} align="center">{data.num_plans}</TableCell>
                                 <TableCell sx={{ fontSize: 12 }} align="center">{data.num_incumbents}</TableCell>
-                                <TableCell sx={{ fontSize: 12 }} align="center">{data.avg_incumbent_winners}</TableCell>
+                                <TableCell sx={{ fontSize: 12 }} align="center">{Math.round(data.avg_incumbent_winners)}</TableCell>
                                 <TableCell sx={{ fontSize: 12 }} align="center">{data.avg_geo_var.toLocaleString("en", {style: "percent"})}</TableCell>
                                 <TableCell sx={{ fontSize: 12 }} align="center">{data.avg_pop_var.toLocaleString("en", {style: "percent"})}</TableCell>
                             </TableRow>
