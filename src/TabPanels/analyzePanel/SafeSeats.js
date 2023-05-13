@@ -33,11 +33,18 @@ class SafeSeats extends React.Component {
                   download: false
                 }
             },
+            // donut: {
+            //     size: '110%'
+            //   },
           },
+          colors: ['#FF5A5F', '#BFD7EA'],
           labels: data['safeLabels'],
           title: {
             text: 'Safe Seats',
-            align: 'center'
+            align: 'left',
+            margin: 30,
+            offsetX: 20,
+            floating: true
           },
           responsive: [{
             breakpoint: 480,

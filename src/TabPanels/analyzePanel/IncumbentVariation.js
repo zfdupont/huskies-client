@@ -127,6 +127,7 @@ class IncumbentVariation extends Component {
             type: 'bar',
             height: 350,
             width: 300,
+            offsetX: 50,
             // sparkline: {
             //     enabled: false
             //   },
@@ -163,7 +164,7 @@ class IncumbentVariation extends Component {
           },
           title: {
             text: type === 'area_variations' ? 'Geo Variation' : 'Population Variation',
-            align: 'center'
+            align: 'center',
           },
           xaxis: {
             title: {

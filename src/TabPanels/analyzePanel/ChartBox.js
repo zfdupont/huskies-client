@@ -53,66 +53,9 @@ export default function ChartBox()
             //console.log(winnerSplits);
             boxWhiskerChart.push(<BarChart key={3} winnerData={allGraphData.winner_split} enactedData={allGraphData['enacted_data'].winner_split}/>);
         }
-        //console.log(bw_data);
-        // for (let id in stateModelData.electionDataDict) {
-        //     if (state.incumbentFilter && !stateModelData.electionDataDict[id].hasIncumbent) continue;
-
-        //     boxWhiskerChart.push(<TestChart data={bw_data}} />);
-        //     boxWhiskerChart.push(<DistrictSummaryItem key={id} electionData={stateModelData.electionDataDict[id]}/>);
-        // }
-        // setState({
-        //     selectedChart: boxWhiskerChart[0]
-        // });
         return boxWhiskerChart;
     }
 
-    function generateBarChartData(incumbent_data) {
-        //structure --> {incumbent: [{change in range: count, ...}]}
-    }
-
-    function onChartButtonClick() {
-        //when we're trying to change the chart
-        //ahh how should we do this...load all data at the beginning and then load charts as necessary?
-        //or request data when needed? it's already being computed anyways so it makes more sense to
-        //to load all at once...
-    }
-
-    function generateWinnerSplitsData(calculated_splits, actual_split) {
-        console.log(calculated_splits);
-        console.log(actual_split);
-        let calc = calculated_splits;
-        let actual = actual_split;
-        if(actual in calc) {
-            console.log("here");
-            let val = calc[actual];
-            console.log(val);
-            calc[actual] = [val, 'enacted'];
-        }
-        else {
-            console.log("not in calculated")
-            calc[actual] = [1, 'enacted'];
-        }
-        console.log(calc);
-        // if(actual_split in calculated_splits) {
-        //     console.log("here");
-        //     calculated_splits[actual_split] = [calculated_splits[actual_split], 'enacted'];
-        // }
-        // else {
-        //     calculated_splits[actual_split] = [1, 'enacted'];
-        // }
-        //calculated_splits[actual_split] = [1, 'enacted'];
-        return calc;
-    }
-
-    function buildIncumbentList(election_data) {
-        let incumbentList = {};
-        for (let id in election_data) {
-            let district = election_data[id];
-            if (district.hasIncumbent) {
-                incumbentList[district.districtId] = district.incumbent;
-            }  
-        }
-    }
 
     function generateSafeSeatsData(election_data) {
         let safe_seats_data = {'incumbent': 0, 'open_seat': 0, 'dem-incmb': 0, 'rep-incmb': 0, 'dem-open': 0, 'rep-open': 0};
@@ -161,9 +104,8 @@ export default function ChartBox()
     }
 
     return (
-        <div>
-            {/* <Stack direction="row" spacing={6} marginLeft={state.margin}> */}
-            <Stack direction="row" spacing={2}>
+        <div style={{display:'flex', flexDirection:'column', flex:1}}>
+            <Stack direction="row" spacing={2} style={{display:'flex', flexDirection:"row", alignItems:'left', justifyContents:'left', flex: "1"}}>
                 <Paper>
                     <MenuList>
                         <MenuItem id={'bw'} onClick={handleClick}>Box and Whisker</MenuItem>
@@ -172,18 +114,7 @@ export default function ChartBox()
                     </MenuList>
                 </Paper>
                 {state.selectedChart}
-                {/* {boxWhiskerChart[0]} */}
              </Stack>
-           {/* {state.dataReady ? (
-                <div>
-                    <TestChart data={state.data}></TestChart>
-                </div>
-            ) : <div></div>} */}
-            {/* {bwdata} */}
-            {/* {boxWhiskerChart[2]} */}
-            {/* {boxWhiskerChart[1]} */}
-            {/* <BarChart></BarChart> */}
-            {/* <SafeSeats></SafeSeats> */}
         </div>
     );
 }

@@ -112,8 +112,8 @@ export default function DistrictSummaryItem(props) {
                             ))}
                             <TableRow key={'chart'}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 }}}>
-                                {(data.hasIncumbent) && <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData} type={'area_variations'}/> }
-                                {(data.hasIncumbent) && <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData} type={'vap_variations'}/> }
+                                {(data.hasIncumbent && (mapStore.getMapPlan() === 'enacted')) && <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData} type={'area_variations'}/> }
+                                {(data.hasIncumbent && (mapStore.getMapPlan() === 'enacted')) && <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData} type={'vap_variations'}/> }
                             </TableRow>
                         </TableBody>
                     </Table>

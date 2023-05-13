@@ -21,7 +21,7 @@ export default function MapPanel() {
                     <MainMap/>
                     <HeatMap/>
                 </Paper>
-                <Paper style={{display:'flex', flexDirection:"column", alignItems:'center', justifyContents:'center', flex: "1"}}>
+                <Paper style={{display:'flex', flexDirection:"column", alignItems:'left', justifyContents:'center', flex: "1"}}>
                     {(!mapStore.isStateNone() && (mapStore.getMapPlan() === 'enacted')) && <ChartBox/>}
                 </Paper>
             </div>

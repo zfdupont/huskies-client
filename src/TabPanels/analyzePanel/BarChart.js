@@ -38,6 +38,20 @@ class BarChart extends Component {
                 }
             }
           },
+          title: {
+            text: 'Ensemble Splits',
+            align: 'center'
+          },
+          yaxis: {
+            title: {
+              text: '# Occurences',
+            }
+          },
+          xaxis: {
+            title: {
+              text: 'R/D Splits',
+            }
+          },
           plotOptions: {
             bar: {
             //   dataLabels: {
