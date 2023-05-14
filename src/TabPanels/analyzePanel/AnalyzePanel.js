@@ -14,11 +14,11 @@ export default function AnalyzePanel()
 {
     const { dataStore } = useContext(StoreContext);
 
-    function getBarchartData() {
-        // ONCE ENSEMBLE API CALL IS CREATED, DELETE THE FOLLOWING SECTION
-        const barData = dataStore.createBarchartDataByEnsemble();
-        return barData;
-    }
+    // function getBarchartData() {
+    //     // ONCE ENSEMBLE API CALL IS CREATED, DELETE THE FOLLOWING SECTION
+    //     const barData = dataStore.createBarchartDataByEnsemble();
+    //     return barData;
+    // }
 
     return (
         <div style={{position: 'absolute', width: 'calc(100% - 20px)', height:'calc(100% - 20px)', padding: '10px', display:'flex'}}>
@@ -32,7 +32,7 @@ export default function AnalyzePanel()
                     <SummaryEnsembleTable></SummaryEnsembleTable>
                 </div>
                 <Paper style={{display:'flex', flex: '1', height: '90%'}}>
-                    <BarChart data={getBarchartData()}></BarChart>
+                    {/* <BarChart data={getBarchartData()}></BarChart> */}
                 </Paper>
             </div>
         </div>

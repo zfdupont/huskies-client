@@ -224,16 +224,6 @@ function StoreContextProvider(props) {
         }
     }
 
-    dataStore.createBarchartDataByEnsemble = function(ensemble) {
-        //because ensemble is currently not populated by server, all data will be mocked
-        // TO DO: remove below code after api call is implemented
-        let data = []
-        for (let x = 17; x < 24; x++) {
-            data.push({name: x, plan: Math.floor(Math.random() * 700) + 100});
-        }
-        return data;
-    }
-
     dataStore.addStateData = async (planType, stateType) => {
         if (dataStore.isStateDataReady(planType, stateType)) return;
 
@@ -241,16 +231,15 @@ function StoreContextProvider(props) {
         console.log(geojson);
         dataStore.setDistrictIdOfGeojson(geojson);
         dataStore.addExtraPropForSimulationPlan(planType, geojson);
-        let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
-        console.log(stateModelData);
 
         let summaryJson =  await api.getStateSummaryJson(stateType);
-
-        let barchartData = dataStore.createBarchartDataByEnsemble();
+        let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
+        console.log(summaryJson);
+        console.log(stateModelData);
 
         dataStoreReducer({
             type: DataActionType.ADD_STATE_DATA,
-            payload: {planType: planType, stateType: stateType, geojson: geojson, stateModelData: stateModelData, ensemble: {barchartData}}
+            payload: {planType: planType, stateType: stateType, geojson: geojson, stateModelData: stateModelData, ensemble: summaryJson}
         })
     }
 
@@ -299,6 +288,11 @@ function StoreContextProvider(props) {
     dataStore.isGeojsonReady = (planType, stateType) => {
         if (!dataStore.geojson[planType]) return false;
         if (!dataStore.geojson[planType][stateType]) return false;
+        return true;
+    }
+
+    dataStore.isEnsemblejsonReady = () => {
+        if(!(dataStore.ensemble['name'])) return false;
         return true;
     }
     // STORE PAGE
