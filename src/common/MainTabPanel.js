@@ -61,7 +61,7 @@ export default function BasicPanel() {
                     <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
                         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                             <Tab label="Map" {...a11yProps(0)}  onClick={() => {onTabClick(TabType.MAP)}}/>
-                            <Tab label="Analyze" {...a11yProps(1)} onClick={() => {onTabClick(TabType.ANALYZE)}}/>
+                            {/*<Tab label="Analyze" {...a11yProps(1)} onClick={() => {onTabClick(TabType.ANALYZE)}}/>*/}
                         </Tabs>
                     </Box>
                 </Box>
@@ -70,11 +70,6 @@ export default function BasicPanel() {
                 <TabPanel index={0} value={value}>
                     <div style={{position: 'absolute', width: '100%', height: 'calc(100% - 50px)'}}>
                         <MapPanel/>
-                    </div>
-                </TabPanel>
-                <TabPanel index={1} value={value}>
-                    <div style={{position:'absolute', width: '100%', height: 'calc(100% - 50px)', overflowY: 'scroll'}}>
-                        <AnalyzePanel/>
                     </div>
                 </TabPanel>
             </div>
