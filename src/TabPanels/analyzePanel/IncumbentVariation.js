@@ -126,7 +126,7 @@ class IncumbentVariation extends Component {
           chart: {
             type: 'bar',
             height: 350,
-            width: 300,
+            width: 400,
             offsetX: 50,
             // sparkline: {
             //     enabled: false
@@ -145,7 +145,7 @@ class IncumbentVariation extends Component {
             }
           },
           dataLabels: {
-            enabled: true,
+            enabled: false,
             offsetX: 0,
             //rotate: -90,
             //offsetY: 100,
@@ -186,7 +186,7 @@ class IncumbentVariation extends Component {
 
     render() {
       return (
-            <Chart options={this.state.options} series={this.state.series} type="bar" height={350} width={300} />
+            <Chart options={this.state.options} series={this.state.series} type="bar" height={350} width={400} />
       );
     }
   }
