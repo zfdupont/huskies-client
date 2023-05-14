@@ -54,17 +54,19 @@ class BarChart extends Component {
           },
           plotOptions: {
             bar: {
-            //   dataLabels: {
-            //     position: 'top',
-            //   },
+              dataLabels: {
+                position: 'top',
+              },
+              //color: ['#185a87']
             }
           },
           dataLabels: {
-            enabled: true,
-            offsetX: -6,
+            // enabled: true,
+            // position: 'top',
+            // offsetX: -6,
             style: {
               fontSize: '12px',
-              //colors: ['#fff']
+              colors: ['black']
             }
           },
           stroke: {
@@ -79,6 +81,7 @@ class BarChart extends Component {
           xaxis: {
             categories: seriesLabels,
           },
+          colors: ['#bce0f5'],
           annotations: {
             xaxis: [
               {
