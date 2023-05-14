@@ -51,11 +51,11 @@ export const PlanType = {
 
 export const PlanTitleType = {
     [PlanType.Y2022]: "2022 enacted",
-    [PlanType.S0001]: "Fairest Seat Vote",
-    [PlanType.S0002]: "Fair Geo / Pop.",
-    [PlanType.S0003]: "Highest Geo / Pop.",
-    [PlanType.S0004]: "Most Dem Favored",
-    [PlanType.S0005]: "Most Rep Favored",
+    [PlanType.S0001]: "Most Dem Favored",
+    [PlanType.S0002]: "Most Rep Favored",
+    [PlanType.S0003]: "Fairest Seat Vote",
+    [PlanType.S0004]: "Highest Geo & Pop",
+    [PlanType.S0005]: "Fair Geo & Pop",
 }
 
 // @enum {string}
