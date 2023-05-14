@@ -1,6 +1,5 @@
 
 import * as React from "react";
-import Whisker from "./Whisker.tsx";
 import {useContext, useState, useEffect} from "react";
 import StoreContext from "../../common/Store";
 import BoxAndWhiskerChart from "./BoxAndWhiskerChart";
