@@ -26,13 +26,13 @@ export default function MapPanel() {
                 </Paper>
             </div>
             <div style={{display:'flex', flexDirection:'column', flex:1.7}}>
-                {/*<div style={{flex: '0', marginBottom:'10px', height:'100%'}}>*/}
-                {/*  {(!mapStore.isStateNone()) && <StateInfoTable/>}*/}
-                {/*</div>*/}
+                <div style={{flex: '0', marginBottom:'10px', height:'100%'}}>
+                  {(!mapStore.isStateNone()) && <StateInfoTable/>}
+                </div>
                 <div style={{flex: '0', marginBottom:'10px', height:'100%'}}>
                     {(!mapStore.isStateNone() && (mapStore.getMapPlan() === 'enacted')) && <SummaryEnsembleTable/>}
                 </div>
-                <Paper style={{display:'flex', flex: '1', height: '80%'}}>
+                <Paper style={{display:'flex', flex: '1', height: '70%'}}>
                     {(!mapStore.isStateNone()) && <DistrictSummaryTable/>}
                 </Paper>
             </div>
