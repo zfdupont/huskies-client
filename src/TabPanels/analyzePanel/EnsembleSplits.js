@@ -16,7 +16,7 @@ class BarChart extends Component {
         seriesLabels.push(''+x);
         data.push(winnerData[x]);
       }
-      if(!(enactedLabel in seriesLabels)) {
+      if(!(seriesLabels.includes(enactedLabel))) {
         seriesLabels.push(''+enactedLabel);
         data.push(0);
       }
@@ -47,24 +47,26 @@ class BarChart extends Component {
               text: '# Occurences',
             }
           },
-          xaxis: {
-            title: {
-              text: 'R/D Splits',
-            }
-          },
+          // xaxis: {
+          //   title: {
+          //     text: 'R/D Splits',
+          //   }
+          // },
           plotOptions: {
             bar: {
-            //   dataLabels: {
-            //     position: 'top',
-            //   },
+              dataLabels: {
+                position: 'top',
+              },
+              //color: ['#185a87']
             }
           },
           dataLabels: {
-            enabled: true,
-            offsetX: -6,
+            // enabled: true,
+            // position: 'top',
+            // offsetX: -6,
             style: {
               fontSize: '12px',
-              //colors: ['#fff']
+              colors: ['black']
             }
           },
           stroke: {
@@ -78,11 +80,17 @@ class BarChart extends Component {
           },
           xaxis: {
             categories: seriesLabels,
+            title: {
+              text: 'Republican/Democrat Splits',
+            }
           },
+          colors: ['#bce0f5'],
           annotations: {
             xaxis: [
               {
                 x: enactedLabel,
+                strokeDashArray: 0,
+                width: '100%',
                 borderColor: '#775DD0',
                 label: {
                   style: {

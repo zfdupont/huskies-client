@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Chart from "react-apexcharts";
+import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 
 class SafeSeats extends React.Component {
 
@@ -43,7 +44,8 @@ class SafeSeats extends React.Component {
             text: 'Safe Seats',
             align: 'left',
             margin: 30,
-            offsetX: 20,
+            offsetX: 50,
+            offsetY: -10,
             floating: true
           },
           responsive: [{
@@ -70,7 +72,7 @@ class SafeSeats extends React.Component {
                     labels: d['incumbentLabels'],
                     title: {
                         ...prevState.title,
-                        text: 'Incumbent Seats'
+                        text: 'Incumbent Seats (Democrat vs Republican)'
                     },
                     chart: {
                         ...prevState.chart,
@@ -87,7 +89,7 @@ class SafeSeats extends React.Component {
                     labels: d['openLabels'],
                     title: {
                         ...prevState.title,
-                        text: 'Open Seats'
+                        text: 'Open Seats (Democrat vs Republican)'
                     },
                     chart: {
                         ...prevState.chart,
@@ -116,7 +118,30 @@ class SafeSeats extends React.Component {
     }
     render() {
       return (
-        <div id="chart">
+        <div style={{display: 'flex'}}>
+            {/* <Chart options={this.state.options} series={this.state.series} type="pie" width={380} id={'pie-chart'} /> */}
+            
+            <TableContainer sx={{ width: 260}}>
+                <Table size="small" sx={{ width: 260}} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell sx={{ fontSize: 12, width: '50%' }} align="center">District</TableCell>
+                            <TableCell sx={{ fontSize: 12, width: '50%' }} align="center">Incumbent/Open Seat</TableCell>
+                            <TableCell sx={{ fontSize: 12, width: '50%' }} align="center">Victory Margin</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        <TableRow
+                            key={'summary'}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <TableCell sx={{ fontSize: 12 }} align="center">1</TableCell>
+                            <TableCell sx={{ fontSize: 12 }} align="center">1</TableCell>
+                            <TableCell sx={{ fontSize: 12 }} align="center">1</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
             <Chart options={this.state.options} series={this.state.series} type="pie" width={380} id={'pie-chart'} />
         </div>
       );
