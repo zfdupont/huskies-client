@@ -28,7 +28,7 @@ class SafeSeats extends React.Component {
                 setTimeout(() => {this.setData(config.w.config.labels[config.dataPointIndex])}, 10),
             },
             width: 380,
-            height: 500,
+            height: 650,
             type: 'pie',
             id: 'pie-chart',
             toolbar: {
@@ -47,6 +47,11 @@ class SafeSeats extends React.Component {
             offsetX: 50,
             offsetY: -10,
             floating: true
+          },
+          legend: {
+            offsetX: -10,
+            offsetY: 180,
+            fontSize: '12px'
           },
           responsive: [{
             breakpoint: 480,
@@ -122,27 +127,27 @@ class SafeSeats extends React.Component {
             <TableContainer sx={{ width: 260, height: 280}}>
                 <Table size="small" sx={{ width: 260}} aria-label="simple table">
                     <TableHead>
-                        <TableRow>
-                            <TableCell sx={{ fontSize: 13, width: '50%', fontWeight: 'bold' }} align="left">District</TableCell>
-                            <TableCell sx={{ fontSize: 13, width: '50%', fontWeight: 'bold' }} align="left">Incumbent/Open Seat</TableCell>
-                            <TableCell sx={{ fontSize: 13, width: '50%', fontWeight: 'bold' }} align="left">Victory Margin</TableCell>
+                        <TableRow sx={{ width: 50 }}>
+                            <TableCell sx={{ fontSize: 13, width: 50, padding: '2px 10px', fontWeight: 'bold' }} align="left">District</TableCell>
+                            <TableCell sx={{ fontSize: 13, width: 50, padding: '2px 10px', fontWeight: 'bold' }} align="left">Incumbent/Open Seat</TableCell>
+                            <TableCell sx={{ fontSize: 13, width: 50, padding: '2px 10px', fontWeight: 'bold' }} align="left">Victory Margin</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                       {this.state.table.map((row) => (
                                 <TableRow
                                     key={'summary'}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 }, width: 50}}
                                 >
-                                    <TableCell sx={{ fontSize: 13 }} align="left">{row.districtId}</TableCell>
-                                    <TableCell sx={{ fontSize: 13 }} align="left">{row.incumbent ? 'Incumbent' : 'Open Seat'}</TableCell>
-                                    <TableCell sx={{ fontSize: 13 }} align="left">{row.victoryMargin+'%'}</TableCell>
+                                    <TableCell sx={{ fontSize: 13, width: 50 }} align="left">{row.districtId}</TableCell>
+                                    <TableCell sx={{ fontSize: 13, width: 50 }} align="left">{row.incumbent ? 'Incumbent' : 'Open Seat'}</TableCell>
+                                    <TableCell sx={{ fontSize: 13, width: 50 }} align="left">{row.victoryMargin+'%'}</TableCell>
                                 </TableRow>
                             ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Chart options={this.state.options} series={this.state.series} type="pie" width={380} id={'pie-chart'} />
+            <Chart options={this.state.options} series={this.state.series} type="pie" width={380} height={650} id={'pie-chart'} />
         </div>
       );
     }
