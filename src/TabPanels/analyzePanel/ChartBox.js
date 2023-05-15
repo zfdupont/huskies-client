@@ -14,17 +14,8 @@ export default function ChartBox()
     const { mapStore, dataStore } = useContext(StoreContext);
     const [ state, setState ] = useState({
         selectedChart: '',
-        dataReady: false,
         data: {},
-        margin: -10
     });
-    //var bwdata = getBoxAndWhiskerData();
-    //console.log(dataStore.ensemble);
-      useEffect(() => {
-        //let bwdata = getBoxAndWhiskerData();
-        //console.log(state);
-    });
-    
     let boxWhiskerChart = getDistrictSummaryInfo();
     
     function getDistrictSummaryInfo() {
@@ -34,9 +25,7 @@ export default function ChartBox()
         let stateModelData = dataStore.getStateModelData(mapStore.getMapPlan(), mapStore.getState());
         let allGraphData = dataStore.getEnsembleData();
         let safeSeatsData = generateSafeSeatsData(stateModelData.electionDataDict);
-        //let winnerSplits = generateWinnerSplitsData(allGraphData.winner_split, allGraphData['enacted_data'].winner_split);
         let bw_data = allGraphData.box_w_data;
-        //console.log(winnerSplits);
         if(bw_data) {
             boxWhiskerChart.push(<BoxAndWhiskerChart key={1} data={bw_data} enactedData={allGraphData.enacted_data}/>);
         }
@@ -44,7 +33,6 @@ export default function ChartBox()
             boxWhiskerChart.push(<SafeSeats key={2} data={safeSeatsData}/>);
         }
         if(allGraphData) {
-            //console.log(winnerSplits);
             boxWhiskerChart.push(<BarChart key={3} winnerData={allGraphData.winner_split} enactedData={allGraphData['enacted_data'].winner_split}/>);
         }
         return boxWhiskerChart;
@@ -53,6 +41,7 @@ export default function ChartBox()
 
     function generateSafeSeatsData(election_data) {
         let safe_seats_data = {'incumbent': 0, 'open_seat': 0, 'dem-incmb': 0, 'rep-incmb': 0, 'dem-open': 0, 'rep-open': 0};
+        let safe_seats_table = [];
         for (let id in election_data) {
             let district = election_data[id];
             if (district.hasIncumbent) {
@@ -63,6 +52,7 @@ export default function ChartBox()
                 else {
                     safe_seats_data['rep-incmb'] += 1;
                 }
+                safe_seats_table.push({districtId: district['districtId'], incumbent: true, victoryMargin: district['winVotePercent']});
             } 
             else {
                 safe_seats_data['open_seat'] += 1;
@@ -72,24 +62,23 @@ export default function ChartBox()
                 else {
                     safe_seats_data['rep-open'] += 1;
                 }
+                safe_seats_table.push({districtId: district['districtId'], incumbent: false, victoryMargin: district['winVotePercent']});
             } 
         }
-        //console.log(safe_seats_data);
-        return safe_seats_data;
+        console.log(safe_seats_table);
+        return {data: safe_seats_data, table: safe_seats_table};
     }
 
     const handleClick = (event) => {
         let chart = event.target.id;
         if(chart === 'bw') {
-            setState({ margin: -10 });
             setState({ selectedChart: boxWhiskerChart[0] });
         }
         else if(chart === 'ensemble') {
-            setState({ margin: -7 });
             setState({ selectedChart: boxWhiskerChart[2] });
         }
         else if(chart === 'safeseats') {
-            //setState({ margin: -15 });
+
             setState({ selectedChart: boxWhiskerChart[1] });
         }
         else {

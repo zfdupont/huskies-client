@@ -11,11 +11,14 @@ class SafeSeats extends React.Component {
 
     constructor(props) {
       super(props);
-
-      var data = this.buildData(props.data)
+      
+      var data = this.buildData(props.data['data']);
+      var table = props.data['table'];
+      console.log(table);
 
       this.state = {
         data: data,
+        table: table,
         currentShow: 'safe-seats',
         series: data['safeSeries'],
         options: {
@@ -34,11 +37,8 @@ class SafeSeats extends React.Component {
                   download: false
                 }
             },
-            // donut: {
-            //     size: '110%'
-            //   },
           },
-          colors: ['#FF5A5F', '#BFD7EA'],
+          colors: ['#BFD7EA', '#FF5A5F'],
           labels: data['safeLabels'],
           title: {
             text: 'Safe Seats',
@@ -119,26 +119,26 @@ class SafeSeats extends React.Component {
     render() {
       return (
         <div style={{display: 'flex'}}>
-            {/* <Chart options={this.state.options} series={this.state.series} type="pie" width={380} id={'pie-chart'} /> */}
-            
-            <TableContainer sx={{ width: 260}}>
+            <TableContainer sx={{ width: 260, height: 280}}>
                 <Table size="small" sx={{ width: 260}} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ fontSize: 12, width: '50%' }} align="center">District</TableCell>
-                            <TableCell sx={{ fontSize: 12, width: '50%' }} align="center">Incumbent/Open Seat</TableCell>
-                            <TableCell sx={{ fontSize: 12, width: '50%' }} align="center">Victory Margin</TableCell>
+                            <TableCell sx={{ fontSize: 13, width: '50%', fontWeight: 'bold' }} align="left">District</TableCell>
+                            <TableCell sx={{ fontSize: 13, width: '50%', fontWeight: 'bold' }} align="left">Incumbent/Open Seat</TableCell>
+                            <TableCell sx={{ fontSize: 13, width: '50%', fontWeight: 'bold' }} align="left">Victory Margin</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        <TableRow
-                            key={'summary'}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                            <TableCell sx={{ fontSize: 12 }} align="center">1</TableCell>
-                            <TableCell sx={{ fontSize: 12 }} align="center">1</TableCell>
-                            <TableCell sx={{ fontSize: 12 }} align="center">1</TableCell>
-                        </TableRow>
+                      {this.state.table.map((row) => (
+                                <TableRow
+                                    key={'summary'}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell sx={{ fontSize: 13 }} align="left">{row.districtId}</TableCell>
+                                    <TableCell sx={{ fontSize: 13 }} align="left">{row.incumbent ? 'Incumbent' : 'Open Seat'}</TableCell>
+                                    <TableCell sx={{ fontSize: 13 }} align="left">{row.victoryMargin+'%'}</TableCell>
+                                </TableRow>
+                            ))}
                     </TableBody>
                 </Table>
             </TableContainer>

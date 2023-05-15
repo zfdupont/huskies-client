@@ -112,6 +112,50 @@ class BoxAndWhiskerChart extends Component {
             }
           }));
         }
+        if(val === 'hispanic-var') {
+          data = this.buildData(this.state.originalData, 'vap_hisp_variations');
+          scatterData = this.buildScatterData(this.state.originalScatterData, 'vap_hisp_variation');
+          this.setState((prevState) => ({
+            ...prevState,
+            type: val,
+            series: [{
+              ...prevState.series,
+              data: data
+            },
+            {
+              ...prevState.series,
+              data: scatterData
+            }],
+            options:{ ...prevState.options,
+              chart: {
+                  ...prevState.chart,
+                  id: 'pie-chart'
+              }
+            }
+          }));
+        }
+        if(val === 'white-var') {
+          data = this.buildData(this.state.originalData, 'vap_white_variations');
+          scatterData = this.buildScatterData(this.state.originalScatterData, 'vap_white_variation');
+          this.setState((prevState) => ({
+            ...prevState,
+            type: val,
+            series: [{
+              ...prevState.series,
+              data: data
+            },
+            {
+              ...prevState.series,
+              data: scatterData
+            }],
+            options:{ ...prevState.options,
+              chart: {
+                  ...prevState.chart,
+                  id: 'pie-chart'
+              }
+            }
+          }));
+        }
 
 
     }
@@ -153,7 +197,7 @@ class BoxAndWhiskerChart extends Component {
             
           },
           title: {
-            text: 'Variation',
+            text: 'District Plans Ensemble Variation',
             align: 'center'
           },
           yaxis: {
@@ -209,6 +253,8 @@ class BoxAndWhiskerChart extends Component {
                     <MenuItem value={'geo-var'}>Geo Variation</MenuItem>
                     <MenuItem value={'pop-var'}>Pop Variation</MenuItem>
                     <MenuItem value={'black-var'}>Black Pop Var</MenuItem>
+                    <MenuItem value={'hispanic-var'}>Hispanic Pop Var</MenuItem>
+                    <MenuItem value={'white-var'}>White Pop Var</MenuItem>
                 </Select>
             </FormControl>
         
