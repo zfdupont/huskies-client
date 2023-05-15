@@ -64,10 +64,12 @@ export default function DistrictSummaryTable() {
         return (
             <div style={{display:'flex', flex: "0 1 50px", marginBottom:'10px'}}>
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 1.2,  fontSize:'12px', color:'grey'}}>Districts</div>
-                <div style={{display:'flex', alignItems: 'end', justifyContent:'left', flex: 1.5,  fontSize:'12px', color:'grey'}}>Candidates</div>
+                <div style={{display:'flex', alignItems: 'end', justifyContent:'left', flex: 1.0,  fontSize:'12px', color:'grey'}}>Candidates</div>
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'left', flex: 0,  fontSize:'12px', color:'grey'}}>Incumbent</div>
-                <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 1.2,  fontSize:'12px', color:'grey'}}>Votes</div>
-                <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 0.8,  fontSize:'12px', color:'grey'}}>Percent</div>
+                <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 0.8,  fontSize:'12px', color:'grey'}}>Votes</div>
+                <div style={{display:'flex', alignItems: 'end', justifyContent:'left', flex: 0.8,  fontSize:'12px', color:'grey'}}>Percent</div>
+                <div style={{display:'flex', alignItems: 'end', justifyContent:'left', flex: 0.8,  fontSize:'12px', color:'grey'}}>Geo Diff</div>
+                <div style={{display:'flex', alignItems: 'end', justifyContent:'left', flex: 0.8,  fontSize:'12px', color:'grey'}}>Pop Diff</div>
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 0.15,  fontSize:'12px', color:'grey'}}></div>
             </div>
         )

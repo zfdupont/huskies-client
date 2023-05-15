@@ -32,6 +32,8 @@ export default function DistrictSummaryItem(props) {
 
     const stateData = dataStore.getStateModelData(mapStore.plan, mapStore.state);
     const compareData = stateData.compareDataDict[data.districtId];
+    let geoVar = data.hasIncumbent? ((compareData.area * 100).toFixed(1).toString() + "%") : "-";
+    let popVar = data.hasIncumbent? ((compareData.population * 100).toFixed(1).toString() + "%") : "-";
     const rows = [
         createData('Geographic difference', (compareData.area * 100).toFixed(1)),
         createData('Democrat difference', (compareData.democrats  * 100).toFixed(1)),
@@ -63,7 +65,7 @@ export default function DistrictSummaryItem(props) {
                         <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, color:'black'}}>
                             {data.winnerVotes?.toLocaleString()}
                         </div>
-                        <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, fontWeight:'800', color:'black'}}>
+                        <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, fontWeight:'400', color:'black'}}>
                             {winVotePercent}%
                         </div>
                         <div style={{flex:'0.1'}}/>
@@ -80,10 +82,22 @@ export default function DistrictSummaryItem(props) {
                         <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, color:'black'}}>
                             {data.loserVotes?.toLocaleString()}
                         </div>
-                        <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, fontWeight:'800', color:'black'}}>
+                        <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, fontWeight:'400', color:'black'}}>
                             {loseVotePercent}%
                         </div>
                         <div style={{flex:'0.1'}}/>
+                    </div>
+                    <div style={{flex:'0 0 1px', backgroundColor:'darkgray'}}></div>
+                </div>
+                <div style={{display:'flex', flex:'1', flexDirection:'column', fontWeight:'800', fontSize:'14px'}}>
+                    <div style={{display:'flex', flex:'1', alignItems: 'center', justifyContent:'center'}}>
+                        {geoVar}
+                    </div>
+                    <div style={{flex:'0 0 1px', backgroundColor:'darkgray'}}></div>
+                </div>
+                <div style={{display:'flex', flex:'1', flexDirection:'column', fontWeight:'800', fontSize:'14px'}}>
+                    <div style={{display:'flex', flex:'1', alignItems: 'center', justifyContent:'center'}}>
+                        {popVar}
                     </div>
                     <div style={{flex:'0 0 1px', backgroundColor:'darkgray'}}></div>
                 </div>
