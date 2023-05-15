@@ -19,6 +19,19 @@ function ResponsiveDrawer(props) {
 
     const drawer = (
         <div>
+            <div style={{
+                position:'absolute',
+                backgroundImage: `url(${process.env.PUBLIC_URL + '/Huskies3.png'})`,
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                width:'130px',
+                height:'50px',
+                top: '10px',
+                left:'20px',
+                zIndex: 100,
+              }}>
+            </div>
             <Toolbar />
             <Divider />
             <DrawerLists/>
@@ -34,6 +47,7 @@ function ResponsiveDrawer(props) {
                 sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
                 aria-label="mailbox folders"
             >
+
                 <Drawer
                     variant="permanent"
                     sx={{
@@ -42,6 +56,8 @@ function ResponsiveDrawer(props) {
                             boxSizing: 'border-box',
                             width: drawerWidth,
                         },
+                        zIndex:0,
+
                     }}
                     open
                 >
