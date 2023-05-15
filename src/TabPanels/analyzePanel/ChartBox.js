@@ -3,16 +3,11 @@ import * as React from "react";
 import {useContext, useState, useEffect} from "react";
 import StoreContext from "../../common/Store";
 import BoxAndWhiskerChart from "./BoxAndWhiskerChart";
-import BarChart from "./BarChart";
+import BarChart from "./EnsembleSplits";
 import SafeSeats from "./SafeSeats";
 import { Stack, Paper, MenuList, MenuItem, Divider } from "@mui/material";
 import { act } from "react-dom/test-utils";
 
-const ChartButtonType = {
-    BW: "box-and-whisker",
-    SAFE: 'safe-seats',
-    BAR: "barchart"
-}
 
 export default function ChartBox()
 {
