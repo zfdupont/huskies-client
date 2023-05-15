@@ -25,7 +25,7 @@ export default function MapPanel() {
                     {(!mapStore.isStateNone() && (mapStore.getMapPlan() === 'enacted')) && <ChartBox/>}
                 </Paper>
             </div>
-            <div style={{display:'flex', flexDirection:'column', flex:1.7}}>
+            <div style={{display:'flex', flexDirection:'column', flex:2.5}}>
                 <div style={{flex: '0', marginBottom:'10px', height:'100%'}}>
                   {(!mapStore.isStateNone()) && <StateInfoTable/>}
                 </div>
