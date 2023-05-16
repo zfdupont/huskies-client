@@ -205,7 +205,7 @@ class BoxAndWhiskerChart extends Component {
               text: 'Variation (%)',
             },
             min: 0,
-            max: function(max) { return max + 15 },
+            //max: function(max) { return max + 5 },
             forceNiceScale: true
             //tickAmount: 10,
           },

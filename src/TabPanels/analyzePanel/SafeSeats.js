@@ -14,7 +14,6 @@ class SafeSeats extends React.Component {
       
       var data = this.buildData(props.data['data']);
       var table = props.data['table'];
-      console.log(table);
 
       this.state = {
         data: data,
@@ -41,7 +40,7 @@ class SafeSeats extends React.Component {
           colors: ['#BFD7EA', '#FF5A5F'],
           labels: data['safeLabels'],
           title: {
-            text: 'Safe Seats',
+            text: 'Safe Seats (Incumbent vs Open Seats)',
             align: 'left',
             margin: 30,
             offsetX: 50,
@@ -136,7 +135,7 @@ class SafeSeats extends React.Component {
                     <TableBody>
                       {this.state.table.map((row) => (
                                 <TableRow
-                                    key={'summary'}
+                                    key={row.districtId}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 }, width: 50}}
                                 >
                                     <TableCell sx={{ fontSize: 13, width: 50 }} align="left">{row.districtId}</TableCell>

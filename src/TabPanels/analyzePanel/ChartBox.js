@@ -5,6 +5,7 @@ import StoreContext from "../../common/Store";
 import BoxAndWhiskerChart from "./BoxAndWhiskerChart";
 import BarChart from "./EnsembleSplits";
 import SafeSeats from "./SafeSeats";
+import Analysis from "./Analysis";
 import { Stack, Paper, MenuList, MenuItem, Divider } from "@mui/material";
 import { act } from "react-dom/test-utils";
 
@@ -35,6 +36,7 @@ export default function ChartBox()
         if(allGraphData) {
             boxWhiskerChart.push(<BarChart key={3} winnerData={allGraphData.winner_split} enactedData={allGraphData['enacted_data'].winner_split}/>);
         }
+        boxWhiskerChart.push(<Analysis/>);
         return boxWhiskerChart;
     }
 
@@ -65,7 +67,6 @@ export default function ChartBox()
                 safe_seats_table.push({districtId: district['districtId'], incumbent: false, victoryMargin: district['winVotePercent']});
             } 
         }
-        console.log(safe_seats_table);
         return {data: safe_seats_data, table: safe_seats_table};
     }
 
@@ -83,6 +84,7 @@ export default function ChartBox()
         }
         else {
             //do nothing
+            setState({ selectedChart: boxWhiskerChart[3] });
         }
     }
 
@@ -94,6 +96,7 @@ export default function ChartBox()
                         <MenuItem id={'bw'} onClick={handleClick}>Box and Whisker</MenuItem>
                         <MenuItem id={'ensemble'} onClick={handleClick}>Ensemble Splits</MenuItem>
                         <MenuItem id={'safeseats'} onClick={handleClick}>Safe Seats</MenuItem>
+                        <MenuItem id={'analysis'} onClick={handleClick}>Analysis</MenuItem>
                     </MenuList>
                 </Paper>
                 {state.selectedChart}
