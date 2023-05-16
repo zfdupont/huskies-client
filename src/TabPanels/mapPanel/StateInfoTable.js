@@ -18,6 +18,8 @@ export default function StateInfoTable() {
                         <TableRow>
                             <TableCell sx={{ fontSize: 12 }} align="center">Total Districts</TableCell>
                             <TableCell sx={{ fontSize: 12 }} align="center">Incumbents</TableCell>
+                            <TableCell sx={{ fontSize: 12 }} align="center">Democrats</TableCell>
+                            <TableCell sx={{ fontSize: 12 }} align="center">Republicans</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -27,6 +29,8 @@ export default function StateInfoTable() {
                         >
                             <TableCell sx={{ fontSize: 12 }} align="center">{summaryData.numOfDistrics}</TableCell>
                             <TableCell sx={{ fontSize: 12 }} align="center">{summaryData.numOfIncumbents}</TableCell>
+                            <TableCell sx={{ fontSize: 12 }} align="center">{summaryData.numOfDemocratWinners}</TableCell>
+                            <TableCell sx={{ fontSize: 12 }} align="center">{summaryData.numOfRepublicanWinners}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>

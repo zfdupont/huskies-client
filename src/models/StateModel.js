@@ -119,10 +119,30 @@ export default class StateModel {
         let summaryData = {
             numOfDistrics: 0,
             numOfIncumbents: 0,
+            numOfDemocratWinners: this.getNumberOfDemocratWinner(),
+            numOfRepublicanWinners: this.getNumberOfRepublicanWinner(),
         }
         summaryData.numOfDistrics = Object.keys(geojsonStateProperties).length;
         summaryData.numOfIncumbents = this.getIncumbentDistrictIDs().length;
         return summaryData;
+    }
+
+    getNumberOfDemocratWinner() {
+        let count = 0;
+        for (let key in this.electionDataDict) {
+            if (this.electionDataDict[key].winnerParty === PartyType.DEMOCRATIC)
+                count += 1;
+        }
+        return count;
+    }
+
+    getNumberOfRepublicanWinner() {
+        let count = 0;
+        for (let key in this.electionDataDict) {
+            if (this.electionDataDict[key].winnerParty === PartyType.REPUBLICAN)
+                count += 1;
+        }
+        return count;
     }
 
     getIncumbentDistrictIDs() {
