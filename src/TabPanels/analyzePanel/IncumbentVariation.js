@@ -71,7 +71,7 @@ class IncumbentVariation extends Component {
         }
         if(type === 'vap_variations') {
             let geo_variations = this.calculateDifferences(incumbent_data['vap_total_variations']);
-            let actual_geo_var = this.calculatePercentVariation(enacted['vap_total_variations']);
+            let actual_geo_var = this.calculatePercentVariation(enacted['vap_total_variation']);
             let labelKeys = Object.keys(geo_variations);
             labelKeys.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
             for(let key in labelKeys){
