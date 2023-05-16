@@ -58,8 +58,8 @@ export default function BasicPanel() {
         <div style={{display: "flex", height: '100%', width:'100%', flexFlow: "column"}}>
             <div style={{flex: "0 1 auto"}}>
                 <Box sx={{width: '100%', backgroundColor:'#7f987d'}}>
-                    <Box sx={{borderBottom: 1, borderColor: 'white'}}>
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" TabIndicatorProps={{style: {background:'white'}}}>
+                    <Box sx={{borderBottom: 2, borderColor: 'white'}}>
+                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" TabIndicatorProps={{style: {background:'white', fontWeight: 'bold'}}}>
                             <Tab label="Map" {...a11yProps(0)}  onClick={() => {onTabClick(TabType.MAP)}}/>
                             {/*<Tab label="Analyze" {...a11yProps(1)} onClick={() => {onTabClick(TabType.ANALYZE)}}/>*/}
                         </Tabs>
