@@ -18,8 +18,8 @@ export default function StateInfoTable() {
                         <TableRow>
                             <TableCell sx={{ fontSize: 12 }} align="center">Total Districts</TableCell>
                             <TableCell sx={{ fontSize: 12 }} align="center">Incumbents</TableCell>
-                            <TableCell sx={{ fontSize: 12 }} align="center">Dem Incumbent</TableCell>
-                            <TableCell sx={{ fontSize: 12 }} align="center">Rep Incumbent</TableCell>
+                            <TableCell sx={{ fontSize: 12 }} align="center">Dem inc winners</TableCell>
+                            <TableCell sx={{ fontSize: 12 }} align="center">Rep inc winners</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

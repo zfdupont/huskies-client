@@ -23,6 +23,7 @@ export default class StateModel {
                 loserCandidate : (data["democrat_votes"] < data["republican_votes"])? data["democrat_candidate"] : data["republican_candidate"],
                 hasIncumbent : (data["incumbent"] !== null),
                 incumbent : data["incumbent"],
+                incumbentParty : (data["incumbent"] === data["democrat_candidate"])? PartyType.DEMOCRATIC : PartyType.REPUBLICAN,
                 winnerParty : (data["democrat_votes"] > data["republican_votes"])? PartyType.DEMOCRATIC : PartyType.REPUBLICAN,
                 loserParty : (data["democrat_votes"] < data["republican_votes"])? PartyType.DEMOCRATIC : PartyType.REPUBLICAN,
                 democraticVotes : data["democrat_votes"],
@@ -130,7 +131,7 @@ export default class StateModel {
     getNumberOfDemocratWinner() {
         let count = 0;
         for (let key in this.electionDataDict) {
-            if (this.electionDataDict[key].winnerParty === PartyType.DEMOCRATIC && this.electionDataDict[key].hasIncumbent)
+            if (this.electionDataDict[key].winnerParty === PartyType.DEMOCRATIC)
                 count += 1;
         }
         return count;
@@ -139,7 +140,7 @@ export default class StateModel {
     getNumberOfRepublicanWinner() {
         let count = 0;
         for (let key in this.electionDataDict) {
-            if (this.electionDataDict[key].winnerParty === PartyType.REPUBLICAN && this.electionDataDict[key].hasIncumbent)
+            if (this.electionDataDict[key].winnerParty === PartyType.REPUBLICAN)
                 count += 1;
         }
         return count;
