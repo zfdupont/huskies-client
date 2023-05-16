@@ -130,7 +130,7 @@ export default class StateModel {
     getNumberOfDemocratWinner() {
         let count = 0;
         for (let key in this.electionDataDict) {
-            if (this.electionDataDict[key].winnerParty === PartyType.DEMOCRATIC)
+            if (this.electionDataDict[key].winnerParty === PartyType.DEMOCRATIC && this.electionDataDict[key].hasIncumbent)
                 count += 1;
         }
         return count;
@@ -139,7 +139,7 @@ export default class StateModel {
     getNumberOfRepublicanWinner() {
         let count = 0;
         for (let key in this.electionDataDict) {
-            if (this.electionDataDict[key].winnerParty === PartyType.REPUBLICAN)
+            if (this.electionDataDict[key].winnerParty === PartyType.REPUBLICAN && this.electionDataDict[key].hasIncumbent)
                 count += 1;
         }
         return count;
