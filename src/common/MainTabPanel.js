@@ -38,6 +38,7 @@ function a11yProps(index) {
     return {
         id: `simple-tab-${index}`,
         'aria-controls': `simple-tabpanel-${index}`,
+        style: {color: 'white'}
     };
 }
 
@@ -56,16 +57,16 @@ export default function BasicPanel() {
     return (
         <div style={{display: "flex", height: '100%', width:'100%', flexFlow: "column"}}>
             <div style={{flex: "0 1 auto"}}>
-                <Box sx={{width: '100%'}}>
-                    <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                <Box sx={{width: '100%', backgroundColor:'#7f987d'}}>
+                    <Box sx={{borderBottom: 1, borderColor: 'white'}}>
+                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" TabIndicatorProps={{style: {background:'white'}}}>
                             <Tab label="Map" {...a11yProps(0)}  onClick={() => {onTabClick(TabType.MAP)}}/>
                             {/*<Tab label="Analyze" {...a11yProps(1)} onClick={() => {onTabClick(TabType.ANALYZE)}}/>*/}
                         </Tabs>
                     </Box>
                 </Box>
             </div>
-            <div style={{flex: "1 1 auto", backgroundColor:'#f0f0f0'}}>
+            <div style={{flex: "1 1 auto", backgroundColor:'#7f987d'}}>
                 <TabPanel index={0} value={value}>
                     <div style={{position: 'absolute', width: '100%', height: 'calc(100% - 50px)'}}>
                         <MapPanel/>

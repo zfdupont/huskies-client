@@ -6,7 +6,7 @@ import * as React from "react";
 
 export default function HomePage() {
     return (
-        <Box sx={{position:"absolute", width: '100%', height:"100%"}}>
+        <Box sx={{position:"absolute", width: '100%', height:"100%", backgroundColor: '#7f987d'}}>
             <Box sx={{position:"relative", height:"100%", marginLeft: '200px'}}>
                 <MainTab/>
             </Box>

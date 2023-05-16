@@ -57,13 +57,16 @@ class IncumbentVariation extends Component {
                     finalData.push({
                         x: labelsMap[labelKeys[key]],
                         y: geo_variations[labelKeys[key]],
-                        fillColor: '#FF0000' 
+                        fillColor: '#fc0345'
                     });
                 }
+                // '#bce0f5',
+                // lower: '#185a87'
                 else {
                     finalData.push({
                         x: labelsMap[labelKeys[key]],
-                        y: geo_variations[labelKeys[key]]
+                        y: geo_variations[labelKeys[key]],
+                        fillColor: '#185a87'
                     });
 
                 }
@@ -79,13 +82,14 @@ class IncumbentVariation extends Component {
                     finalData.push({
                         x: labelsMap[labelKeys[key]],
                         y: geo_variations[labelKeys[key]],
-                        fillColor: '#FF0000' 
+                        fillColor: '#fc0345' 
                     });
                 }
                 else {
                     finalData.push({
                         x: labelsMap[labelKeys[key]],
-                        y: geo_variations[labelKeys[key]]
+                        y: geo_variations[labelKeys[key]],
+                        fillColor: '#185a87'
                     });
 
                 }
@@ -110,7 +114,6 @@ class IncumbentVariation extends Component {
       let data = this.buildData(enactedData[incumbent], incumbentData[incumbent], type);
 
       this.state = {
-      
         series: [{
           name: 'Variations',
           data: data
@@ -163,7 +166,7 @@ class IncumbentVariation extends Component {
             intersect: false
           },
           title: {
-            text: type === 'area_variations' ? 'Geographic Variation' : 'Population Variation',
+            text: type === 'area_variations' ? 'Geographic Variation for '+incumbent : 'Population Variation for '+incumbent,
             align: 'center',
             offsetY: 20
           },
