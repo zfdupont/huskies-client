@@ -31,11 +31,11 @@ export default function SummaryEnsembleTable() {
                     <Table size="small" sx={{ minWidth: 200}} aria-label="simple table">
                         <TableHead>
                             <TableRow>
-                                <TableCell sx={{ fontSize: 12 }} align="center">Plans</TableCell>
-                                <TableCell sx={{ fontSize: 12 }} align="center">Incumbents</TableCell>
-                                <TableCell sx={{ fontSize: 12 }} align="center">Predicted Winners</TableCell>
-                                <TableCell sx={{ fontSize: 12 }} align="center">Avg Geo Var</TableCell>
-                                <TableCell sx={{ fontSize: 12 }} align="center">Avg Pop Var</TableCell>
+                                <TableCell sx={{ fontSize: 12, fontWeight: 'bold' }} align="center">Plans</TableCell>
+                                <TableCell sx={{ fontSize: 12, fontWeight: 'bold' }} align="center">Incumbents</TableCell>
+                                <TableCell sx={{ fontSize: 12, fontWeight: 'bold' }} align="center">Predicted Winners</TableCell>
+                                <TableCell sx={{ fontSize: 12, fontWeight: 'bold' }} align="center">Avg Geo Var</TableCell>
+                                <TableCell sx={{ fontSize: 12, fontWeight: 'bold' }} align="center">Avg Pop Var</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
