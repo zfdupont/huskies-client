@@ -1,7 +1,9 @@
 import axios from 'axios'
 axios.defaults.withCredentials = true;
+
+
 const api = axios.create({
-    baseURL: 'http://localhost:8080/api',
+    baseURL: `${process.env.SERVER_URL}:${process.env.SERVER_PORT}/api`,
 })
 
 export const getStateSummaryJson = async (stateType) => {
