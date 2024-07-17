@@ -20,7 +20,7 @@ export default function MapFilterList() {
     const [open, setOpen] = useState(true);
     const [switches, setSwitches] = useState({
         [MapFilterType.INCUMBENT]: false,
-        [MapFilterType.VICTORYMARGIN]: false,
+        [MapFilterType.VICTORYMARGIN]: true,
         [MapFilterType.WHITE]: false,
         [MapFilterType.BLACK]: false,
         [MapFilterType.HISPANIC]: false,

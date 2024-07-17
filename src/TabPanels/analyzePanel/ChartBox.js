@@ -34,7 +34,7 @@ export default function ChartBox()
             boxWhiskerChart.push(<SafeSeats key={2} data={safeSeatsData}/>);
         }
         if(allGraphData) {
-            boxWhiskerChart.push(<BarChart key={3} winnerData={allGraphData.winner_split} enactedData={allGraphData['enacted_data'].winner_split}/>);
+            boxWhiskerChart.push(<BarChart key={3} winnerData={allGraphData.winner_split} enactedData={allGraphData['enacted_data']?.winner_split}/>);
         }
         boxWhiskerChart.push(<Analysis/>);
         return boxWhiskerChart;
@@ -93,7 +93,7 @@ export default function ChartBox()
             <Stack direction="row" spacing={2} style={{display:'flex', flexDirection:"row", alignItems:'left', justifyContents:'left', flex: "1"}}>
                 <Paper>
                     <MenuList>
-                        <MenuItem id={'bw'} onClick={handleClick}>Box and Whisker</MenuItem>
+                        {/* <MenuItem id={'bw'} onClick={handleClick}>Box and Whisker</MenuItem> */}
                         <MenuItem id={'ensemble'} onClick={handleClick}>Ensemble Splits</MenuItem>
                         <MenuItem id={'safeseats'} onClick={handleClick}>Safe Seats</MenuItem>
                         <MenuItem id={'analysis'} onClick={handleClick}>Analysis</MenuItem>
