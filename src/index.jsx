@@ -4,7 +4,7 @@ import './index.css';
 import 'leaflet/dist/leaflet.css'
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
+// import * as
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

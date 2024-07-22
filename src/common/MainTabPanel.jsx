@@ -55,24 +55,24 @@ export default function BasicPanel() {
     }
 
     return (
-        <div style={{display: "flex", height: '100%', width:'100%', flexFlow: "column"}}>
-            <div style={{flex: "0 1 auto"}}>
-                <Box sx={{width: '100%', backgroundColor:'#7f987d'}}>
-                    <Box sx={{borderBottom: 2, borderColor: 'white'}}>
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" TabIndicatorProps={{style: {background:'white', fontWeight: 'bold'}}}>
-                            <Tab label="Map" {...a11yProps(0)}  onClick={() => {onTabClick(TabType.MAP)}}/>
-                            {/*<Tab label="Analyze" {...a11yProps(1)} onClick={() => {onTabClick(TabType.ANALYZE)}}/>*/}
-                        </Tabs>
-                    </Box>
-                </Box>
-            </div>
+        // <div style={{display: "flex", height: '100%', width:'100%', flexFlow: "column"}}>
+            // <div style={{flex: "0 1 auto"}}>
+            //     <Box sx={{width: '100%', backgroundColor:'#7f987d'}}>
+            //         <Box sx={{borderBottom: 2, borderColor: 'white'}}>
+            //             <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" TabIndicatorProps={{style: {background:'white', fontWeight: 'bold'}}}>
+            //                 <Tab label="Map" {...a11yProps(0)}  onClick={() => {onTabClick(TabType.MAP)}}/>
+            //                 <Tab label="Analyze" {...a11yProps(1)} onClick={() => {onTabClick(TabType.ANALYZE)}}/>
+            //             </Tabs>
+            //         </Box>
+            //     </Box>
+            // </div>
             <div style={{flex: "1 1 auto", backgroundColor:'#7f987d'}}>
                 <TabPanel index={0} value={value}>
-                    <div style={{position: 'absolute', width: '100%', height: 'calc(100% - 50px)'}}>
+                    <div style={{position: 'absolute', width: '100%', height: '100%'}}>
                         <MapPanel/>
                     </div>
                 </TabPanel>
             </div>
-        </div>
+        // </div>
     );
 }

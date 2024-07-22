@@ -33,6 +33,10 @@ export default function MapFilterList() {
         callbacks.addOnResetState(resetStateFilter);
     }, [])
 
+    useEffect(() => {
+        mapStore.setColorFilter(MapFilterType.VICTORYMARGIN)
+    }, [])
+
     const label = {inputProps: { 'aria-label': 'Switch demo' }};
     const menuTitle = "Map Filter";
 
@@ -49,7 +53,7 @@ export default function MapFilterList() {
         else {
             state = {
                 [MapFilterType.INCUMBENT]: switches[MapFilterType.INCUMBENT],
-                [MapFilterType.VICTORYMARGIN]: false,
+                [MapFilterType.VICTORYMARGIN]: true,
                 [MapFilterType.WHITE]: false,
                 [MapFilterType.BLACK]: false,
                 [MapFilterType.HISPANIC]: false,

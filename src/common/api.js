@@ -3,7 +3,7 @@ axios.defaults.withCredentials = true;
 
 
 const api = axios.create({
-    baseURL: `${process.env.SERVER_URL}:${process.env.SERVER_PORT}/api`,
+    baseURL: `${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/api`,
 })
 
 export const getStateSummaryJson = async (stateType) => {
@@ -20,6 +20,8 @@ export const getStateSummaryJson = async (stateType) => {
 }
 
 export const getStateGeojson = async (planType, stateType) => {
+    console.log(import.meta.env);
+    console.log(api.getUri())
     return api.get(`/plan`,
         {
             params: {

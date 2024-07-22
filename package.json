@@ -32,11 +32,11 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "vite",
+    "start": "vite --port 3005",
     "build": "vite build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "vite"
+    "dev": "vite --port=3005"
   },
   "eslintConfig": {
     "extends": [
