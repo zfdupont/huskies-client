@@ -3,7 +3,7 @@ axios.defaults.withCredentials = true;
 
 
 const api = axios.create({
-    baseURL: `${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/api`,
+    baseURL: `${import.meta.env.VITE_SERVER_URL}/api`,
 })
 
 export const getStateSummaryJson = async (stateType) => {
