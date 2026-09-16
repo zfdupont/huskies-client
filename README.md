@@ -1,70 +1,59 @@
-# Getting Started with Create React App
+# Huskies Client
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React single-page app for visualizing and analyzing U.S. congressional redistricting
+plans. Pick a state (NY, GA, IL) and a districting plan (the 2022 enacted map or one of
+five simulated/ensemble plans), then explore it on an interactive Leaflet map with
+demographic/partisan heatmaps and summary tables. Data is served by a separate backend API.
 
-## Available Scripts
+Built with React 18, Vite, MUI, and Leaflet. Package manager: **pnpm**.
 
-In the project directory, you can run:
+## Getting Started
 
-### `npm start`
+Install dependencies:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```sh
+pnpm install
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Create your local env file from the template:
 
-### `npm test`
+```sh
+cp .env.development.example .env.development
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Then start the dev server:
 
-### `npm run build`
+```sh
+pnpm dev
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+This runs the app in development mode on [http://localhost:3000](http://localhost:3000)
+and talks to the backend at `http://localhost:8000/api`.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Scripts
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Run the dev server in development mode (port 3000, loads `.env.development`). |
+| `pnpm start` | Run in production mode (port 3005, loads `.env.production`). |
+| `pnpm build` | Build for production into `build/`. |
 
-### `npm run eject`
+## Environment
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Configuration is per-mode using Vite's env files. These are git-ignored; copy from the
+committed `*.example` templates and fill in values.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+| File | Used by | Purpose |
+|------|---------|---------|
+| `.env.development` | `pnpm dev` | Local development. |
+| `.env.production` | `pnpm start`, `pnpm build` | Production. |
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Variables:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- `VITE_SERVER_URL` — backend base URL. `src/common/api.js` appends `/api`.
+- `PORT` — port the Vite client serves on.
 
-## Learn More
+## Architecture
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+See [CLAUDE.md](./CLAUDE.md) for a detailed overview of the state management, data flow,
+and map rendering.
