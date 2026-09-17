@@ -47,7 +47,6 @@ class BoxAndWhiskerChart extends Component {
         if(val === 'pop-var') {
           data = this.buildData(this.state.originalData, 'vap_total_variations');
           scatterData = this.buildScatterData(this.state.originalScatterData, 'vap_total_variation');
-          console.log(this.state.series);
           this.setState((prevState) => ({
             ...prevState,
             type: val,

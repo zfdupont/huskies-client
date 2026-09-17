@@ -20,8 +20,6 @@ export const getStateSummaryJson = async (stateType) => {
 }
 
 export const getStateGeojson = async (planType, stateType) => {
-    console.log(import.meta.env);
-    console.log(api.getUri())
     return api.get(`/plan`,
         {
             params: {

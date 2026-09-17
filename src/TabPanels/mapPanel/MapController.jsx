@@ -138,8 +138,6 @@ export default function MapController() {
                 return populationColors[i];
             }
         }
-        console.log(featureValues);
-        console.log(population);
     }
 
     function setupHighlightDistrict() {

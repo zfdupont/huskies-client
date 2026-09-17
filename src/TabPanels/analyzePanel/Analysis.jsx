@@ -6,7 +6,6 @@ import StoreContext from "../../common/Store";
 export default function Analysis() {
 
     const { mapStore } = useContext(StoreContext);
-    console.log(mapStore.getState());
     const state = mapStore.getState();
 
     const StateType = {
