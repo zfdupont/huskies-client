@@ -21,7 +21,10 @@
   "scripts": {
     "start": "vite --mode production",
     "build": "vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "browserslist": {
     "production": [
@@ -36,9 +39,15 @@
     ]
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
     "@vitejs/plugin-react": "^4.3.1",
-    "vite": "^5.2.13"
+    "jsdom": "^30.0.1",
+    "vite": "^5.2.13",
+    "vitest": "^2.1.9"
   }
 }
