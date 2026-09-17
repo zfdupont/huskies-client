@@ -15,7 +15,10 @@ const drawerWidth = 200;
 function ResponsiveDrawer(props) {
     const isMobile = useIsMobile();
     const [open, setOpen] = React.useState(!isMobile);
-    const [height, setHeight] = React.useState(0);
+    // Default to the standard toolbar height so the logo (the mobile drawer
+    // toggle) stays tappable even when the drawer's Toolbar hasn't mounted yet
+    // (temporary drawer starts closed on mobile).
+    const [height, setHeight] = React.useState(64);
     const ref = React.useRef(null);
 
     const handleDrawerToggle = () => {
@@ -23,8 +26,8 @@ function ResponsiveDrawer(props) {
     }
 
     React.useEffect(() => {
-        setHeight(ref.current.clientHeight)
-    }, []);
+        if (ref.current) setHeight(ref.current.clientHeight);
+    }, [open]);
 
     const drawer = (
         <div>
@@ -71,15 +74,17 @@ function ResponsiveDrawer(props) {
                 
 
                 <Drawer
-                    variant="persistent"
+                    variant={isMobile ? 'temporary' : 'persistent'}
+                    onClose={handleDrawerToggle}
+                    ModalProps={{ keepMounted: true }}
                     sx={{
-                        display: { xs: 'none', sm: 'block' },
                         '& .MuiDrawer-paper': {
                             boxSizing: 'border-box',
                             width: drawerWidth,
                         },
-                        zIndex:0,
-
+                        // On mobile the temporary drawer must sit above the fixed
+                        // navbar (zIndex 10000) so its scrim and paper are visible.
+                        zIndex: isMobile ? 13000 : 0,
                     }}
                     open={open}
                 >
