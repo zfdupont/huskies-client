@@ -1,0 +1,7 @@
+# Build scripts we intentionally do not run:
+#   esbuild ships a prebuilt platform binary and works without its postinstall;
+#   core-js postinstall scripts are just donation banners.
+allowBuilds:
+  core-js: false
+  core-js-pure: false
+  esbuild: false
