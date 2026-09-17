@@ -46,7 +46,7 @@ function ResponsiveDrawer(props) {
 
                 <div className='navbar'
                 style={{
-                    position:'absolute',
+                    position:'fixed',
                     backgroundColor: 'white',
                     width:`100vw`,
                     zIndex: 10000,
