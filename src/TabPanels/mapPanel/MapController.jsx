@@ -128,6 +128,7 @@ export default function MapController() {
                 return partyColorArray[i];
             }
         }
+        return partyColorArray[partyColorArray.length - 1];
     }
 
     function getColorByPopulation(featureValues, population) {
@@ -138,6 +139,7 @@ export default function MapController() {
                 return populationColors[i];
             }
         }
+        return populationColors[populationColors.length - 1];
     }
 
     function setupHighlightDistrict() {

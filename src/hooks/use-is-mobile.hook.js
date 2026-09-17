@@ -9,7 +9,7 @@ const debounce = (fn, delay) => {
 };
 
 const useIsMobile = ()  => {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
   useLayoutEffect(() => {
     const updateSize = debounce(() => {
