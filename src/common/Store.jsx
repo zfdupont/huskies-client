@@ -206,11 +206,16 @@ function StoreContextProvider(props) {
             props["republican_votes"] = props["republican"];
             if (props["incumbent_party"] === "D") {
                 props["democrat_candidate"] = props["incumbent"];
-                props["republican_candidate"] = "Opponent";
+                props["republican_candidate"] = "Challenger";
             }
-            if (props["incumbent_party"] === "R") {
+            else if (props["incumbent_party"] === "R") {
                 props["republican_candidate"] = props["incumbent"];
-                props["democrat_candidate"] = "Opponent";
+                props["democrat_candidate"] = "Challenger";
+            }
+            else {
+                // No incumbent in this district (two challengers).
+                props["democrat_candidate"] = "Challenger";
+                props["republican_candidate"] = "Challenger";
             }
         }
     }
