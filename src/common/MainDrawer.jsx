@@ -1,6 +1,5 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { useContext } from 'react';
 // MUI
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -9,14 +8,11 @@ import Toolbar from '@mui/material/Toolbar';
 // Custom
 import DrawerLists from "./DrawerLists";
 import ResetButtonGroup from "../TabPanels/mapPanel/ResetButtonGroup";
-import StoreContext from './Store';
-import {TabType} from "./GlobalVariables";
 import useIsMobile from '../hooks/use-is-mobile.hook';
 
 const drawerWidth = 200;
 
 function ResponsiveDrawer(props) {
-    const { pageStore } = useContext(StoreContext);
     const isMobile = useIsMobile();
     const [open, setOpen] = React.useState(!isMobile);
     const [height, setHeight] = React.useState(0);
@@ -36,7 +32,7 @@ function ResponsiveDrawer(props) {
             <Divider />
             <DrawerLists/>
             <Divider />
-            {pageStore.isTabMatch(TabType.MAP) && <ResetButtonGroup/>}
+            <ResetButtonGroup/>
         </div>
     );
 

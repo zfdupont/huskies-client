@@ -1,11 +1,9 @@
 import {createContext, useState} from 'react';
 import {
     StateType,
-    TabType,
     PlanType,
     MapFilterType,
     MapActionType,
-    PageActionType,
     DataActionType
 } from './GlobalVariables';
 import api from './api.js';
@@ -13,29 +11,29 @@ import StateModel from "../models/StateModel";
 import {remove} from "./CalculationHelper";
 export const StoreContext = createContext({});
 
+// Fields cleared by every reset action (fresh objects each call).
+const resetFields = () => ({
+    planFilterTypes: [],
+    incumbentFilter: false,
+    mapFilterType: MapFilterType.NONE,
+    districtId: null,
+});
+
 // --- CONTEXT PROVIDER---------------------------------
 function StoreContextProvider(props) {
     const [mapStore, setMapStore] = useState({
         plan: null,
         planFilterTypes: [],
         state: StateType.NONE,
-        prevState: null,
         districtId: null,
         mapFilterType: MapFilterType.NONE,
         incumbentFilter: false,
-        heatMapFeatureValues: [],
     })
     const [dataStore, setDataStore] = useState({
-        planType: PlanType,
         stateData: {},
         geojson: {},
-        districtBoundData: {},
         ensemble: {}
     })
-    const [pageStore, setPageStore] = useState({
-        tabType: TabType.MAP
-    })
-
     const [callbacks, setCallbacks] = useState({
         resetState: [],
     })
@@ -58,7 +56,7 @@ function StoreContextProvider(props) {
             case MapActionType.SELECT_STATE:
                 return setMapStore((prev) => ({...prev, state: payload.stateType, districtId: null}));
             case MapActionType.UNSELECT_STATE:
-                return setMapStore((prev) => ({...prev, state: StateType.NONE, planFilterTypes: [],  incumbentFilter: false, mapFilterType: MapFilterType.NONE, districtId: null}));
+                return setMapStore((prev) => ({...prev, ...resetFields(), state: StateType.NONE}));
             case MapActionType.UPDATE_COLOR_FILTER:
                 return setMapStore((prev) => ({...prev, mapFilterType: payload.mapFilterType}));
             case MapActionType.UPDATE_INCUMBENT_FILTER:
@@ -66,9 +64,9 @@ function StoreContextProvider(props) {
             case MapActionType.HIGHLIGHT_DISTRICT:
                 return setMapStore((prev) => ({...prev, districtId: payload.districtId}));
             case MapActionType.RESET_STATE:
-                return setMapStore((prev) => ({...prev, planFilterTypes: [],  incumbentFilter: false, mapFilterType: MapFilterType.NONE, districtId: null}))
+                return setMapStore((prev) => ({...prev, ...resetFields()}))
             case MapActionType.RESET_PAGE:
-                return setMapStore((prev) => ({...prev, state: StateType.NONE, planFilterTypes: [],  incumbentFilter: false, mapFilterType: MapFilterType.NONE, districtId: null}));
+                return setMapStore((prev) => ({...prev, ...resetFields(), state: StateType.NONE}));
             default:
                 return;
         }
@@ -89,15 +87,6 @@ function StoreContextProvider(props) {
                     geojson: dataStore.geojson,
                     ensemble: dataStore.ensemble
                 })
-            default:
-                return;
-        }
-    }
-    const pageStoreReducer = (action) => {
-        const {type, payload} = action;
-        switch (type) {
-            case PageActionType.UPDATE_TAB:
-                return setPageStore((prev) => ({...prev, tabType: payload.tabType}))
             default:
                 return;
         }
@@ -245,14 +234,6 @@ function StoreContextProvider(props) {
         }
     }
 
-// --- PAGE STORE FUNCTIONS -----------------------------
-    pageStore.selectTab = function(tabType) {
-        pageStoreReducer({
-            type: PageActionType.UPDATE_TAB,
-            payload: { tabType: tabType }
-        })
-    }
-
 // --- CALLBACK FUNCTIONS -----------------------------
     callbacks.addOnResetState = function(callback) {
         setCallbacks((prev) => ({...prev, resetState: [...prev.resetState, callback]}))
@@ -263,19 +244,15 @@ function StoreContextProvider(props) {
     }
 // --- HELPER FUNCTIONS -----------------------------
     mapStore.getMapPlan = () => mapStore.plan;
-    mapStore.getSubPlan = () => mapStore.subPlan;
     mapStore.getState = () => mapStore.state;
     mapStore.getHighlightDistrictId = () => mapStore.districtId;
     mapStore.isPlanSelected = () => mapStore.plan !== null;
     mapStore.isPlanFilterSelected = (planType) => mapStore.planFilterTypes.includes(planType);
-    mapStore.isStateChanged = () => mapStore.state !== mapStore.prevState;
     mapStore.isStateNone = () => mapStore.state === StateType.NONE;
     mapStore.isStateMatch = (stateType) => stateType === mapStore.state;
 
-    dataStore.getPlanType = () => dataStore.planType;
-    dataStore.getStateGeoJson = (planType, stateType) => JSON.parse(JSON.stringify(dataStore.geojson[planType][stateType]));
+    dataStore.getStateGeoJson = (planType, stateType) => dataStore.geojson[planType][stateType];
     dataStore.getStateModelData = (planType, stateType) => dataStore.stateData[planType][stateType];
-    dataStore.getCurrentStateGeojson = (planType) => dataStore.geojson[planType][mapStore.state];
     dataStore.getEnsembleData = () => dataStore.ensemble;
     dataStore.isReadyToDisplayCurrentMap = () => dataStore.isStateDataReady(mapStore.plan, mapStore.state);
     // TO DO: once ensemble api call is usable, add to following functions -->
@@ -297,11 +274,9 @@ function StoreContextProvider(props) {
         if(!(dataStore.ensemble['name'])) return false;
         return true;
     }
-    // STORE PAGE
-    pageStore.isTabMatch = (tabType) => tabType === pageStore.tabType;
 
     return (
-        <StoreContext.Provider value={{mapStore, dataStore, pageStore, callbacks, loading}}>
+        <StoreContext.Provider value={{mapStore, dataStore, callbacks, loading}}>
             {props.children}
         </StoreContext.Provider>
     )

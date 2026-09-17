@@ -42,28 +42,20 @@ export function convertMapFilterTypeToPopulationType(filterType){
     }
 }
 
+// Bound-size thresholds paired with their zoom level, largest first.
+const boundSizeToZoom = [
+    [boundSizeDict.level6, zoomLevelDict.level6],
+    [boundSizeDict.level5, zoomLevelDict.level5],
+    [boundSizeDict.level4, zoomLevelDict.level4],
+    [boundSizeDict.level3, zoomLevelDict.level3],
+    [boundSizeDict.level2, zoomLevelDict.level2],
+    [boundSizeDict.level1, zoomLevelDict.level1],
+];
+
 export function convertBoundSizeToZoomLevel(targetSize)
 {
-    let boundSizes = [
-        boundSizeDict.level6,
-        boundSizeDict.level5,
-        boundSizeDict.level4,
-        boundSizeDict.level3,
-        boundSizeDict.level2,
-        boundSizeDict.level1
-    ];
-    let zoomLevels = [
-        zoomLevelDict.level6,
-        zoomLevelDict.level5,
-        zoomLevelDict.level4,
-        zoomLevelDict.level3,
-        zoomLevelDict.level2,
-        zoomLevelDict.level1,
-    ];
-
-    for (let i = 0; i < boundSizes.length; i++) {
-        if (targetSize > boundSizes[i])
-            return zoomLevels[i]
+    for (const [bound, zoom] of boundSizeToZoom) {
+        if (targetSize > bound) return zoom;
     }
     return zoomLevelDict.level6;
 }
