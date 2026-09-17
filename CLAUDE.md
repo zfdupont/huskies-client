@@ -15,13 +15,12 @@ tables. Data is fetched from a separate backend API.
 Package manager is **pnpm** (`pnpm-lock.yaml`). Build tool is **Vite** (migrated from
 Create React App; see caveats below).
 
-- `pnpm dev` / `pnpm start` — dev server on port **3005** (port is hardcoded in the
-  npm scripts, overriding the `PORT` env var and vite's default 3000)
+- `pnpm dev` — dev server in development mode on port **3000** (loads `.env.development`)
+- `pnpm start` — dev server in production mode on port **3005** (loads `.env.production`)
 - `pnpm build` — production build to `build/` (outDir is customized to CRA's `build/`,
   not vite's default `dist/`)
-- `pnpm test` — **currently non-functional**: the script still calls `react-scripts
-  test` even though the app runs on Vite. There is no working test runner or lint
-  script wired up. `src/App.test.jsx` exists but is the CRA default.
+
+There is no test runner or lint script configured.
 
 ## Environment Variables
 
@@ -87,16 +86,14 @@ through `src/common/ConversionHelper.js`.
 ### UI layout
 
 `HomePage` → `MainDrawer` (MUI responsive drawer with controls) + `MainTabPanel`
-(renders `MapPanel`). Note: the tab bar and the ANALYZE tab are **commented out** in
-`MainTabPanel.jsx`; only the map view is currently rendered. Components under
+(renders `MapPanel` only — the tab bar / ANALYZE tab were removed). Components under
 `src/TabPanels/analyzePanel/` exist but are largely unmounted. `Loader.jsx` (an `ldrs`
 spinner) shows while `loading` is true.
 
 ### Conventions
 
-- MUI v5 (`@mui/material`) is the primary UI kit; note `@material-ui/core` v4 is also
-  still in dependencies. Prefer `@mui/*`.
-- Files are `.jsx`/`.js` (not TypeScript, despite `typescript` being a dependency).
+- MUI v5 (`@mui/material`) is the UI kit; charts use `apexcharts`/`react-apexcharts`.
+- Files are `.jsx`/`.js` (not TypeScript).
 - SVGs import as React components (svgr configured in `vite.config.mjs`).
 - `vite.config.mjs` contains custom plugins replicating CRA behavior (env handling,
   `build/` outDir, `%ENV%` HTML substitution, `~` import prefix). Be careful editing it.
