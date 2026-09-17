@@ -22,5 +22,5 @@ jobs:
           build-args: |
             VITE_SERVER_URL=
           tags: |
-            ghcr.io/zfdupont/huskies-client:latest
+            ghcr.io/zfdupont/huskies-client:release
             ghcr.io/zfdupont/huskies-client:${{ github.sha }}
