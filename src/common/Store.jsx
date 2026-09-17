@@ -11,6 +11,14 @@ import StateModel from "../models/StateModel";
 import {remove} from "./CalculationHelper";
 export const StoreContext = createContext({});
 
+// Fields cleared by every reset action (fresh objects each call).
+const resetFields = () => ({
+    planFilterTypes: [],
+    incumbentFilter: false,
+    mapFilterType: MapFilterType.NONE,
+    districtId: null,
+});
+
 // --- CONTEXT PROVIDER---------------------------------
 function StoreContextProvider(props) {
     const [mapStore, setMapStore] = useState({
@@ -48,7 +56,7 @@ function StoreContextProvider(props) {
             case MapActionType.SELECT_STATE:
                 return setMapStore((prev) => ({...prev, state: payload.stateType, districtId: null}));
             case MapActionType.UNSELECT_STATE:
-                return setMapStore((prev) => ({...prev, state: StateType.NONE, planFilterTypes: [],  incumbentFilter: false, mapFilterType: MapFilterType.NONE, districtId: null}));
+                return setMapStore((prev) => ({...prev, ...resetFields(), state: StateType.NONE}));
             case MapActionType.UPDATE_COLOR_FILTER:
                 return setMapStore((prev) => ({...prev, mapFilterType: payload.mapFilterType}));
             case MapActionType.UPDATE_INCUMBENT_FILTER:
@@ -56,9 +64,9 @@ function StoreContextProvider(props) {
             case MapActionType.HIGHLIGHT_DISTRICT:
                 return setMapStore((prev) => ({...prev, districtId: payload.districtId}));
             case MapActionType.RESET_STATE:
-                return setMapStore((prev) => ({...prev, planFilterTypes: [],  incumbentFilter: false, mapFilterType: MapFilterType.NONE, districtId: null}))
+                return setMapStore((prev) => ({...prev, ...resetFields()}))
             case MapActionType.RESET_PAGE:
-                return setMapStore((prev) => ({...prev, state: StateType.NONE, planFilterTypes: [],  incumbentFilter: false, mapFilterType: MapFilterType.NONE, districtId: null}));
+                return setMapStore((prev) => ({...prev, ...resetFields(), state: StateType.NONE}));
             default:
                 return;
         }
