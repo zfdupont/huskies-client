@@ -23,16 +23,6 @@ export const DataActionType = {
     ADD_STATE_DATA: "add_state_data",
 }
 
-export const PageActionType = {
-    UPDATE_TAB: "change_tab",
-}
-
-// @enum {string}
-export const TabType = {
-    MAP: "map",
-    ANALYZE: "analyze",
-}
-
 // @enum {string}
 export const PlanType = {
     Y2022: "enacted",

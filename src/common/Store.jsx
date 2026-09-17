@@ -1,11 +1,9 @@
 import {createContext, useState} from 'react';
 import {
     StateType,
-    TabType,
     PlanType,
     MapFilterType,
     MapActionType,
-    PageActionType,
     DataActionType
 } from './GlobalVariables';
 import api from './api.js';
@@ -28,10 +26,6 @@ function StoreContextProvider(props) {
         geojson: {},
         ensemble: {}
     })
-    const [pageStore, setPageStore] = useState({
-        tabType: TabType.MAP
-    })
-
     const [callbacks, setCallbacks] = useState({
         resetState: [],
     })
@@ -85,15 +79,6 @@ function StoreContextProvider(props) {
                     geojson: dataStore.geojson,
                     ensemble: dataStore.ensemble
                 })
-            default:
-                return;
-        }
-    }
-    const pageStoreReducer = (action) => {
-        const {type, payload} = action;
-        switch (type) {
-            case PageActionType.UPDATE_TAB:
-                return setPageStore((prev) => ({...prev, tabType: payload.tabType}))
             default:
                 return;
         }
@@ -241,14 +226,6 @@ function StoreContextProvider(props) {
         }
     }
 
-// --- PAGE STORE FUNCTIONS -----------------------------
-    pageStore.selectTab = function(tabType) {
-        pageStoreReducer({
-            type: PageActionType.UPDATE_TAB,
-            payload: { tabType: tabType }
-        })
-    }
-
 // --- CALLBACK FUNCTIONS -----------------------------
     callbacks.addOnResetState = function(callback) {
         setCallbacks((prev) => ({...prev, resetState: [...prev.resetState, callback]}))
@@ -289,11 +266,9 @@ function StoreContextProvider(props) {
         if(!(dataStore.ensemble['name'])) return false;
         return true;
     }
-    // STORE PAGE
-    pageStore.isTabMatch = (tabType) => tabType === pageStore.tabType;
 
     return (
-        <StoreContext.Provider value={{mapStore, dataStore, pageStore, callbacks, loading}}>
+        <StoreContext.Provider value={{mapStore, dataStore, callbacks, loading}}>
             {props.children}
         </StoreContext.Provider>
     )
