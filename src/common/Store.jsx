@@ -40,6 +40,8 @@ function StoreContextProvider(props) {
         resetState: [],
     })
 
+    const [loading, setLoading] = useState(false);
+
 
 // --- STORE REDUCERS---------------------------------------
     const mapStoreReducer = (action) => {
@@ -226,21 +228,21 @@ function StoreContextProvider(props) {
 
     dataStore.addStateData = async (planType, stateType) => {
         if (dataStore.isStateDataReady(planType, stateType)) return;
+        setLoading(true);
+        try {
+            let geojson = await api.getStateGeojson(planType, stateType);
+            dataStore.setDistrictIdOfGeojson(geojson);
+            dataStore.addExtraPropForSimulationPlan(planType, geojson);
 
-        let geojson = await api.getStateGeojson(planType, stateType);
-        console.log(geojson);
-        dataStore.setDistrictIdOfGeojson(geojson);
-        dataStore.addExtraPropForSimulationPlan(planType, geojson);
-
-        let summaryJson =  await api.getStateSummaryJson(stateType);
-        let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
-        console.log(summaryJson);
-        console.log(stateModelData);
-
-        dataStoreReducer({
-            type: DataActionType.ADD_STATE_DATA,
-            payload: {planType: planType, stateType: stateType, geojson: geojson, stateModelData: stateModelData, ensemble: summaryJson}
-        })
+            let summaryJson =  await api.getStateSummaryJson(stateType);
+            let stateModelData = dataStore.createStateDataByGeojson(planType, stateType, geojson);
+            dataStoreReducer({
+                type: DataActionType.ADD_STATE_DATA,
+                payload: {planType: planType, stateType: stateType, geojson: geojson, stateModelData: stateModelData, ensemble: summaryJson}
+            })
+        } finally {
+            setLoading(false);
+        }
     }
 
 // --- PAGE STORE FUNCTIONS -----------------------------
@@ -299,7 +301,7 @@ function StoreContextProvider(props) {
     pageStore.isTabMatch = (tabType) => tabType === pageStore.tabType;
 
     return (
-        <StoreContext.Provider value={{mapStore, dataStore, pageStore, callbacks}}>
+        <StoreContext.Provider value={{mapStore, dataStore, pageStore, callbacks, loading}}>
             {props.children}
         </StoreContext.Provider>
     )

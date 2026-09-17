@@ -66,12 +66,12 @@ export default function BasicPanel() {
             //         </Box>
             //     </Box>
             // </div>
-            <div style={{flex: "1 1 auto", backgroundColor:'#7f987d'}}>
-                <TabPanel index={0} value={value}>
-                    <div style={{position: 'absolute', width: '100%', height: '100%'}}>
+            <div style={{backgroundColor:'#7f987d'}}>
+                {/* <TabPanel index={0} value={value}> */}
+                    <div style={{position: 'fixed', width: '100%', height: '100%', overflow: 'hidden'}}>
                         <MapPanel/>
                     </div>
-                </TabPanel>
+                {/* </TabPanel> */}
             </div>
         // </div>
     );

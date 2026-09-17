@@ -11,28 +11,28 @@ import DrawerLists from "./DrawerLists";
 import ResetButtonGroup from "../TabPanels/mapPanel/ResetButtonGroup";
 import StoreContext from './Store';
 import {TabType} from "./GlobalVariables";
+import useIsMobile from '../hooks/use-is-mobile.hook';
 
 const drawerWidth = 200;
 
 function ResponsiveDrawer(props) {
     const { pageStore } = useContext(StoreContext);
+    const isMobile = useIsMobile();
+    const [open, setOpen] = React.useState(!isMobile);
+    const [height, setHeight] = React.useState(0);
+    const ref = React.useRef(null);
+
+    const handleDrawerToggle = () => {
+        setOpen(!open);
+    }
+
+    React.useEffect(() => {
+        setHeight(ref.current.clientHeight)
+    }, []);
 
     const drawer = (
         <div>
-            <div style={{
-                position:'absolute',
-                backgroundImage: `url(${process.env.PUBLIC_URL + '/Huskies3.png'})`,
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                width:'130px',
-                height:'50px',
-                top: '10px',
-                left:'20px',
-                zIndex: 100,
-              }}>
-            </div>
-            <Toolbar />
+            <Toolbar ref={ref}/>
             <Divider />
             <DrawerLists/>
             <Divider />
@@ -48,8 +48,34 @@ function ResponsiveDrawer(props) {
                 aria-label="mailbox folders"
             >
 
+                <div className='navbar'
+                style={{
+                    position:'absolute',
+                    backgroundColor: 'white',
+                    width:`100vw`,
+                    zIndex: 10000,
+                    top: '0px',
+                    left:'0px',
+                }}
+                >
+                    <div 
+                    className='logo'
+                    style={{     
+                        backgroundImage: `url(${process.env.PUBLIC_URL + '/Huskies3.png'})`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundSize: 'contain',
+                        backgroundPosition: 'left',
+                        width: `${drawerWidth-1}px`,
+                        height:`${height}px`,    
+                    }}
+                    onClick={() => handleDrawerToggle()}
+                    >
+                    </div>
+                </div>
+                
+
                 <Drawer
-                    variant="permanent"
+                    variant="persistent"
                     sx={{
                         display: { xs: 'none', sm: 'block' },
                         '& .MuiDrawer-paper': {
@@ -59,7 +85,7 @@ function ResponsiveDrawer(props) {
                         zIndex:0,
 
                     }}
-                    open
+                    open={open}
                 >
                     {drawer}
                 </Drawer>
