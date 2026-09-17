@@ -251,7 +251,7 @@ function StoreContextProvider(props) {
     mapStore.isStateNone = () => mapStore.state === StateType.NONE;
     mapStore.isStateMatch = (stateType) => stateType === mapStore.state;
 
-    dataStore.getStateGeoJson = (planType, stateType) => JSON.parse(JSON.stringify(dataStore.geojson[planType][stateType]));
+    dataStore.getStateGeoJson = (planType, stateType) => dataStore.geojson[planType][stateType];
     dataStore.getStateModelData = (planType, stateType) => dataStore.stateData[planType][stateType];
     dataStore.getEnsembleData = () => dataStore.ensemble;
     dataStore.isReadyToDisplayCurrentMap = () => dataStore.isStateDataReady(mapStore.plan, mapStore.state);
