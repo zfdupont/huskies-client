@@ -19,17 +19,13 @@ function StoreContextProvider(props) {
         plan: null,
         planFilterTypes: [],
         state: StateType.NONE,
-        prevState: null,
         districtId: null,
         mapFilterType: MapFilterType.NONE,
         incumbentFilter: false,
-        heatMapFeatureValues: [],
     })
     const [dataStore, setDataStore] = useState({
-        planType: PlanType,
         stateData: {},
         geojson: {},
-        districtBoundData: {},
         ensemble: {}
     })
     const [pageStore, setPageStore] = useState({
@@ -263,19 +259,15 @@ function StoreContextProvider(props) {
     }
 // --- HELPER FUNCTIONS -----------------------------
     mapStore.getMapPlan = () => mapStore.plan;
-    mapStore.getSubPlan = () => mapStore.subPlan;
     mapStore.getState = () => mapStore.state;
     mapStore.getHighlightDistrictId = () => mapStore.districtId;
     mapStore.isPlanSelected = () => mapStore.plan !== null;
     mapStore.isPlanFilterSelected = (planType) => mapStore.planFilterTypes.includes(planType);
-    mapStore.isStateChanged = () => mapStore.state !== mapStore.prevState;
     mapStore.isStateNone = () => mapStore.state === StateType.NONE;
     mapStore.isStateMatch = (stateType) => stateType === mapStore.state;
 
-    dataStore.getPlanType = () => dataStore.planType;
     dataStore.getStateGeoJson = (planType, stateType) => JSON.parse(JSON.stringify(dataStore.geojson[planType][stateType]));
     dataStore.getStateModelData = (planType, stateType) => dataStore.stateData[planType][stateType];
-    dataStore.getCurrentStateGeojson = (planType) => dataStore.geojson[planType][mapStore.state];
     dataStore.getEnsembleData = () => dataStore.ensemble;
     dataStore.isReadyToDisplayCurrentMap = () => dataStore.isStateDataReady(mapStore.plan, mapStore.state);
     // TO DO: once ensemble api call is usable, add to following functions -->

@@ -15,7 +15,6 @@ export const MapActionType = {
     UPDATE_COLOR_FILTER: "updateColorFilter",
     UPDATE_INCUMBENT_FILTER: "updateIncumbentFilter",
     HIGHLIGHT_DISTRICT: "highlightDistrict",
-    SET_HEATMAP_FEATURE_VALUES: 'addHeatmapFeatureValues',
     RESET_STATE: 'resetState',
     RESET_PAGE: 'resetPage',
 }
@@ -32,11 +31,6 @@ export const PageActionType = {
 export const TabType = {
     MAP: "map",
     ANALYZE: "analyze",
-}
-
-// @enum {string}
-export const RefType = {
-    MAPCONTROLLER: "mapController",
 }
 
 // @enum {string}
