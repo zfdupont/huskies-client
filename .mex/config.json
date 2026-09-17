@@ -1,0 +1,10 @@
+{
+  "setupMode": "code-repo",
+  "aiTools": [
+    "claude"
+  ],
+  "scaffold_id": "07adfc47-67b4-429f-9ccc-e83fdbadc011",
+  "scaffold_name": "huskies-client",
+  "origin": null,
+  "upstream": null
+}
