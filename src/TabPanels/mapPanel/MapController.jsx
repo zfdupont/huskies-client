@@ -269,10 +269,7 @@ export default function MapController() {
     }
 
     function validCheck(list) {
-        list.forEach((v) => {
-            if (!v) return false;
-        })
-        return true;
+        return list.every(Boolean);
     }
 
     return ( <div ref={mapControllerRef}/> )
