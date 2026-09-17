@@ -51,16 +51,21 @@ export default function MapFilterList() {
             mapStore.setIncumbentFilter(e.target.checked);
         }
         else {
+            // Victory Margin and the population filters are mutually exclusive.
+            // Enabling one selects it; disabling a population filter falls back to
+            // Victory Margin (the default), while disabling Victory Margin itself
+            // clears the color filter.
+            const activeFilter = e.target.checked
+                ? filterType
+                : (filterType === MapFilterType.VICTORYMARGIN ? MapFilterType.NONE : MapFilterType.VICTORYMARGIN);
             state = {
                 [MapFilterType.INCUMBENT]: switches[MapFilterType.INCUMBENT],
-                [MapFilterType.VICTORYMARGIN]: true,
-                [MapFilterType.WHITE]: false,
-                [MapFilterType.BLACK]: false,
-                [MapFilterType.HISPANIC]: false,
-            }
-            state[filterType] = e.target.checked;
-            filterType = (e.target.checked)? filterType : MapFilterType.NONE;
-            mapStore.setColorFilter(filterType);
+                [MapFilterType.VICTORYMARGIN]: activeFilter === MapFilterType.VICTORYMARGIN,
+                [MapFilterType.WHITE]: activeFilter === MapFilterType.WHITE,
+                [MapFilterType.BLACK]: activeFilter === MapFilterType.BLACK,
+                [MapFilterType.HISPANIC]: activeFilter === MapFilterType.HISPANIC,
+            };
+            mapStore.setColorFilter(activeFilter);
         }
         setSwitches(state);
     };
