@@ -6,18 +6,10 @@ import {PlanType} from "../../common/GlobalVariables";
 import * as React from "react";
 
 
-const TableButtonType = {
-    NONE: "none",
-    MAIN: "main",
-    COMPARE: "compare",
-}
-
 export default function DistrictSummaryTable() {
     const infoTableRef = useRef();
     const { mapStore, dataStore } = useContext(StoreContext);
     const [ state, setState ] = useState({
-        selectedTableMenu: TableButtonType.MAIN,
-        selectedDistrictId: -1,
         incumbentFilter: true,
     });
 
@@ -26,15 +18,8 @@ export default function DistrictSummaryTable() {
     });
 
     let title = (mapStore.getMapPlan() === PlanType.Y2022)? "2022 District Detail" : "Simulation Detail";
-    let subTitles = getTitles();
+    let subTitles = getSubTitles();
     let districtSummaryInfo = getDistrictSummaryInfo();
-    selectedDistrictIdSetup();
-
-    function selectedDistrictIdSetup() {
-        if (state.selectedDistrictId !== mapStore.getHighlightDistrictId()) {
-            setState((prev) => ({...prev, selectedDistrictId: mapStore.getHighlightDistrictId()}))
-        }
-    }
 
     function getDistrictSummaryInfo() {
         const districtSummaryInfo = [];
@@ -55,11 +40,6 @@ export default function DistrictSummaryTable() {
         return []
     }
 
-    function getTitles() {
-        if (state.selectedTableMenu !== TableButtonType.COMPARE) return getSubTitles();
-        else return getCompareInfoTitle();
-    }
-
     function getSubTitles() {
         return (
             <div style={{display:'flex', flex: "0 1 50px", marginBottom:'10px'}}>
@@ -71,17 +51,6 @@ export default function DistrictSummaryTable() {
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'left', flex: 0.8,  fontSize:'12px', color:'grey'}}>Geo Diff</div>
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'left', flex: 0.8,  fontSize:'12px', color:'grey'}}>Pop Diff</div>
                 <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 0.15,  fontSize:'12px', color:'grey'}}></div>
-            </div>
-        )
-    }
-
-    function getCompareInfoTitle() {
-        return (
-            <div style={{display:'flex', flex: "0 1 50px", marginBottom:'10px'}}>
-                <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 1.2,  fontSize:'12px', color:'grey'}}>Districts</div>
-                <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 1.2,  fontSize:'12px', color:'grey'}}>Democrats</div>
-                <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 1.2,  fontSize:'12px', color:'grey'}}>Republican</div>
-                <div style={{display:'flex', alignItems: 'end', justifyContent:'center', flex: 1.2,  fontSize:'12px', color:'grey'}}>population</div>
             </div>
         )
     }

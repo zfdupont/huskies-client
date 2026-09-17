@@ -21,6 +21,10 @@ export default function DistrictSummaryItem(props) {
     let loseVotePercent = 100 - winVotePercent;
     const isHighlighted = mapStore.getHighlightDistrictId() === data.districtId;
     let bgColor = (isHighlighted)? colorDict.highlight : colorDict.white;
+    const canShowIncumbentVariation = data.hasIncumbent
+        && (mapStore.getMapPlan() === 'enacted')
+        && !!enactedData?.incumbent_data?.[data.incumbent]
+        && !!incumbentData?.[data.incumbent];
 
     function onItemClick() {
         mapStore.highlightDistrict(data.districtId);
@@ -126,8 +130,8 @@ export default function DistrictSummaryItem(props) {
                             ))}
                             <TableRow key={'chart'}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 }}}>
-                                {(data.hasIncumbent && (mapStore.getMapPlan() === 'enacted')) && <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData} type={'area_variations'}/> }
-                                {(data.hasIncumbent && (mapStore.getMapPlan() === 'enacted')) && <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData} type={'vap_variations'}/> }
+                                {canShowIncumbentVariation && <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData} type={'area_variations'}/> }
+                                {canShowIncumbentVariation && <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData} type={'vap_variations'}/> }
                             </TableRow>
                         </TableBody>
                     </Table>
