@@ -28,7 +28,7 @@ pnpm dev
 ```
 
 This runs the app in development mode on [http://localhost:3000](http://localhost:3000)
-and talks to the backend at `http://localhost:8000/api`.
+and talks to the backend at `http://localhost:8090/api`.
 
 ## Scripts
 
