@@ -66,10 +66,10 @@ export default function MapPanel() {
         </Panel>
       </div>
       <div className="flex flex-[2.5] flex-col">
-        <div className="mb-2.5 h-full flex-none">
+        <div className="mb-2.5 flex-none">
           {!mapStore.isStateNone() && <StateInfoTable />}
         </div>
-        <div className="mb-2.5 h-full flex-none">
+        <div className="mb-2.5 flex-none">
           {!mapStore.isStateNone() && mapStore.getMapPlan() === "enacted" && <SummaryEnsembleTable />}
         </div>
         <Panel className="flex flex-1" style={{ height: "70%" }}>
