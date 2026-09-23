@@ -17,7 +17,7 @@ export default function MultiPlanList() {
   const [open, setOpen] = useState(true);
   const [filters, setFilters] = useState(emptyFilters);
 
-  const resetStateFilter = useCallback(() => setFilters(emptyFilters), []);
+  const resetStateFilter = useCallback(() => setFilters({ ...emptyFilters }), []);
 
   useEffect(() => {
     callbacks.addOnResetState(resetStateFilter);
