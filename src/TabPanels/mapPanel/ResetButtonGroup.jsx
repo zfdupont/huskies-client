@@ -1,24 +1,20 @@
-import {Stack} from "@mui/material";
-import Button from "@mui/material/Button";
-import { useContext } from 'react';
-import { StoreContext } from '../../common/Store';
+import { useContext } from "react";
+import Button from "../../ui/Button";
+import { StoreContext } from "../../common/Store";
+
 export default function ResetButtonGroup() {
-    const { mapStore } = useContext(StoreContext);
+  const { mapStore } = useContext(StoreContext);
 
-    function onResetPageClick() {
-        mapStore.resetPage();
-    }
-
-    function onResetStateClick() {
-        mapStore.resetState();
-    }
-
-    return (
-        <div>
-            <Stack direction="column">
-                {!mapStore.isStateNone() && <Button onClick={onResetStateClick} size="small">Reset State</Button>}
-                <Button onClick={onResetPageClick} size="small" >Reset Page</Button>
-            </Stack>
-        </div>
-    )
+  return (
+    <div className="flex flex-col items-start px-3 py-2">
+      {!mapStore.isStateNone() && (
+        <Button size="sm" onClick={() => mapStore.resetState()}>
+          Reset State
+        </Button>
+      )}
+      <Button size="sm" onClick={() => mapStore.resetPage()}>
+        Reset Page
+      </Button>
+    </div>
+  );
 }
