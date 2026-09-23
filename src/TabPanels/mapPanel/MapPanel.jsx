@@ -8,7 +8,6 @@ import DistrictSummaryTable from "./DistrictSummaryTable";
 import StateInfoTable from "./StateInfoTable";
 import StoreReducer from '../../common/Store';
 import HeatMap from "./HeatMap";
-import SummaryEnsembleTable from "../analyzePanel/SummaryEnsembleTable";
 import useIsMobile from "../../hooks/use-is-mobile.hook";
 
 // The three data tables shown beside the map on desktop and inside the bottom
@@ -18,9 +17,6 @@ function DataTables({mapStore}) {
         <>
             <div style={{flex: '0', marginBottom: '10px', width: '100%'}}>
                 {(!mapStore.isStateNone()) && <StateInfoTable/>}
-            </div>
-            <div style={{flex: '0', marginBottom: '10px', width: '100%'}}>
-                {(!mapStore.isStateNone() && (mapStore.getMapPlan() === 'enacted')) && <SummaryEnsembleTable/>}
             </div>
             <Paper style={{display: 'flex', flex: '1', minHeight: 240, width: '100%'}}>
                 {(!mapStore.isStateNone()) && <DistrictSummaryTable/>}
@@ -84,9 +80,6 @@ export default function MapPanel() {
             <div style={{display:'flex', flexDirection:'column', flex:2.5}}>
                 <div style={{flex: '0', marginBottom:'10px', height:'100%'}}>
                   {(!mapStore.isStateNone()) && <StateInfoTable/>}
-                </div>
-                <div style={{flex: '0', marginBottom:'10px', height:'100%'}}>
-                    {(!mapStore.isStateNone() && (mapStore.getMapPlan() === 'enacted')) && <SummaryEnsembleTable/>}
                 </div>
                 <Paper style={{display:'flex', flex: '1', height: '70%'}}>
                     {(!mapStore.isStateNone()) && <DistrictSummaryTable/>}

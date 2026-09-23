@@ -4,7 +4,9 @@ import {
     PlanType,
     MapFilterType,
     MapActionType,
-    DataActionType
+    DataActionType,
+    PageActionType,
+    PageType
 } from './GlobalVariables';
 import api from './api.js';
 import StateModel from "../models/StateModel";
@@ -33,6 +35,9 @@ function StoreContextProvider(props) {
         stateData: {},
         geojson: {},
         ensemble: {}
+    })
+    const [pageStore, setPageStore] = useState({
+        page: PageType.MAP,
     })
     const [callbacks, setCallbacks] = useState({
         resetState: [],
@@ -67,6 +72,15 @@ function StoreContextProvider(props) {
                 return setMapStore((prev) => ({...prev, ...resetFields()}))
             case MapActionType.RESET_PAGE:
                 return setMapStore((prev) => ({...prev, ...resetFields(), state: StateType.NONE}));
+            default:
+                return;
+        }
+    }
+    const pageStoreReducer = (action) => {
+        const {type, payload} = action;
+        switch (type) {
+            case PageActionType.SELECT_PAGE:
+                return setPageStore((prev) => ({...prev, page: payload.pageType}));
             default:
                 return;
         }
@@ -239,6 +253,18 @@ function StoreContextProvider(props) {
         }
     }
 
+// --- PAGE STORE FUNCTIONS -----------------------------
+    pageStore.selectPage = function(pageType) {
+        if (pageStore.page === pageType) return;
+        pageStoreReducer({
+            type: PageActionType.SELECT_PAGE,
+            payload: {pageType: pageType},
+        })
+    }
+
+    pageStore.getPage = () => pageStore.page;
+    pageStore.isPage = (pageType) => pageStore.page === pageType;
+
 // --- CALLBACK FUNCTIONS -----------------------------
     callbacks.addOnResetState = function(callback) {
         setCallbacks((prev) => ({...prev, resetState: [...prev.resetState, callback]}))
@@ -281,7 +307,7 @@ function StoreContextProvider(props) {
     }
 
     return (
-        <StoreContext.Provider value={{mapStore, dataStore, callbacks, loading}}>
+        <StoreContext.Provider value={{mapStore, dataStore, pageStore, callbacks, loading}}>
             {props.children}
         </StoreContext.Provider>
     )

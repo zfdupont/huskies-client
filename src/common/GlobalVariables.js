@@ -20,6 +20,16 @@ export const DataActionType = {
     ADD_STATE_DATA: "add_state_data",
 }
 
+export const PageActionType = {
+    SELECT_PAGE: "selectPage",
+}
+
+// @enum {string}
+export const PageType = {
+    MAP: "map",
+    ANALYZE: "analyze",
+}
+
 // @enum {string}
 export const PlanType = {
     Y2022: "enacted",
