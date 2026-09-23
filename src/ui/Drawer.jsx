@@ -11,7 +11,7 @@ export default function Drawer({
     <aside
       data-variant={variant}
       style={{ width }}
-      className={`fixed left-0 top-0 h-full overflow-y-auto bg-surface transition-transform ${variant === "docked" ? "border-r border-border" : "z-[13000]"} ${open ? "translate-x-0" : "-translate-x-full"} ${className}`}
+      className={`fixed left-0 top-0 h-full overflow-y-auto bg-surface transition-transform ${variant === "docked" ? "border-r border-border" : "z-[13000]"} ${open ? "translate-x-0" : "-translate-x-full invisible"} ${className}`}
       {...props}
     >
       {children}
