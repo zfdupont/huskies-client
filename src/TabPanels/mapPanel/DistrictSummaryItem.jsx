@@ -3,7 +3,9 @@ import StoreContext from "../../common/Store";
 import {colorDict, PartyType, PlanType} from "../../common/GlobalVariables";
 import '../../App.css';
 import {convertNumToPlace} from "../../common/ConversionHelper";
-import {Checkbox, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import Panel from "../../ui/Panel";
+import Checkbox from "../../ui/Checkbox";
+import { Table, Thead, Tbody, Tr, Th, Td } from "../../ui/Table";
 import IncumbentVariation from '../analyzePanel/IncumbentVariation';
 
 const partyColor = {
@@ -64,7 +66,7 @@ export default function DistrictSummaryItem(props) {
                             {data.winnerCandidate}
                         </div>
                         <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 40px'}}>
-                            {(data.winnerCandidate === data.incumbent) &&<Checkbox defaultChecked disabled={true} color="default" size="small" sx={{position: 'relative', margin:'-10px'}}/>}
+                            {(data.winnerCandidate === data.incumbent) && <Checkbox checked />}
                         </div>
                         <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, color:'black'}}>
                             {data.winnerVotes?.toLocaleString()}
@@ -81,7 +83,7 @@ export default function DistrictSummaryItem(props) {
                             {data.loserCandidate}
                         </div>
                         <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: '0 0 40px'}}>
-                            {(data.loserCandidate === data.incumbent) && <Checkbox defaultChecked color="default" size="small" sx={{margin:'-10px'}}/>}
+                            {(data.loserCandidate === data.incumbent) && <Checkbox checked />}
                         </div>
                         <div style={{display:'flex', alignItems: 'center', justifyContent:'right', flex: 0.7, color:'black'}}>
                             {data.loserVotes?.toLocaleString()}
@@ -108,34 +110,32 @@ export default function DistrictSummaryItem(props) {
             </div>
             {isHighlighted &&
             <div style={{flex:'0 0 100px'}}>
-                <TableContainer component={Paper} sx={{marginBottom:'10px'}}>
-                    <Table aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{fontWeight:'800'}}>Compare to 2020 plan</TableCell>
-                                <TableCell sx={{fontWeight:'800'}} align="right">Percentage&nbsp;(%)</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {rows.map((row) => (
-                                <TableRow
-                                    key={row.name}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell component="th" scope="row" sx={{fontSize:'14px'}}>
-                                        {row.name}
-                                    </TableCell>
-                                    <TableCell align="right" sx={{fontWeight:'700', fontSize:'14px'}}>{row.percentage}</TableCell>
-                                </TableRow>
-                            ))}
-                            <TableRow key={'chart'}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 }}}>
-                                {canShowIncumbentVariation && <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData} type={'area_variations'}/> }
-                                {canShowIncumbentVariation && <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData} type={'vap_variations'}/> }
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <Panel className="mb-2.5">
+                  <Table>
+                    <Thead>
+                      <Tr>
+                        <Th className="text-left font-extrabold">Compare to 2020 plan</Th>
+                        <Th className="text-right font-extrabold">Percentage&nbsp;(%)</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {rows.map((row) => (
+                        <Tr key={row.name}>
+                          <Td className="text-left text-fg">{row.name}</Td>
+                          <Td className="text-right font-bold text-fg">{row.percentage}</Td>
+                        </Tr>
+                      ))}
+                      <Tr key="chart">
+                        {canShowIncumbentVariation && (
+                          <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData} type={"area_variations"} />
+                        )}
+                        {canShowIncumbentVariation && (
+                          <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData} type={"vap_variations"} />
+                        )}
+                      </Tr>
+                    </Tbody>
+                  </Table>
+                </Panel>
             </div>
             }
         </div>

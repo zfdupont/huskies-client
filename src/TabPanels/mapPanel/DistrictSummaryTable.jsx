@@ -1,5 +1,5 @@
 import DistrictSummaryItem from "./DistrictSummaryItem";
-import {Switch} from "@mui/material";
+import Toggle from "../../ui/Toggle";
 import {useContext, useEffect, useRef, useState} from "react";
 import StoreContext from "../../common/Store";
 import {PlanType} from "../../common/GlobalVariables";
@@ -79,7 +79,7 @@ export default function DistrictSummaryTable() {
                     </div>
                     <div style={{display:'flex', alignItems:'center', justifyContent: 'right', flex:'1', fontSize:'12px'}}>
                         Only Incumbents
-                        <Switch aria-label='Switch demo' size="small" sx={{margin: 1}} checked={state.incumbentFilter} onClick={onIncumbentFilterClick} />
+                        <Toggle size="sm" aria-label="Only Incumbents" checked={state.incumbentFilter} onChange={onIncumbentFilterClick} />
                     </div>
                 </div>
             </div>
