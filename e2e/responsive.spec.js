@@ -11,7 +11,7 @@ test("desktop: controls always visible and map shares the row", async ({ page },
     // State picker is visible without any interaction, and the drawer is the
     // docked (persistent) variant rather than a temporary overlay.
     await expect(page.getByText("New York")).toBeVisible();
-    await expect(page.locator(".MuiDrawer-docked")).toHaveCount(1);
+    await expect(page.locator('[data-testid="controls-drawer"][data-variant="docked"]')).toHaveCount(1);
 
     // Map does not fill the full width; the data column takes the rest.
     const viewport = page.viewportSize();
@@ -26,7 +26,7 @@ test("mobile: controls hide behind the logo tap and map fills the viewport", asy
     // Controls start hidden, and the drawer is a temporary overlay (no docked
     // variant) rather than the persistent desktop drawer.
     await expect(page.getByText("New York")).toBeHidden();
-    await expect(page.locator(".MuiDrawer-docked")).toHaveCount(0);
+    await expect(page.locator('[data-testid="controls-drawer"][data-variant="docked"]')).toHaveCount(0);
 
     // Map fills essentially the full viewport width.
     const viewport = page.viewportSize();
