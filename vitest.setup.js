@@ -18,6 +18,16 @@ if (!window.matchMedia) {
     });
 }
 
+// jsdom does not implement ResizeObserver; apexcharts (box-and-whisker chart in
+// the Analyze tab) reaches for it on mount. Provide a no-op stub.
+if (!global.ResizeObserver) {
+    global.ResizeObserver = class {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+    };
+}
+
 afterEach(() => {
     cleanup();
 });
