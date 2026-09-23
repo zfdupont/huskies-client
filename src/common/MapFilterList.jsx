@@ -1,122 +1,77 @@
-// React
-import * as React from 'react';
-import {useCallback, useContext, useEffect, useState} from "react";
-// MUI
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Collapse from '@mui/material/Collapse';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import Star from '@mui/icons-material/Star';
-import {ListItem, Switch} from "@mui/material";
-// source
+import * as React from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
+import NavSection from "../ui/NavSection";
+import Toggle from "../ui/Toggle";
 import StoreContext from "./Store";
-import {MapFilterType, StateType} from './GlobalVariables';
+import { MapFilterType } from "./GlobalVariables";
+
+const allOff = {
+  [MapFilterType.INCUMBENT]: false,
+  [MapFilterType.VICTORYMARGIN]: false,
+  [MapFilterType.WHITE]: false,
+  [MapFilterType.BLACK]: false,
+  [MapFilterType.HISPANIC]: false,
+};
 
 export default function MapFilterList() {
-    const { mapStore, callbacks }= useContext(StoreContext);
-    const [open, setOpen] = useState(true);
-    const [switches, setSwitches] = useState({
-        [MapFilterType.INCUMBENT]: false,
-        [MapFilterType.VICTORYMARGIN]: true,
-        [MapFilterType.WHITE]: false,
-        [MapFilterType.BLACK]: false,
-        [MapFilterType.HISPANIC]: false,
-    })
-    const resetStateFilter = useCallback(() => {
-        resetFilters();
-    }, [])
+  const { mapStore, callbacks } = useContext(StoreContext);
+  const [open, setOpen] = useState(true);
+  const [switches, setSwitches] = useState({ ...allOff, [MapFilterType.VICTORYMARGIN]: true });
 
-    useEffect(() => {
-        callbacks.addOnResetState(resetStateFilter);
-    }, [])
+  const resetStateFilter = useCallback(() => setSwitches({ ...allOff }), []);
 
-    useEffect(() => {
-        mapStore.setColorFilter(MapFilterType.VICTORYMARGIN)
-    }, [])
+  useEffect(() => {
+    callbacks.addOnResetState(resetStateFilter);
+  }, []);
 
-    const label = {inputProps: { 'aria-label': 'Switch demo' }};
-    const menuTitle = "Map Filter";
+  useEffect(() => {
+    mapStore.setColorFilter(MapFilterType.VICTORYMARGIN);
+  }, []);
 
-    const onListClick = () => {
-        setOpen(!open);
-    };
-
-    const onToggle = (e, filterType) => {
-        let state;
-        if (filterType === MapFilterType.INCUMBENT) {
-            state = {...switches, [MapFilterType.INCUMBENT]: e.target.checked};
-            mapStore.setIncumbentFilter(e.target.checked);
-        }
-        else {
-            // Victory Margin and the population filters are mutually exclusive.
-            // Enabling one selects it; disabling a population filter falls back to
-            // Victory Margin (the default), while disabling Victory Margin itself
-            // clears the color filter.
-            const activeFilter = e.target.checked
-                ? filterType
-                : (filterType === MapFilterType.VICTORYMARGIN ? MapFilterType.NONE : MapFilterType.VICTORYMARGIN);
-            state = {
-                [MapFilterType.INCUMBENT]: switches[MapFilterType.INCUMBENT],
-                [MapFilterType.VICTORYMARGIN]: activeFilter === MapFilterType.VICTORYMARGIN,
-                [MapFilterType.WHITE]: activeFilter === MapFilterType.WHITE,
-                [MapFilterType.BLACK]: activeFilter === MapFilterType.BLACK,
-                [MapFilterType.HISPANIC]: activeFilter === MapFilterType.HISPANIC,
-            };
-            mapStore.setColorFilter(activeFilter);
-        }
-        setSwitches(state);
-    };
-
-    function resetFilters() {
-        setSwitches({
-            [MapFilterType.INCUMBENT]: false,
-            [MapFilterType.VICTORYMARGIN]: false,
-            [MapFilterType.WHITE]: false,
-            [MapFilterType.BLACK]: false,
-            [MapFilterType.HISPANIC]: false,
-        })
+  const onToggle = (e, filterType) => {
+    let state;
+    if (filterType === MapFilterType.INCUMBENT) {
+      state = { ...switches, [MapFilterType.INCUMBENT]: e.target.checked };
+      mapStore.setIncumbentFilter(e.target.checked);
+    } else {
+      const activeFilter = e.target.checked
+        ? filterType
+        : filterType === MapFilterType.VICTORYMARGIN
+        ? MapFilterType.NONE
+        : MapFilterType.VICTORYMARGIN;
+      state = {
+        [MapFilterType.INCUMBENT]: switches[MapFilterType.INCUMBENT],
+        [MapFilterType.VICTORYMARGIN]: activeFilter === MapFilterType.VICTORYMARGIN,
+        [MapFilterType.WHITE]: activeFilter === MapFilterType.WHITE,
+        [MapFilterType.BLACK]: activeFilter === MapFilterType.BLACK,
+        [MapFilterType.HISPANIC]: activeFilter === MapFilterType.HISPANIC,
+      };
+      mapStore.setColorFilter(activeFilter);
     }
+    setSwitches(state);
+  };
 
-    return (
-        <List
-            sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-            component="nav"
-            aria-labelledby="nested-list-subheader"
-        >
-            <ListItemButton onClick={onListClick} sx={{ pl: 2}}>
-                <ListItemIcon>
-                    <Star />
-                </ListItemIcon>
-                <ListItemText style={{position:"absolute", left:'48px'}} primary={menuTitle} primaryTypographyProps={{fontSize: '14px'}} />
-                {open ? <ExpandLess style={{position:"absolute", left:'160px'}} /> : <ExpandMore style={{position:"absolute", left:'160px'}} />}
-            </ListItemButton>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                    <ListItem sx={{ pl:6 }}>
-                        <ListItemText primary="Incumbent" primaryTypographyProps={{fontSize: '12px'}} />
-                        <Switch {...label} checked={switches[MapFilterType.INCUMBENT]} size="small" onClick={(e) => {onToggle(e, MapFilterType.INCUMBENT)}} />
-                    </ListItem>
-                    <ListItem sx={{ pl: 6 }}>
-                        <ListItemText primary="Victory Margin" primaryTypographyProps={{fontSize: '12px'}} />
-                        <Switch {...label} checked={switches[MapFilterType.VICTORYMARGIN]} size="small"  onClick={(e) => {onToggle(e, MapFilterType.VICTORYMARGIN)}} />
-                    </ListItem>
-                    <ListItem sx={{ pl: 6 }}>
-                        <ListItemText primary="White Pop" primaryTypographyProps={{fontSize: '12px'}} />
-                        <Switch {...label} checked={switches[MapFilterType.WHITE]} size="small" onClick={(e) => {onToggle(e, MapFilterType.WHITE)}} />
-                    </ListItem>
-                    <ListItem sx={{ pl: 6 }}>
-                        <ListItemText primary="Black Pop" primaryTypographyProps={{fontSize: '12px'}} />
-                        <Switch {...label} checked={switches[MapFilterType.BLACK]} size="small" onClick={(e) => {onToggle(e, MapFilterType.BLACK)}} />
-                    </ListItem>
-                    <ListItem sx={{ pl: 6 }}>
-                        <ListItemText primary="Hispanic Pop" primaryTypographyProps={{fontSize: '12px'}} />
-                        <Switch {...label} checked={switches[MapFilterType.HISPANIC]} size="small" onClick={(e) => {onToggle(e, MapFilterType.HISPANIC)}} />
-                    </ListItem>
-                </List>
-            </Collapse>
-        </List>
-    );
+  const rows = [
+    [MapFilterType.INCUMBENT, "Incumbent"],
+    [MapFilterType.VICTORYMARGIN, "Victory Margin"],
+    [MapFilterType.WHITE, "White Pop"],
+    [MapFilterType.BLACK, "Black Pop"],
+    [MapFilterType.HISPANIC, "Hispanic Pop"],
+  ];
+
+  return (
+    <NavSection title="Map Filter" open={open} onToggle={() => setOpen(!open)}>
+      {rows.map(([type, label]) => (
+        <div key={type} className="flex items-center justify-between px-6 py-1.5 text-xs text-fg">
+          <span>{label}</span>
+          <Toggle
+            size="sm"
+            aria-label={label}
+            checked={switches[type]}
+            onChange={(e) => onToggle(e, type)}
+          />
+        </div>
+      ))}
+    </NavSection>
+  );
 }
