@@ -1,97 +1,81 @@
-import {useContext, useState} from "react";
-import {Paper, Drawer, Fab} from "@mui/material";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import 'leaflet/dist/leaflet.css'
-
+import { useContext, useState } from "react";
+import "leaflet/dist/leaflet.css";
+import Panel from "../../ui/Panel";
+import IconButton from "../../ui/IconButton";
+import BottomSheet from "../../ui/BottomSheet";
+import { BarChart } from "../../ui/icons";
 import MainMap from "./MainMap";
 import DistrictSummaryTable from "./DistrictSummaryTable";
 import StateInfoTable from "./StateInfoTable";
-import StoreReducer from '../../common/Store';
+import StoreReducer from "../../common/Store";
 import HeatMap from "./HeatMap";
 import SummaryEnsembleTable from "../analyzePanel/SummaryEnsembleTable";
 import useIsMobile from "../../hooks/use-is-mobile.hook";
 
-// The three data tables shown beside the map on desktop and inside the bottom
-// sheet on mobile. Guarded by the same conditions in both layouts.
-function DataTables({mapStore}) {
-    return (
-        <>
-            <div style={{flex: '0', marginBottom: '10px', width: '100%'}}>
-                {(!mapStore.isStateNone()) && <StateInfoTable/>}
-            </div>
-            <div style={{flex: '0', marginBottom: '10px', width: '100%'}}>
-                {(!mapStore.isStateNone() && (mapStore.getMapPlan() === 'enacted')) && <SummaryEnsembleTable/>}
-            </div>
-            <Paper style={{display: 'flex', flex: '1', minHeight: 240, width: '100%'}}>
-                {(!mapStore.isStateNone()) && <DistrictSummaryTable/>}
-            </Paper>
-        </>
-    );
+function DataTables({ mapStore }) {
+  return (
+    <>
+      <div className="mb-2.5 w-full flex-none">
+        {!mapStore.isStateNone() && <StateInfoTable />}
+      </div>
+      <div className="mb-2.5 w-full flex-none">
+        {!mapStore.isStateNone() && mapStore.getMapPlan() === "enacted" && <SummaryEnsembleTable />}
+      </div>
+      <Panel className="flex w-full flex-1" style={{ minHeight: 240 }}>
+        {!mapStore.isStateNone() && <DistrictSummaryTable />}
+      </Panel>
+    </>
+  );
 }
 
 export default function MapPanel() {
-    let {mapStore} = useContext(StoreReducer);
-    const isMobile = useIsMobile();
-    const [sheetOpen, setSheetOpen] = useState(false);
+  const { mapStore } = useContext(StoreReducer);
+  const isMobile = useIsMobile();
+  const [sheetOpen, setSheetOpen] = useState(false);
 
-    if (isMobile) {
-        return (
-            <div style={{position: 'absolute', width: '100%', height: '100%'}}>
-                <Paper className="map" style={{position: 'absolute', inset: 0}}>
-                    <MainMap/>
-                    <HeatMap/>
-                </Paper>
-                {(!mapStore.isStateNone()) && (
-                    <Fab
-                        size="medium"
-                        color="primary"
-                        aria-label="Show district data"
-                        onClick={() => setSheetOpen(true)}
-                        sx={{position: 'absolute', bottom: 16, right: 16, zIndex: 1100}}
-                    >
-                        <BarChartIcon/>
-                    </Fab>
-                )}
-                <Drawer
-                    anchor="bottom"
-                    open={sheetOpen}
-                    onClose={() => setSheetOpen(false)}
-                    PaperProps={{
-                        sx: {
-                            maxHeight: '75vh',
-                            p: 1.5,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            overflow: 'auto',
-                        },
-                    }}
-                >
-                    <DataTables mapStore={mapStore}/>
-                </Drawer>
-            </div>
-        );
-    }
-
+  if (isMobile) {
     return (
-        <div style={{position: 'absolute', width: 'calc(100% - 20px)', height:'calc(100% - 0px)', padding: '10px', display:'flex'}}>
-            <div style={{display: "flex", flexDirection: "column", justifyContent:'center', flex:3.5, marginRight: '10px'}}>
-                <Paper className="map" style={{flex: 1, marginBottom: '10px'}}>
-                    <MainMap/>
-                    <HeatMap/>
-                </Paper>
-            </div>
-            <div style={{display:'flex', flexDirection:'column', flex:2.5}}>
-                <div style={{flex: '0', marginBottom:'10px', height:'100%'}}>
-                  {(!mapStore.isStateNone()) && <StateInfoTable/>}
-                </div>
-                <div style={{flex: '0', marginBottom:'10px', height:'100%'}}>
-                    {(!mapStore.isStateNone() && (mapStore.getMapPlan() === 'enacted')) && <SummaryEnsembleTable/>}
-                </div>
-                <Paper style={{display:'flex', flex: '1', height: '70%'}}>
-                    {(!mapStore.isStateNone()) && <DistrictSummaryTable/>}
-                </Paper>
-            </div>
-        </div>
+      <div className="absolute h-full w-full">
+        <Panel className="map absolute inset-0">
+          <MainMap />
+          <HeatMap />
+        </Panel>
+        {!mapStore.isStateNone() && (
+          <IconButton
+            variant="elevated"
+            aria-label="Show district data"
+            onClick={() => setSheetOpen(true)}
+            className="absolute bottom-4 right-4 z-[1100]"
+          >
+            <BarChart />
+          </IconButton>
+        )}
+        <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)}>
+          <DataTables mapStore={mapStore} />
+        </BottomSheet>
+      </div>
     );
+  }
+
+  return (
+    <div className="absolute flex h-full p-2.5" style={{ width: "calc(100% - 20px)" }}>
+      <div className="mr-2.5 flex flex-[3.5] flex-col justify-center">
+        <Panel className="map mb-2.5 flex-1">
+          <MainMap />
+          <HeatMap />
+        </Panel>
+      </div>
+      <div className="flex flex-[2.5] flex-col">
+        <div className="mb-2.5 h-full flex-none">
+          {!mapStore.isStateNone() && <StateInfoTable />}
+        </div>
+        <div className="mb-2.5 h-full flex-none">
+          {!mapStore.isStateNone() && mapStore.getMapPlan() === "enacted" && <SummaryEnsembleTable />}
+        </div>
+        <Panel className="flex flex-1" style={{ height: "70%" }}>
+          {!mapStore.isStateNone() && <DistrictSummaryTable />}
+        </Panel>
+      </div>
+    </div>
+  );
 }
