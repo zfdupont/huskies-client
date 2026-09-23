@@ -6,12 +6,12 @@ export function Table({ className = "", children, ...props }) {
   );
 }
 
-export function Thead({ children }) {
-  return <thead>{children}</thead>;
+export function Thead({ className = "", children, ...props }) {
+  return <thead className={className} {...props}>{children}</thead>;
 }
 
-export function Tbody({ children }) {
-  return <tbody>{children}</tbody>;
+export function Tbody({ className = "", children, ...props }) {
+  return <tbody className={className} {...props}>{children}</tbody>;
 }
 
 export function Tr({ className = "", children, ...props }) {
