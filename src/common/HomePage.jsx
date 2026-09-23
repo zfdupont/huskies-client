@@ -1,22 +1,18 @@
-import Box from "@mui/material/Box";
+import * as React from "react";
 import MainTab from "./MainTabPanel";
 import MainDrawer from "./MainDrawer";
-import * as React from "react";
-
 import Loader from "./Loader";
-
 import StoreContext from "./Store";
 
-
 export default function HomePage() {
-    const {loading} = React.useContext(StoreContext)
-    return (
-        <Box sx={{position:"absolute", width: '100%', height:"100%", backgroundColor: 'silver'}}>
-            <Box sx={{position:"relative", height:"100%", marginTop: '64px'}}>
-                {loading ? <Loader /> : null}
-                <MainTab/>
-            </Box>
-            <MainDrawer/>
-        </Box>
-    )
+  const { loading } = React.useContext(StoreContext);
+  return (
+    <div className="absolute h-full w-full bg-bg">
+      <div className="relative mt-16 h-full">
+        {loading ? <Loader /> : null}
+        <MainTab />
+      </div>
+      <MainDrawer />
+    </div>
+  );
 }

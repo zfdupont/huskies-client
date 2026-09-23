@@ -1,106 +1,47 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-// MUI
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
-import Toolbar from '@mui/material/Toolbar';
-// Custom
+import * as React from "react";
+import Drawer from "../ui/Drawer";
 import DrawerLists from "./DrawerLists";
 import ResetButtonGroup from "../TabPanels/mapPanel/ResetButtonGroup";
-import useIsMobile from '../hooks/use-is-mobile.hook';
+import useIsMobile from "../hooks/use-is-mobile.hook";
 
 const drawerWidth = 200;
 
-function ResponsiveDrawer(props) {
-    const isMobile = useIsMobile();
-    const [open, setOpen] = React.useState(!isMobile);
-    // Default to the standard toolbar height so the logo (the mobile drawer
-    // toggle) stays tappable even when the drawer's Toolbar hasn't mounted yet
-    // (temporary drawer starts closed on mobile).
-    const [height, setHeight] = React.useState(64);
-    const ref = React.useRef(null);
+export default function ResponsiveDrawer() {
+  const isMobile = useIsMobile();
+  const [open, setOpen] = React.useState(!isMobile);
 
-    const handleDrawerToggle = () => {
-        setOpen(!open);
-    }
+  const handleDrawerToggle = () => setOpen((o) => !o);
 
-    React.useEffect(() => {
-        if (ref.current) setHeight(ref.current.clientHeight);
-    }, [open]);
+  return (
+    <nav aria-label="controls">
+      <div
+        className="navbar fixed left-0 top-0 z-[10000] flex h-16 w-screen items-center bg-surface border-b border-border"
+      >
+        <div
+          className="logo h-16"
+          style={{
+            width: `${drawerWidth - 1}px`,
+            backgroundImage: `url(${process.env.PUBLIC_URL + "/Huskies3.png"})`,
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "contain",
+            backgroundPosition: "left",
+          }}
+          onClick={handleDrawerToggle}
+        />
+      </div>
 
-    const drawer = (
-        <div>
-            <Toolbar ref={ref}/>
-            <Divider />
-            <DrawerLists/>
-            <Divider />
-            <ResetButtonGroup/>
-        </div>
-    );
-
-    return (
-        <Box sx={{ display: 'flex' }}>
-            <Box
-                component="nav"
-                sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-                aria-label="mailbox folders"
-            >
-
-                <div className='navbar'
-                style={{
-                    position:'fixed',
-                    backgroundColor: 'white',
-                    width:`100vw`,
-                    zIndex: 10000,
-                    top: '0px',
-                    left:'0px',
-                }}
-                >
-                    <div 
-                    className='logo'
-                    style={{     
-                        backgroundImage: `url(${process.env.PUBLIC_URL + '/Huskies3.png'})`,
-                        backgroundRepeat: 'no-repeat',
-                        backgroundSize: 'contain',
-                        backgroundPosition: 'left',
-                        width: `${drawerWidth-1}px`,
-                        height:`${height}px`,    
-                    }}
-                    onClick={() => handleDrawerToggle()}
-                    >
-                    </div>
-                </div>
-                
-
-                <Drawer
-                    variant={isMobile ? 'temporary' : 'persistent'}
-                    onClose={handleDrawerToggle}
-                    ModalProps={{ keepMounted: true }}
-                    sx={{
-                        '& .MuiDrawer-paper': {
-                            boxSizing: 'border-box',
-                            width: drawerWidth,
-                        },
-                        // On mobile the temporary drawer must sit above the fixed
-                        // navbar (zIndex 10000) so its scrim and paper are visible.
-                        zIndex: isMobile ? 13000 : 0,
-                    }}
-                    open={open}
-                >
-                    {drawer}
-                </Drawer>
-            </Box>
-        </Box>
-    );
+      <Drawer
+        variant={isMobile ? "overlay" : "docked"}
+        open={isMobile ? open : true}
+        onClose={handleDrawerToggle}
+        width={drawerWidth}
+        className="pt-16"
+        data-testid="controls-drawer"
+      >
+        <DrawerLists />
+        <div className="my-2 border-t border-border" />
+        <ResetButtonGroup />
+      </Drawer>
+    </nav>
+  );
 }
-
-ResponsiveDrawer.propTypes = {
-    /**
-     * Injected by the documentation to work in an iframe.
-     * You won't need it on your project.
-     */
-    window: PropTypes.func,
-};
-
-export default ResponsiveDrawer;
