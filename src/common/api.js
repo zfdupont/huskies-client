@@ -1,5 +1,9 @@
 import axios from 'axios'
-axios.defaults.withCredentials = true;
+// The API is public, read-only data with no auth or cookies, and the server's
+// CORS config intentionally does not allow credentials. Sending credentialed
+// requests makes the browser block every cross-origin response in local dev
+// (client on :3000 -> server on :8090), so credentials mode must stay off.
+axios.defaults.withCredentials = false;
 
 
 const api = axios.create({
