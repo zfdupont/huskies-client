@@ -1,40 +1,35 @@
 import * as React from "react";
-import {useContext} from 'react';
-import StoreContext from '../../common/Store';
-import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import { useContext } from "react";
+import StoreContext from "../../common/Store";
+import Panel from "../../ui/Panel";
+import { Table, Thead, Tbody, Tr, Th, Td } from "../../ui/Table";
 
 export default function StateInfoTable() {
+  const { mapStore, dataStore } = useContext(StoreContext);
+  if (!dataStore.isReadyToDisplayCurrentMap()) return null;
+  const modelData = dataStore.getStateModelData(mapStore.plan, mapStore.state);
+  const summaryData = modelData.summaryData;
 
-    const {mapStore, dataStore} = useContext(StoreContext);
-    if (!dataStore.isReadyToDisplayCurrentMap()) return null;
-    const modelData = dataStore.getStateModelData(mapStore.plan, mapStore.state);
-    const summaryData = modelData.summaryData;
-
-    return (
-        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight:'500', fontSize:'12px', color:'white'}}>
-            <TableContainer component={Paper}>
-                <Table size="small" sx={{ minWidth: 200}} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={{ fontSize: 12, fontWeight: 'bold' }} align="center">Total Districts</TableCell>
-                            <TableCell sx={{ fontSize: 12, fontWeight: 'bold' }} align="center">Incumbents</TableCell>
-                            <TableCell sx={{ fontSize: 12, fontWeight: 'bold' }} align="center">Dem winners</TableCell>
-                            <TableCell sx={{ fontSize: 12, fontWeight: 'bold' }} align="center">Rep winners</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        <TableRow
-                            key={'summary'}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                            <TableCell sx={{ fontSize: 12 }} align="center">{summaryData.numOfDistrics}</TableCell>
-                            <TableCell sx={{ fontSize: 12 }} align="center">{summaryData.numOfIncumbents}</TableCell>
-                            <TableCell sx={{ fontSize: 12 }} align="center">{summaryData.numOfDemocratWinners}</TableCell>
-                            <TableCell sx={{ fontSize: 12 }} align="center">{summaryData.numOfRepublicanWinners}</TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </div>
-    )
+  return (
+    <Panel className="p-2">
+      <Table>
+        <Thead>
+          <Tr>
+            <Th>Total Districts</Th>
+            <Th>Incumbents</Th>
+            <Th>Dem winners</Th>
+            <Th>Rep winners</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          <Tr>
+            <Td>{summaryData.numOfDistrics}</Td>
+            <Td>{summaryData.numOfIncumbents}</Td>
+            <Td>{summaryData.numOfDemocratWinners}</Td>
+            <Td>{summaryData.numOfRepublicanWinners}</Td>
+          </Tr>
+        </Tbody>
+      </Table>
+    </Panel>
+  );
 }
