@@ -24,9 +24,14 @@ export default function IncumbentVariation({ metric }) {
   const options = {
     chart: { type: "boxPlot", height: 260, width: 360, toolbar: { show: false } },
     title: { text: metric.label, align: "center", style: { fontSize: "13px" } },
-    plotOptions: { boxPlot: { colors: { upper: BOX_UPPER, lower: BOX_LOWER } } },
-    // enacted value drawn as a labeled line across the box so you can see where
-    // the observed plan falls within the ensemble distribution.
+    grid: { borderColor: "#eef0f2" },
+    plotOptions: {
+      // Narrow the single box so it isn't a full-width slab; center it.
+      bar: { columnWidth: "45%" },
+      boxPlot: { colors: { upper: BOX_UPPER, lower: BOX_LOWER } },
+    },
+    // enacted value drawn as a labeled line across the box; the label is anchored
+    // to the right edge so it doesn't overlap the box.
     annotations: {
       yaxis: [
         {
@@ -34,9 +39,11 @@ export default function IncumbentVariation({ metric }) {
           borderColor: OBSERVED_COLOR,
           strokeDashArray: 4,
           label: {
-            text: `enacted ${asPct(observed)} (${pctile}th pct)`,
-            position: "left",
-            textAnchor: "start",
+            text: `enacted ${asPct(observed)} · ${pctile}th pct`,
+            position: "right",
+            textAnchor: "end",
+            offsetX: -4,
+            offsetY: -6,
             borderColor: OBSERVED_COLOR,
             style: { background: OBSERVED_COLOR, color: "#fff", fontSize: "11px" },
           },

@@ -127,7 +127,7 @@ export default function DistrictSummaryItem(props) {
                       ))}
                       <Tr key="chart">
                         {canShowIncumbentVariation && incumbentBundle.metrics.map((metric) => (
-                          <IncumbentVariation key={metric.id} metric={metric} />
+                          <IncumbentVariation key={metric.id ?? metric.label} metric={metric} />
                         ))}
                       </Tr>
                     </Tbody>
