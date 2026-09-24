@@ -276,7 +276,7 @@ function StoreContextProvider(props) {
     }
 
     dataStore.isEnsemblejsonReady = () => {
-        if(!(dataStore.ensemble['name'])) return false;
+        if(!(dataStore.ensemble && dataStore.ensemble.schema_version)) return false;
         return true;
     }
 
