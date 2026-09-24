@@ -17,16 +17,16 @@ export default function DistrictSummaryItem(props) {
     const { mapStore, dataStore } = useContext(StoreContext);
 
     let data = props.electionData;
-    let enactedData = props.enactedData;
-    let incumbentData = props.incumbentData;
+    let incumbentBundle = props.incumbentBundle;
     let winVotePercent = Math.ceil((data.winnerVotes  / (data.winnerVotes + data.loserVotes)) * 100 );
     let loseVotePercent = 100 - winVotePercent;
     const isHighlighted = mapStore.getHighlightDistrictId() === data.districtId;
     let bgColor = (isHighlighted)? colorDict.highlight : colorDict.white;
     const canShowIncumbentVariation = data.hasIncumbent
         && (mapStore.getMapPlan() === 'enacted')
-        && !!enactedData?.incumbent_data?.[data.incumbent]
-        && !!incumbentData?.[data.incumbent];
+        && !!incumbentBundle
+        && Array.isArray(incumbentBundle.metrics)
+        && incumbentBundle.metrics.length > 0;
 
     function onItemClick() {
         mapStore.highlightDistrict(data.districtId);
@@ -126,12 +126,9 @@ export default function DistrictSummaryItem(props) {
                         </Tr>
                       ))}
                       <Tr key="chart">
-                        {canShowIncumbentVariation && (
-                          <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData} type={"area_variations"} />
-                        )}
-                        {canShowIncumbentVariation && (
-                          <IncumbentVariation incumbent={data.incumbent} enactedData={enactedData.incumbent_data} incumbentData={incumbentData} type={"vap_variations"} />
-                        )}
+                        {canShowIncumbentVariation && incumbentBundle.metrics.map((metric) => (
+                          <IncumbentVariation key={metric.id} metric={metric} />
+                        ))}
                       </Tr>
                     </Tbody>
                   </Table>
