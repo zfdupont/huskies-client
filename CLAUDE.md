@@ -19,8 +19,9 @@ Create React App; see caveats below).
 - `pnpm start` — dev server in production mode on port **3005** (loads `.env.production`)
 - `pnpm build` — production build to `build/` (outDir is customized to CRA's `build/`
   rather than Vite's usual output directory)
+- `pnpm test` — Vitest unit/component tests (jsdom); `pnpm test:e2e` — Playwright e2e
 
-There is no test runner or lint script configured.
+Tests (Vitest + Playwright) run in CI (`.github/workflows/ci.yml`). No lint script is configured.
 
 ## Environment Variables
 
@@ -85,14 +86,16 @@ through `src/common/ConversionHelper.js`.
 
 ### UI layout
 
-`HomePage` → `MainDrawer` (MUI responsive drawer with controls) + `MainTabPanel`
-(renders `MapPanel` only — the tab bar / ANALYZE tab were removed). Components under
-`src/TabPanels/analyzePanel/` exist but are largely unmounted. `Loader.jsx` (an `ldrs`
+`HomePage` → `MainDrawer` (responsive drawer built on `src/ui/Drawer.jsx`) + `MainTabPanel`
+(renders `MapPanel` only — the tab bar / ANALYZE tab were removed). From
+`src/TabPanels/analyzePanel/`, `SummaryEnsembleTable` and `IncumbentVariation` (box-and-whisker
+charts) render inside the map view; the rest is unmounted. `Loader.jsx` (an `ldrs`
 spinner) shows while `loading` is true.
 
 ### Conventions
 
-- MUI v5 (`@mui/material`) is the UI kit; charts use `apexcharts`/`react-apexcharts`.
+- Styling is Tailwind v4; UI primitives are owned in `src/ui/` (MUI/Emotion removed).
+  Charts use `apexcharts`/`react-apexcharts`. Theme flips via `<html data-theme>` tokens.
 - Files are `.jsx`/`.js` (not TypeScript).
 - SVGs import as React components (svgr configured in `vite.config.mjs`).
 - `vite.config.mjs` contains custom plugins replicating CRA behavior (env handling,

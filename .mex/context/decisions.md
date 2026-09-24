@@ -13,7 +13,7 @@ edges:
   - target: context/stack.md
     condition: when a decision relates to technology choice
 grounds_to: []
-last_updated: 2026-09-17
+last_updated: 2026-09-24
 ---
 
 # Decisions
@@ -46,7 +46,7 @@ last_updated: 2026-09-17
 
 ### Remove test tooling; no tests
 **Date:** 2026-09-17
-**Status:** Active
+**Status:** Superseded (2026-09-24 — Vitest + Playwright added; see "Add Vitest + Playwright test suite")
 **Decision:** Removed `react-scripts` and `@testing-library/*`; deleted the boilerplate test files. No test runner is configured.
 **Reasoning:** The `react-scripts test` script was broken post-Vite migration and only CRA boilerplate tests existed; react-scripts was a very heavy unused dependency.
 **Alternatives considered:** Wiring up Vitest (deferred — additive, not cleanup).
@@ -59,3 +59,26 @@ last_updated: 2026-09-17
 **Reasoning:** Moving it out is a real refactor — `GeoData` is read synchronously in `MapController`.
 **Alternatives considered:** Moving files to `public/` + runtime fetch (deferred to its own branch — higher risk of breaking the map).
 **Consequences:** JS bundle is ~12MB (Vite warns on chunk size). Tackle separately when addressing bundle size.
+
+### Add Vitest + Playwright test suite
+**Date:** 2026-09-24
+**Status:** Active
+**Decision:** Vitest (+ @testing-library/react, jsdom) for unit/component tests co-located as `*.test.{js,jsx}`; Playwright for e2e in `e2e/`. Both run in CI.
+**Reasoning:** The reskin and data-contract work were high-risk with no tests; the earlier "no tests" stance was cleanup-era, not permanent.
+**Consequences:** `pnpm test` / `pnpm test:e2e` are gates alongside `pnpm build`. Playwright stubs `/api/*` via route fixtures, so e2e needs no backend.
+
+### Remove MUI/Emotion; Tailwind v4 + owned `src/ui/` kit
+**Date:** 2026-09-24
+**Status:** Active
+**Decision:** Drop MUI and Emotion; style with Tailwind v4 (its Vite plugin) and a small owned primitives kit in `src/ui/`. Light/dark theme via semantic CSS tokens that flip on `<html data-theme>`.
+**Reasoning:** Aesthetic overhaul + remove the heaviest dependency; own the component layer for control and a cheaper future layout rework.
+**Alternatives considered:** Headless UI lib + Tailwind (rejected — adds a dep, against the removal spirit); inline Tailwind everywhere (rejected — duplication).
+**Consequences:** No component library. New UI goes through `src/ui/`; theme-aware colors use tokens, not hardcoded values.
+
+### Ensemble analysis data contract (observed vs. distribution)
+**Date:** 2026-09-24
+**Status:** Active
+**Decision:** `/api/summary` returns a canonical contract built on one repeatable comparison unit — `{observed, observed_percentile, ensemble:{n, quantiles, histogram}}` — under `metrics.by_incumbent[]`, plus `meta`/`summary`/`schema_version` (snake_case). JSON Schema (in huskies-server) is the source of truth. Replaced the mismatched `enacted_data`/`incumbent_data` blobs that had left the incumbent-variation charts broken.
+**Reasoning:** The client expected an `enacted_data` field the server never sent; a generic, extensible contract fixes it and matches redistricting outlier-analysis norms.
+**Alternatives considered:** raw per-plan samples (rejected — heavy, pushes stats to client); quantiles-only (deferred). Chose histogram + quantiles.
+**Consequences:** Breaking, in-place `/api/summary` change — server + Mongo re-ingest + client must ship together. Client reads it via `ensembleContract.js`; v1 renders per-incumbent **box-and-whisker** charts from `quantiles` (`IncumbentVariation`).

@@ -25,3 +25,4 @@ Lookup table for all pattern files in this directory. Check here before starting
 |---------|----------|
 | [add-store-action.md](add-store-action.md) | Adding shared state or a new mutation to the central Store |
 | [debug-data-loading.md](debug-data-loading.md) | Map/tables load empty or the loading spinner misbehaves |
+| [deploy-release.md](deploy-release.md) | Deploying/redeploying to production (release branch + watchtower) |

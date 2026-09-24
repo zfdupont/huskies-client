@@ -14,7 +14,7 @@ edges:
     condition: when setting up the dev environment or running the project for the first time
   - target: patterns/INDEX.md
     condition: when starting a task — check the pattern index for a matching pattern file
-last_updated: 2026-09-17
+last_updated: 2026-09-24
 ---
 
 # Session Bootstrap
@@ -29,22 +29,32 @@ Then read this file fully before doing anything else in this session.
 - Interactive Leaflet map: select state (NY/GA/IL) + plan (enacted + 5 sims), district
   layers, partisan/demographic heatmaps, summary tables.
 - Data flow through `Store.jsx` → `api.js` (`/api/plan`, `/api/summary`) → `StateModel`, cached.
-- Loading spinner overlay during fetches (`loading` flag; clears via `try/finally`).
-- Per-mode Vite env (`pnpm dev` on 3000, `pnpm start` prod on 3005); `pnpm build` green.
-- Codebase cleaned: dead code/deps removed, no test/lint tooling, `.DS_Store` untracked.
+- **UI reskinned**: MUI + Emotion removed; Tailwind v4 + owned `src/ui/` primitives kit;
+  light/dark toggle via `<html data-theme>` semantic tokens; mobile drawer/bottom-sheet.
+- **Ensemble analysis contract**: `/api/summary` returns `{schema_version, meta, summary,
+  metrics.by_incumbent}`; client reads it via `src/common/ensembleContract.js`; focusing an
+  incumbent district renders **box-and-whisker** charts (`IncumbentVariation`, from the
+  contract's `quantiles` + an enacted marker). A JSON Schema (in the huskies-server repo's
+  scripts/schema dir) is the source of truth.
+- **Tests**: Vitest unit + Playwright e2e, both run in CI (`.github/workflows/ci.yml`).
+  `pnpm build` green.
+- **Deploy**: push the `release` branch → CI builds `ghcr.io/zfdupont/huskies-client:release`
+  → watchtower auto-deploys. Live at `https://huskies.zfdupont.com`.
 
 **Not yet built / deferred:**
-- ANALYZE tab is not mounted; `src/TabPanels/analyzePanel/` components mostly unused.
-- Moving the ~31MB bundled GeoJSON (NYD/GAD/ILD) to runtime fetch (own branch).
-- Test setup (Vitest) — intentionally none right now.
+- ANALYZE tab still not mounted; analysis pieces render inside the map view, not a tab.
+- Contract v1 omits `by_district`/`statewide` metrics and per-incumbent `district`/`party`
+  (shape is ready; adding them is data-only).
+- Moving the bundled GeoJSON to runtime fetch (own branch).
 
 **Known issues:**
-- JS bundle is ~12MB (Vite chunk-size warning) because GeoJSON is bundled.
-- Backend must run at `VITE_SERVER_URL` (:8000 in dev) or data silently loads empty
-  (api.js swallows errors → `null`).
-- Responsive drawer: starts open on mobile and its controls are `display:none` on `xs`
-  (unreachable on phones) — not yet fixed.
-- Backend is a separate repo (`~/huskies-server`, Java Spring Boot + Python GerryChain scripts).
+- JS bundle large (Vite chunk-size warning) because GeoJSON is bundled.
+- Backend must serve `/api` at `VITE_SERVER_URL` (dev `:8090`) or data loads empty
+  (api.js swallows errors → `null`). Requests are non-credentialed (server CORS has no creds).
+- `/api/summary` is a breaking in-place contract: deploying requires re-ingesting Mongo
+  (the huskies-server contract-build then DB-load scripts) or the server 404s.
+- Backend is a separate repo (`~/huskies-server`, github.com/zfdupont/huskies; Java Spring
+  Boot + Python GerryChain scripts, MongoDB Atlas).
 
 ## Routing Table
 

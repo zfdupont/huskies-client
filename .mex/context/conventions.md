@@ -18,7 +18,7 @@ edges:
   - target: patterns/debug-data-loading.md
     condition: when the map or tables load empty
 grounds_to: []
-last_updated: 2026-09-17
+last_updated: 2026-09-24
 ---
 
 # Conventions
@@ -43,6 +43,12 @@ last_updated: 2026-09-17
 - Panels live under `src/TabPanels/<panel>/`; shared UI/state under `src/common/`.
 - Map layer logic is imperative Leaflet inside `MapController.jsx` — not JSX map layers.
 - Static base-map GeoJSON is imported via the `GeoData` table in `GlobalVariables.js`.
+- **Styling is Tailwind v4** utility classes (no MUI, no Emotion, no `sx`). Reusable UI
+  goes through the owned primitives in `src/ui/`; add a primitive there rather than
+  re-styling ad hoc. Theme-aware colors use the semantic tokens (`bg-surface`, `text-fg`,
+  `bg-accent`, …) that flip on `<html data-theme>`, not hardcoded light/dark values.
+- **Component tests** live beside the code as `*.test.{js,jsx}` (Vitest + Testing Library);
+  e2e specs live in `e2e/` (Playwright).
 
 ## Patterns
 
@@ -62,7 +68,7 @@ Step-by-step procedures: see `patterns/add-store-action.md` (extending the store
 ## Verify Checklist
 
 Before presenting any code:
-- [ ] `pnpm build` succeeds (there is no test/lint gate — the build is the check).
+- [ ] `pnpm test` passes (Vitest) and `pnpm build` succeeds; run `pnpm test:e2e` for UI-flow changes.
 - [ ] New state/actions go through `GlobalVariables.js` + a reducer, not ad-hoc `setState`.
 - [ ] Any new enum value matches the exact string the backend API expects.
 - [ ] No new dependency added when an existing one covers it (deps were just pruned).
