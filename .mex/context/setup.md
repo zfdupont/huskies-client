@@ -14,7 +14,7 @@ edges:
   - target: context/architecture.md
     condition: when understanding how components connect during setup
 grounds_to: []
-last_updated: 2026-09-17
+last_updated: 2026-09-24
 ---
 
 # Setup
@@ -23,7 +23,7 @@ last_updated: 2026-09-17
 
 - Node.js (v24 in use locally; v18+ works)
 - pnpm (`npm install -g pnpm`)
-- The backend (huskies-server) running on `http://localhost:8000` for data to load
+- The backend (huskies-server) running on `http://localhost:8090` for data to load
 
 ## First-time Setup
 
@@ -38,7 +38,7 @@ Per-mode via Vite env files (git-ignored; copy from the committed `*.example` te
 - `VITE_SERVER_URL` (required) — backend base URL; `src/common/api.js` appends `/api`.
 - `PORT` (required) — port the Vite client serves on.
 
-Files: `.env.development` (dev: `http://localhost:8000`, port 3000) and `.env.production`
+Files: `.env.development` (dev: `http://localhost:8090`, port 3000) and `.env.production`
 (prod: `https://huskies.zfdupont.com`, port 3005).
 
 ## Common Commands
@@ -46,13 +46,22 @@ Files: `.env.development` (dev: `http://localhost:8000`, port 3000) and `.env.pr
 - `pnpm dev` — dev server in development mode, port 3000 (loads `.env.development`)
 - `pnpm start` — dev server in production mode, port 3005 (loads `.env.production`)
 - `pnpm build` — production build to `build/`
+- `pnpm test` — Vitest unit/component tests (jsdom); `pnpm test:watch` to watch
+- `pnpm test:e2e` — Playwright e2e (boots its own `pnpm dev`; API stubbed, no backend needed)
 
-No test or lint scripts are configured.
+No lint script is configured.
+
+## Deploy
+
+Push the `release` branch → CI (`.github/workflows/ci.yml`) builds+pushes
+`ghcr.io/zfdupont/huskies-client:release` → watchtower on the host auto-pulls and restarts
+(~2 min). Live at `https://huskies.zfdupont.com`. NOTE: an `/api/summary` contract change is
+breaking and in-place — the server + a Mongo re-ingest (in huskies-server) must ship together.
 
 ## Common Issues
 
 - **Map/tables never load, spinner clears with empty data:** the backend isn't reachable at
-  `VITE_SERVER_URL`. api.js swallows errors and returns `null`. Start huskies-server on :8000.
+  `VITE_SERVER_URL`. api.js swallows errors and returns `null`. Start huskies-server on :8090.
 - **Port already in use:** `lsof -i :3000` then `kill -9 <PID>`, or change `PORT` in the env file.
 - **`ERR_PNPM_IGNORED_BUILDS` on install:** expected/benign; acknowledged in `pnpm-workspace.yaml`
   (`allowBuilds` set false for core-js/esbuild). esbuild works via its prebuilt platform binary.

@@ -15,7 +15,7 @@ edges:
   - target: context/conventions.md
     condition: when writing code against the store/data flow
 grounds_to: []
-last_updated: 2026-09-17
+last_updated: 2026-09-24
 ---
 
 # Architecture
@@ -52,14 +52,24 @@ Action flow:
 - **MapController (`src/TabPanels/mapPanel/MapController.jsx`)** — drives Leaflet imperatively
   via `useMap()`; tears down and rebuilds layer groups (`currLayerGroups`) each render.
 - **api (`src/common/api.js`)** — axios instance, `baseURL = ${VITE_SERVER_URL}/api`,
-  `withCredentials = true`; both endpoints swallow errors and return `null`.
+  **non-credentialed** (`withCredentials` removed to match the server's non-credentialed
+  CORS); both endpoints swallow errors and return `null`.
+- **UI kit (`src/ui/`)** — owned presentational primitives (Button, IconButton, Panel,
+  Toggle, Checkbox, Collapse, NavSection, Drawer, BottomSheet, Table, inline SVG icons)
+  styled with Tailwind v4. Replaced MUI. Theme flips via `<html data-theme>` semantic tokens
+  (`App.jsx` toggle + a pre-paint script in `index.html`).
+- **Ensemble contract (`src/common/ensembleContract.js`)** — `indexIncumbentsByName()` maps
+  the `/api/summary` contract's `metrics.by_incumbent[]` for lookup. `DistrictSummaryTable`
+  passes the matched bundle to `DistrictSummaryItem`, which renders one `IncumbentVariation`
+  box-and-whisker per metric (from the bundle's `quantiles` + observed marker).
 
 ## External Dependencies
 
-- **The Huskies backend** (a separate repo at `~/huskies-server`, not an npm package) — a
-  Java Spring Boot HTTP server (port 8000) that serves plans + ensemble summaries from a
-  database and performs no calculations. Client base URL is `VITE_SERVER_URL` (dev
-  `http://localhost:8000`, prod `https://huskies.zfdupont.com`); api.js appends `/api`.
+- **The Huskies backend** (a separate repo at `~/huskies-server`, github.com/zfdupont/huskies)
+  — a Java Spring Boot HTTP server (dev port `8090`) that serves plans + ensemble summaries
+  from MongoDB and performs no calculations. Client base URL is `VITE_SERVER_URL` (dev
+  `http://localhost:8090`, prod `https://huskies.zfdupont.com`); api.js appends `/api`. The
+  `/api/summary` response follows the ensemble contract (schema in the server repo).
 - **GerryChain Python scripts** (in the huskies-server repo) — generate the simulated
   redistricting ensembles via MCMC/ReCom and POST them to the DB. Not called by this client.
 - **Leaflet tile providers** — base map tiles for the interactive map (via react-leaflet).
@@ -68,7 +78,7 @@ Action flow:
 
 - No backend, database, or plan-generation logic — all in huskies-server.
 - No client-side routing (`react-router` was removed); single page, no routes.
-- No test suite or lint step configured.
+- No lint step configured. (A test suite DOES exist now: Vitest unit + Playwright e2e.)
 - No state library (Redux/Zustand) — state is the hand-rolled React Context in `Store.jsx`.
 - The ANALYZE tab is not mounted; only the map view renders. `src/TabPanels/analyzePanel/`
   components mostly exist but are unused.

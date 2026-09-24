@@ -1,1 +1,5 @@
 {"timestamp":"2026-09-17T05:57:00.940Z","kind":"note","message":"Initialized mex scaffold; populated context/patterns from codebase + huskies-server context","files":[],"cwd":"."}
+{"timestamp":"2026-09-24T18:26:15.437Z","kind":"note","message":"Removed MUI/Emotion; reskinned with Tailwind v4 + owned src/ui kit; light/dark via <html data-theme>","files":[],"cwd":"."}
+{"timestamp":"2026-09-24T18:26:16.510Z","kind":"note","message":"Added ensemble /api/summary data contract (observed-vs-distribution); client renders per-incumbent box-and-whisker from quantiles; deployed to prod","files":[],"cwd":"."}
+{"timestamp":"2026-09-24T18:26:17.573Z","kind":"note","message":"Added Vitest unit + Playwright e2e suites (run in CI); supersedes prior no-tests stance","files":[],"cwd":"."}
+{"timestamp":"2026-09-24T18:26:18.719Z","kind":"note","message":"Gotcha: Spring Data Mongo POJOs need @Field for snake_case keys (not just Jackson @JsonProperty) or fields deserialize null","files":[],"cwd":"."}

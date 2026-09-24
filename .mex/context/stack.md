@@ -13,7 +13,7 @@ edges:
   - target: context/conventions.md
     condition: when understanding how to use a technology in this codebase
 grounds_to: []
-last_updated: 2026-09-17
+last_updated: 2026-09-24
 ---
 
 # Stack
@@ -29,20 +29,31 @@ last_updated: 2026-09-17
 
 ## Key Libraries
 
-- **@mui/material v5** (+ `@mui/icons-material`) — UI kit. `@emotion/react` + `@emotion/styled`
-  are its required styling peers (kept even though not directly imported).
+- **Tailwind CSS v4** (`tailwindcss` plus its Vite plugin, dev deps) — styling. MUI and
+  Emotion were removed; UI is a hand-rolled primitives kit in `src/ui/` (Button, IconButton,
+  Panel, Toggle, Checkbox, Collapse, NavSection, Drawer, BottomSheet, Table, inline SVG
+  icons) styled with Tailwind. Theme via semantic CSS tokens that flip on `<html data-theme>`.
 - **leaflet + react-leaflet** — the interactive map. `MapController` uses Leaflet imperatively.
-- **apexcharts + react-apexcharts** — charts in the (currently unmounted) analyze panel.
-- **axios** — HTTP client in `src/common/api.js`.
+- **apexcharts + react-apexcharts** — box-and-whisker charts in a focused district's detail
+  (`IncumbentVariation`), built from the ensemble contract's `quantiles`.
+- **axios** — HTTP client in `src/common/api.js` (non-credentialed; backend CORS has no
+  credentials, so `withCredentials` was removed).
 - **ldrs** — the loading spinner (`l-helix`) used by `Loader.jsx`.
+
+## Testing
+
+- **Vitest + @testing-library/react** — unit/component tests (`src/**/*.test.{js,jsx}`,
+  jsdom, `css:false`). Run with `pnpm test`.
+- **Playwright** — e2e in `e2e/` (`pnpm test:e2e`); webServer boots `pnpm dev`, no backend
+  needed (API stubbed via route fixtures). Both run in CI (`.github/workflows/ci.yml`).
 
 ## What We Deliberately Do NOT Use
 
 - **No Redux / Zustand / MobX** — app state is a hand-rolled React Context (`Store.jsx`).
 - **No react-router** — single page, removed during cleanup.
 - **No TypeScript** — plain JSX despite React types being available.
-- **No test runner or ESLint** — none configured (react-scripts/testing-library removed).
-- **Not MUI v4** (`@material-ui/core`) — removed; use `@mui/*` only.
+- **No ESLint** — not configured. (Tests DO exist now: Vitest + Playwright — see Testing.)
+- **No MUI / Emotion / component library** — removed; UI is the owned `src/ui/` kit + Tailwind.
 
 ## Version Constraints
 
