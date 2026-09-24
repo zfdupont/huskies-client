@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import Panel from "../../ui/Panel";
 import IconButton from "../../ui/IconButton";
@@ -32,6 +32,15 @@ export default function MapPanel() {
   const { mapStore } = useContext(StoreReducer);
   const isMobile = useIsMobile();
   const [sheetOpen, setSheetOpen] = useState(false);
+
+  // On mobile the district detail lives in a bottom sheet (opened by the FAB).
+  // Tapping a district on the map should also pop the sheet open so its detail is
+  // visible without hunting for the FAB. The sheet auto-scrolls to the highlighted
+  // district. Closing the sheet won't re-open until a different district is tapped.
+  const highlightDistrictId = mapStore.getHighlightDistrictId();
+  useEffect(() => {
+    if (isMobile && highlightDistrictId != null) setSheetOpen(true);
+  }, [isMobile, highlightDistrictId]);
 
   if (isMobile) {
     return (
