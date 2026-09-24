@@ -1,32 +1,22 @@
-import { buildBarModel } from "./IncumbentVariation";
+import { buildBoxModel } from "./IncumbentVariation";
 
 const metric = {
   label: "Geographic Variation",
   observed: 0.33,
-  observed_percentile: 0.5,
+  observed_percentile: 0.6,
   unit: "fraction",
-  ensemble: { histogram: {
-    bin_edges: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],   // 5 bins
-    counts:    [1,   2,   3,   4,   5],
-  } },
+  ensemble: {
+    quantiles: { "0": 0.05, "0.25": 0.12, "0.5": 0.2, "0.75": 0.28, "1": 0.45 },
+  },
 };
 
-test("categories are per-bin percent ranges", () => {
-  const m = buildBarModel(metric);
-  expect(m.categories).toEqual(["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"]);
-  expect(m.counts).toEqual([1, 2, 3, 4, 5]);
+test("box is [min, Q1, median, Q3, max] from quantiles", () => {
+  expect(buildBoxModel(metric).box).toEqual([0.05, 0.12, 0.2, 0.28, 0.45]);
 });
 
-test("highlightIndex is the bin containing observed", () => {
-  expect(buildBarModel(metric).highlightIndex).toBe(1);          // 0.33 in [0.2,0.4)
-});
-
-test("observed at the top edge clamps to the last bin", () => {
-  const top = { ...metric, observed: 1.0 };
-  expect(buildBarModel(top).highlightIndex).toBe(4);
-});
-
-test("observed below range clamps to the first bin", () => {
-  const low = { ...metric, observed: -5 };
-  expect(buildBarModel(low).highlightIndex).toBe(0);
+test("carries category label, observed value, and percentile", () => {
+  const m = buildBoxModel(metric);
+  expect(m.category).toBe("Geographic Variation");
+  expect(m.observed).toBe(0.33);
+  expect(m.observedPercentile).toBe(0.6);
 });
