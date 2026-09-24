@@ -82,6 +82,9 @@ function StoreContextProvider(props) {
                 dataStore.geojson[payload.planType][payload.stateType] = payload.geojson;
 
                 dataStore.ensemble = payload.ensemble;
+                if (payload.ensemble && payload.ensemble.schema_version && payload.ensemble.schema_version !== "1.0") {
+                    console.warn(`Unexpected ensemble schema_version: ${payload.ensemble.schema_version}`);
+                }
                 return setDataStore({
                     stateData: dataStore.stateData,
                     geojson: dataStore.geojson,
