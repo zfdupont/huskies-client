@@ -8,7 +8,7 @@ export default function SummaryEnsembleTable() {
   const { dataStore } = useContext(StoreContext);
   if (!dataStore.isEnsemblejsonReady()) return null;
 
-  const data = dataStore.getEnsembleData().ensemble_summary;
+  const data = dataStore.getEnsembleData().summary;
   if (!data) return null;
 
   return (
