@@ -85,8 +85,10 @@ new.
       {
         "id": "austin-scott",           // stable slug; never key by display name
         "name": "Austin Scott",
-        "district": 8,                  // the incumbent's district in the subject plan
-        "party": "R",
+        // NOTE (v1): `district` and `party` are deferred. The pipeline's
+        // ensemble_data.json artifact does not carry them, and the client matches
+        // incumbents by name and already has district/party from the plan GeoJSON.
+        // Adding them later is data-only (enrich the pipeline output).
         "metrics": [
           {
             "id": "geographic_variation",
