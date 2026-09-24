@@ -32,7 +32,6 @@ export default function DistrictSummaryTable() {
         let stateModelData = dataStore.getStateModelData(mapStore.getMapPlan(), mapStore.getState());
         for (let id in stateModelData.electionDataDict) {
             if (state.incumbentFilter && !stateModelData.electionDataDict[id].hasIncumbent) continue;
-            //console.log(ensembleData.enacted_data);
             districtSummaryInfo.push(<DistrictSummaryItem key={id} electionData={stateModelData.electionDataDict[id]} incumbentBundle={incumbentsByName[stateModelData.electionDataDict[id].incumbent]}/>);
         }
         return districtSummaryInfo;
