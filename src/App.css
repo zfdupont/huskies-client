@@ -6,3 +6,9 @@ div.logo:hover {
   box-shadow: inset 0 0 0 2000px rgba(94, 72, 215, 0.3);
   cursor: pointer;
 }
+
+/* The logo is black line-art on transparent, invisible on the dark navbar.
+   Invert it in dark mode -> crisp white version of the same artwork. */
+[data-theme="dark"] .logo {
+  filter: invert(1);
+}
