@@ -35,4 +35,8 @@ test("mobile: tapping a district on the map opens the detail sheet", async ({ pa
 
     // The bottom sheet pops open with the district detail — no FAB tap needed.
     await expect(page.locator(".map-side-item").first()).toBeVisible({ timeout: 10000 });
+
+    // ...and it can be closed via the visible close control (no reset needed).
+    await page.getByRole("button", { name: "Close district data" }).click();
+    await expect(page.locator(".map-side-item").first()).toBeHidden();
 });
